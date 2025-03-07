@@ -14,6 +14,8 @@ const loginFields: FormField[] = [
         key: "password",
         placeholder: "Enter your password",
     },
+    
+    
 ];
 
 export default function LoginScreen() {
