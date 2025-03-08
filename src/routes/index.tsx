@@ -1,27 +1,31 @@
-import React, { lazy, Suspense } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+// /src/routes/AppRoutes.tsx
+import React, { lazy, Suspense } from 'react'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
 // Carga perezosa (lazy) de componentes
-const Login = lazy(() => import('../components/screens/LoginScreen'));
-const Dashboard = lazy(() => import('../components/screens/DashboardScreen'));
-/* const LandingPage = lazy(() => import('../components/template/LandingPage'));
-const Registry = lazy(() => import('../components/screens/Registry'));
-const BanksRoutes = lazy(() => import('./ejemploEscalable')); */
+const Login = lazy(() => import('../components/screens/AuthScreen'))
+const Layout = lazy(() => import('../components/templates/Layout'))
+const Dashboard = lazy(() => import('../components/screens/DashboardScreen'))
+const Dropfiles = lazy(() => import('../components/screens/DropFilesScreen'))
 
 export const AppRoutes = () => {
     return (
         <BrowserRouter>
             <Suspense fallback={<div>Cargando...</div>}>
                 <Routes>
+                    {/* Redirige la raíz a /login */}
                     <Route path="/" element={<Navigate to="/login" />} />
-                    <Route path="/login" element={<Login  />} />
-                    <Route path="/Dashboard" element={<Dashboard  />} />
-                    {/* <Route path="/landing-page" element={<LandingPage />} />
-                    <Route path="/registry" element={<Registry />} /> */}
-                    {/* Las rutas anidadas para bancos */}
-                    {/* <Route path="/banks/*" element={<BanksRoutes />} /> */}
+
+                    {/* Ruta login */}
+                    <Route path="/login" element={<Login />} />
+
+                    {/* Rutas con Layout */}
+                    <Route path="/" element={<Layout />}>
+                        <Route path="dashboard" element={<Dashboard />} />
+                        <Route path="dropfiles" element={<Dropfiles />} />
+                    </Route>
                 </Routes>
             </Suspense>
         </BrowserRouter>
-    );
-};
+    )
+}

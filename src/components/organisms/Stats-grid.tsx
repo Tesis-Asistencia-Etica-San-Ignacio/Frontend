@@ -1,5 +1,5 @@
 import React from "react"
-import { StatsCard, StatsCardProps } from "@/components/molecules/StatsCard"
+import { StatsCard, StatsCardProps } from "@/components/molecules/Stats-card"
 
 export interface StatsGridProps {
   cards: StatsCardProps[]

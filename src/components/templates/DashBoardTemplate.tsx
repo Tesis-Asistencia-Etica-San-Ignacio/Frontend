@@ -1,16 +1,17 @@
 import React from "react"
-import { StatsGrid } from "@/components/organisms/StatsGrid"
+import { StatsGrid } from "@/components/organisms/Stats-grid"
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
 } from "../atoms/ui/tabs"
-import { DatePickerWithRange } from "../molecules/date-range-picker"
-import { MainNav } from "./components/main-nav"
-import { Overview } from "./components/overview"
-import { UserNav } from "./components/user-nav"
+import { DatePickerWithRange } from "../molecules/Date-range-picker"
+import { BarChartComponent } from "../molecules/graphics/Bar-Chart"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../atoms/ui/card"
+import { LineChartComponent } from "../molecules/graphics/Line-Chart"
+import { PieChartComponent } from "../molecules/graphics/Pie-Chart"
+
 
 export interface DashboardTemplateProps {
     cardsData: {
@@ -23,32 +24,7 @@ export interface DashboardTemplateProps {
 
 export default function DashboardTemplate({ cardsData }: DashboardTemplateProps) {
     return (
-        <>
-            <div className="md:hidden">
-                <img
-                    src="/examples/dashboard-light.png"
-                    width="1280"
-                    height="866"
-                    alt="Dashboard"
-                    className="block dark:hidden"
-                />
-                <img
-                    src="/examples/dashboard-dark.png"
-                    width="1280"
-                    height="866"
-                    alt="Dashboard"
-                    className="hidden dark:block"
-                />
-            </div>
             <div className="hidden flex-col md:flex">
-                <div className="border-b">
-                    <div className="flex h-16 items-center px-4">
-                        <MainNav className="mx-6" />
-                        <div className="ml-auto flex items-center space-x-4">
-                            <UserNav />
-                        </div>
-                    </div>
-                </div>
                 <div className="flex-1 space-y-4 p-8 pt-6">
                     <div className="flex items-center justify-between space-y-2">
                         <h2 className="text-3xl font-bold tracking-tight">Dashboard</h2>
@@ -75,18 +51,25 @@ export default function DashboardTemplate({ cardsData }: DashboardTemplateProps)
                                         <CardTitle>Overview</CardTitle>
                                     </CardHeader>
                                     <CardContent className="pl-2">
-                                        <Overview />
+                                        <LineChartComponent />
                                     </CardContent>
                                 </Card>
-                                
+                                <Card className="col-span-3">
+                                    <CardHeader>
+                                        <CardTitle>Overview</CardTitle>
+                                    </CardHeader>
+                                    <CardContent >
+                                        <PieChartComponent />
+                                    </CardContent>
+                                </Card>
+
                             </div>
                         </TabsContent>
-                        <TabsContent value="analytics" className="bg-amber-500 space-y-4">
-                            <div>Analytics content here</div>
+                        <TabsContent value="analytics" className="space-y-4">
+                            <BarChartComponent />
                         </TabsContent>
                     </Tabs>
                 </div>
             </div>
-        </>
     )
 }

@@ -10,7 +10,7 @@ import {
 
 const slides = [
     {
-        imageUrl: "src/assets/anime-4k-pictures-s6fzu24pgsaxtsfb.jpg",
+        imageUrl: "src/assets/bg-Medicina.jpg",
         title: "Bienvenido",
         description: "Al sistema de asistencia a la evaluación ética del HUSI",
     },
@@ -20,7 +20,7 @@ const slides = [
         description: "Información relevante para el usuario",
     },
     {
-        imageUrl: "src/assets/anime-4k-pictures-s6fzu24pgsaxtsfb.jpg",
+        imageUrl: "src/assets/bg-Medicina.jpg",
         title: "Último Slide",
         description: "Pequeña descripción final",
     },
@@ -32,7 +32,7 @@ export function CarouselPlugin() {
     );
 
     return (
-        <div className="flex flex-col w-11/12  justify-center items-center mx-auto my-auto">
+        <div className="flex flex-col   justify-center items-center">
             <Carousel
                 opts={{ loop: true }}
                 plugins={[plugin.current]}

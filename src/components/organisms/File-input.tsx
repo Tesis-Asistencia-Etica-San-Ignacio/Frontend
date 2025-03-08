@@ -138,12 +138,13 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
     }
 
     return (
-        <div className="w-full">
+        <div className="w-full h-full">
             <div
                 className={cn(
-                    "relative w-full border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center cursor-pointer transition ",
+                    "relative w-full  border-2 border-dashed border-gray-300 rounded-3xl flex flex-col items-center justify-center cursor-pointer transition ",
                     dragActive && "bg-gray-100",
-                    noFiles ? "aspect-video" : "h-fit",
+                    noFiles ? "h-[95%]" : "h-fit",
+
                     className
                 )}
                 onDragEnter={handleDragEnter}
