@@ -107,8 +107,9 @@ export const DynamicForm: React.FC<DynamicFormProps> = ({
                     disabled={!editable}
                     placeholder={field.placeholder}
                     value={formData[field.key] || ""}
-                    onValueChange={(val, err) => handleInputChange(field.key, val, err)}
+                    onChange={(event) => handleInputChange(field.key, event.target.value)}
                 />
+
                 {formErrors[field.key] && (
                     <p className="mt-1 text-xs text-red-600">{formErrors[field.key]}</p>
                 )}

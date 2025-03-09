@@ -1,4 +1,3 @@
-// /src/routes/AppRoutes.tsx
 import React, { lazy, Suspense } from 'react'
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 
@@ -26,6 +25,7 @@ export const AppRoutes = () => {
                         <Route path="dropfiles" element={<Dropfiles />} />
                         <Route path="page" element={<Page />} />
                     </Route>
+                    
                 </Routes>
             </Suspense>
         </BrowserRouter>
