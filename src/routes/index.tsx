@@ -7,6 +7,7 @@ const Layout = lazy(() => import('../components/templates/Layout'))
 const Dashboard = lazy(() => import('../components/screens/DashboardScreen'))
 const Dropfiles = lazy(() => import('../components/screens/DropFilesScreen'))
 const Page = lazy(() => import('../components/templates/TableTemplate'))
+const Landing = lazy(() => import('../components/templates/LandingTemplate'))
 
 export const AppRoutes = () => {
     return (
@@ -24,6 +25,7 @@ export const AppRoutes = () => {
                         <Route path="dashboard" element={<Dashboard />} />
                         <Route path="dropfiles" element={<Dropfiles />} />
                         <Route path="page" element={<Page />} />
+                        <Route path="landing" element={<Landing />} />
                     </Route>
                     
                 </Routes>
