@@ -109,7 +109,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, inputType, icon, value = "", onChange, maxLength, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
-    const { schema, maxLength: defaultMaxLength, icon: defaultIcon } =
+    const {maxLength: defaultMaxLength, icon: defaultIcon } =
       getConfigForType(inputType)
 
     let nativeType: React.HTMLInputTypeAttribute = "text"
