@@ -8,6 +8,7 @@ const Dashboard = lazy(() => import('../components/screens/DashboardScreen'))
 const Dropfiles = lazy(() => import('../components/screens/DropFilesScreen'))
 const Page = lazy(() => import('../components/templates/TableTemplate'))
 const Landing = lazy(() => import('../components/templates/LandingTemplate'))
+const Evaluation = lazy(() => import('../components/templates/EvaluationResultTemplate'))
 
 export const AppRoutes = () => {
     return (
@@ -26,6 +27,7 @@ export const AppRoutes = () => {
                         <Route path="dropfiles" element={<Dropfiles />} />
                         <Route path="page" element={<Page />} />
                         <Route path="landing" element={<Landing />} />
+                        <Route path="evaluation" element={<Evaluation/>}/>
                     </Route>
 
                 </Routes>
