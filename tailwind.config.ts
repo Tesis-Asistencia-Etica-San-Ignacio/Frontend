@@ -1,3 +1,5 @@
+import { text } from "stream/consumers"
+
 const { fontFamily } = require("tailwindcss/defaultTheme")
 
 /** @type {import('tailwindcss').Config} */
@@ -31,6 +33,7 @@ module.exports = {
         muted: {
           DEFAULT: "hsl(var(--muted))",
           foreground: "hsl(var(--muted-foreground))",
+          text: "hsl(var(--muted-text))",
         },
         accent: {
           DEFAULT: "hsl(var(--accent))",

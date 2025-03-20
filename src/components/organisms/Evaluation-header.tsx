@@ -1,10 +1,9 @@
-import React from "react"
 import { Edit } from "lucide-react"      // Ejemplo de ícono
 import { Button } from "../atoms/ui/button" 
 
 interface EvaluationHeaderProps {
-  title?: string
-  onEdit?: () => void
+  readonly title?: string
+  readonly onEdit?: () => void
 }
 
 export function EvaluationHeader({

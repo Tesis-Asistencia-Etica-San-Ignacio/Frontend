@@ -23,11 +23,11 @@ export const AppRoutes = () => {
 
                     {/* Rutas con Layout */}
                     <Route path="/" element={<Layout />}>
-                        <Route path="dashboard" element={<Dashboard />} />
-                        <Route path="dropfiles" element={<Dropfiles />} />
-                        <Route path="page" element={<Page />} />
-                        <Route path="landing" element={<Landing />} />
-                        <Route path="evaluation" element={<Evaluation/>}/>
+                        <Route path="estadisticas" element={<Dashboard />} />
+                        <Route path="subir-archivos" element={<Dropfiles />} />
+                        <Route path="historial-archivos" element={<Page />} />
+                        <Route path="inicio" element={<Landing />} />
+                        <Route path="evaluacion" element={<Evaluation/>}/>
                     </Route>
 
                 </Routes>
