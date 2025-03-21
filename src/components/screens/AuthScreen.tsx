@@ -14,6 +14,7 @@ const registryFields: FormField[] = [
     { type: "password", key: "password", placeholder: "Choose a strong password" },
 ]
 
+
 export default function AuthScreen() {
     return (
         <AuthTemplate

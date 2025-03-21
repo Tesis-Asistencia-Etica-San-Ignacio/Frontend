@@ -1,21 +1,15 @@
 import * as React from "react"
 import {
-    AudioWaveform,
-    BookOpen,
-    Bot,
-    Command,
-    Frame,
-    GalleryVerticalEnd,
-    Map,
-    PieChart,
-    Settings2,
-    SquareTerminal,
+    LayoutGrid,
+    Upload,
+    History,
+    FileStack,
+    ChartLine,
 } from "lucide-react"
 
+
 import { NavMain } from "../molecules/side-navigation/nav-main"
-import { NavProjects } from "../molecules/side-navigation/nav-projects"
 import { NavUser } from "../molecules/side-navigation/nav-user"
-import { TeamSwitcher } from "../molecules/side-navigation/team-switcher"
 import {
     Sidebar,
     SidebarContent,
@@ -31,125 +25,31 @@ const data = {
         email: "m@example.com",
         avatar: "/avatars/shadcn.jpg",
     },
-    teams: [
-        {
-            name: "Acme Inc",
-            logo: GalleryVerticalEnd,
-            plan: "Enterprise",
-        },
-        {
-            name: "Acme Corp.",
-            logo: AudioWaveform,
-            plan: "Startup",
-        },
-        {
-            name: "Evil Corp.",
-            logo: Command,
-            plan: "Free",
-        },
-    ],
     navMain: [
         {
-            title: "Playground",
-            url: "#",
-            icon: SquareTerminal,
-            isActive: true,
-            items: [
-                {
-                    title: "History",
-                    url: "#",
-                },
-                {
-                    title: "Starred",
-                    url: "#",
-                },
-                {
-                    title: "Settings",
-                    url: "#",
-                },
-            ],
+            title: "Inicio",
+            url: "/inicio",
+            icon: LayoutGrid,
         },
         {
-            title: "Models",
-            url: "#",
-            icon: Bot,
-            items: [
-                {
-                    title: "Genesis",
-                    url: "#",
-                },
-                {
-                    title: "Explorer",
-                    url: "#",
-                },
-                {
-                    title: "Quantum",
-                    url: "#",
-                },
-            ],
+            title: "Subir archivos",
+            url: "/subir-archivos",
+            icon: Upload,
         },
         {
-            title: "Documentation",
-            url: "#",
-            icon: BookOpen,
-            items: [
-                {
-                    title: "Introduction",
-                    url: "#",
-                },
-                {
-                    title: "Get Started",
-                    url: "#",
-                },
-                {
-                    title: "Tutorials",
-                    url: "#",
-                },
-                {
-                    title: "Changelog",
-                    url: "#",
-                },
-            ],
+            title: "Historial de archivos",
+            url: "/historial-archivos",
+            icon: FileStack,
         },
         {
-            title: "Settings",
+            title: "Historial de casos",
             url: "#",
-            icon: Settings2,
-            items: [
-                {
-                    title: "General",
-                    url: "#",
-                },
-                {
-                    title: "Team",
-                    url: "#",
-                },
-                {
-                    title: "Billing",
-                    url: "#",
-                },
-                {
-                    title: "Limits",
-                    url: "#",
-                },
-            ],
-        },
-    ],
-    projects: [
-        {
-            name: "Design Engineering",
-            url: "#",
-            icon: Frame,
+            icon: History,
         },
         {
-            name: "Sales & Marketing",
-            url: "#",
-            icon: PieChart,
-        },
-        {
-            name: "Travel",
-            url: "#",
-            icon: Map,
+            title: "Estadísticas",
+            url: "estadisticas",
+            icon: ChartLine,
         },
     ],
 }
@@ -158,11 +58,10 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <TeamSwitcher teams={data.teams} />
+                <img src="src/assets/Logo_HUSI_Blanco.png" alt="Logo hospital Universitario San Ignacio" />
             </SidebarHeader>
             <SidebarContent>
                 <NavMain items={data.navMain} />
-                <NavProjects projects={data.projects} />
             </SidebarContent>
             <SidebarFooter>
                 <NavUser user={data.user} />
