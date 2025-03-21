@@ -87,3 +87,5 @@ const cardsData = [
 export default function DashboardScreen() {
     return <DashboardTemplate cardsData={cardsData} />
 }
+
+
