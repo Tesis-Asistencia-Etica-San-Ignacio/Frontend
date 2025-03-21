@@ -12,10 +12,10 @@ import {
     SquareTerminal,
 } from "lucide-react"
 
-import { NavMain } from "../molecules/side-navigation/Nav-main"
-import { NavProjects } from "../molecules/side-navigation/Nav-projects"
-import { NavUser } from "../molecules/side-navigation/Nav-user"
-import { TeamSwitcher } from "../molecules/side-navigation/Team-switcher"
+import { NavMain } from "../molecules/side-navigation/nav-main"
+import { NavProjects } from "../molecules/side-navigation/nav-projects"
+import { NavUser } from "../molecules/side-navigation/nav-user"
+import { TeamSwitcher } from "../molecules/side-navigation/team-switcher"
 import {
     Sidebar,
     SidebarContent,
