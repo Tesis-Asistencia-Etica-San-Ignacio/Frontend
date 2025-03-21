@@ -3,10 +3,10 @@ import FeatureList from "../molecules/Feature-list";
 
 export default function FeaturesSection() {
     return (
-      <section className="bg-gray-900 text-white py-12 px-6 rounded-xl shadow-lg">
+      <section className="bg-[#E8E8E8] text-white py-12 px-6 shadow-lg">
         <div className="max-w-5xl mx-auto text-center">
          
-          <TextAnimate animation="fadeIn" by="line" as="h2" className="text-4xl font-bold text-blue-400">
+          <TextAnimate animation="fadeIn" by="line" as="h2" className="text-4xl font-bold text-[#1154A0]">
             Funcionalidades
           </TextAnimate>
   

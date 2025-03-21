@@ -21,7 +21,7 @@ export default function TextSection() {
         </BlurFade>
   
         <BlurFade delay={0.75} inView>
-          <Button variant="default" size="lg">Empezar ahora</Button>
+          <Button variant="landing" size="lg">Empezar ahora</Button>
         </BlurFade>
       </div>
     );
