@@ -73,7 +73,7 @@ export default function AuthForm({
 
                 {/* Login */}
                 <TabsContent value="login" className="space-y-4">
-                    <h1 className="text-2xl font-bold text-center">Login to your account</h1>
+                    <h1 className="text-2xl font-bold text-center">Iniciar Sesion</h1>
                     <form onSubmit={handleLoginSubmit} className="grid gap-6">
                         <DynamicForm
                             formDataConfig={loginFields}
@@ -81,7 +81,7 @@ export default function AuthForm({
                             initialData={{}}
                         />
                         <Button type="submit" className="w-full">
-                            Login
+                            Iniciar Sesion
                         </Button>
                         <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
                             <span className="relative z-10 bg-background px-2 text-muted-foreground">

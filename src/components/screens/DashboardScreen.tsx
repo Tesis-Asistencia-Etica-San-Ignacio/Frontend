@@ -3,7 +3,7 @@ import DashboardTemplate from "../templates/DashBoardTemplate";
 
 const cardsData = [
     {
-        title: "Total Revenue",
+        title: "Total de consentimientos evaludados",
         value: "$45,231.89",
         description: "+20.1% from last month",
         icon: (
@@ -23,7 +23,7 @@ const cardsData = [
     },
 
     {
-        title: "Subscriptions",
+        title: "Consentimientos aprobados",
         value: "+2350",
         description: "+180.1% from last month",
         icon: (
@@ -44,7 +44,7 @@ const cardsData = [
         ),
     },
     {
-        title: "Sales",
+        title: "Consentiemientos devueltos",
         value: "+12,234",
         description: "+19% from last month",
         icon: (
@@ -64,7 +64,7 @@ const cardsData = [
         ),
     },
     {
-        title: "Active Now",
+        title: "Tasa de devolucion completitud/calidad",
         value: "+573",
         description: "+201 since last hour",
         icon: (
