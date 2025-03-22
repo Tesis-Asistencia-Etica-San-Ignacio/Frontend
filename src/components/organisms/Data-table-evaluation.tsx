@@ -1,5 +1,4 @@
 "use client"
-
 import * as React from "react"
 import {
   ColumnDef,
@@ -26,23 +25,30 @@ import {
 } from "../atoms/ui/table"
 
 import { DataTablePagination } from "../molecules/table/Data-table-pagination"
-import { DataTableToolbar } from "../molecules/table/Data-table-toolbar"
+import { DataTableToolbar } from "../molecules/table/Data-table-toolbar-evaluation-result"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends Identifiable, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  onRowClick?: (row: TData) => void
+  selectedRowId?: string
 }
 
-export function DataTable<TData, TValue>({
+
+interface Identifiable {
+  id: string
+}
+
+export function DataTable<TData extends Identifiable, TValue>({
   columns,
   data,
-}: DataTableProps<TData, TValue>) {
+  onRowClick,
+  selectedRowId,
+}: Readonly<DataTableProps<TData, TValue>>) {
   const [rowSelection, setRowSelection] = React.useState({})
   const [columnVisibility, setColumnVisibility] =
     React.useState<VisibilityState>({})
-  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>(
-    []
-  )
+  const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
 
   const table = useReactTable({
@@ -75,38 +81,43 @@ export function DataTable<TData, TValue>({
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <TableHead key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder
-                        ? null
-                        : flexRender(
-                            header.column.columnDef.header,
-                            header.getContext()
-                          )}
-                    </TableHead>
-                  )
-                })}
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder
+                      ? null
+                      : flexRender(
+                          header.column.columnDef.header,
+                          header.getContext()
+                        )}
+                  </TableHead>
+                ))}
               </TableRow>
             ))}
           </TableHeader>
           <TableBody>
             {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-state={row.getIsSelected() && "selected"}
-                >
-                  {row.getVisibleCells().map((cell) => (
-                    <TableCell key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))
+              table.getRowModel().rows.map((row) => {
+                const isSelected = selectedRowId === row.original.id
+                return (
+                  <TableRow
+                    key={row.id}
+                    onClick={() => onRowClick && onRowClick(row.original)}
+                    className={`cursor-pointer transition-colors duration-200 hover:bg-gray-200 ${
+                      isSelected ? "bg-blue-100" : ""
+                    }`}
+                    data-state={row.getIsSelected() && "selected"}
+                  >
+                    {row.getVisibleCells().map((cell) => (
+                      <TableCell key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext()
+                        )}
+                      </TableCell>
+                    ))}
+                  </TableRow>
+                )
+              })
             ) : (
               <TableRow>
                 <TableCell
