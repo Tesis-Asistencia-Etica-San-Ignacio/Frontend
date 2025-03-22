@@ -9,16 +9,16 @@ interface AuthTemplateProps {
 
 export default function AuthTemplate({ loginFields, registryFields }: AuthTemplateProps) {
   return (
-    <div className="grid min-h-svh lg:grid-cols-2 h-screen w-screen p-8 gap-8">
-      <div className="flex items-center justify-center h-full overflow-hidden rounded-xl">
+    <main className="grid min-h-svh lg:grid-cols-2 h-screen w-screen p-8 gap-8">
+      <section className="flex items-center justify-center h-full overflow-hidden rounded-xl">
         <CarouselPlugin />
-      </div>
-      <div className="flex flex-col gap-4 p-6 md:p-10">
+      </section>
+      <section className="flex flex-col gap-4 ">
         <AuthForm
           loginFields={loginFields}
           registryFields={registryFields}
         />
-      </div>
-    </div>
-  )
+      </section>
+    </main>
+    )
 }

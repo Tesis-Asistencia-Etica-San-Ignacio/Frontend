@@ -24,7 +24,7 @@ export default function FeatureList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {features.map((feature, index) => (
-        <Card key={index} className="p-6 bg-gray-900 text-white shadow-md">
+        <Card key={index} className="p-6 bg-[#101828] text-white shadow-md">
           <CardContent className="flex items-center gap-4">
             <div className="text-blue-400 text-3xl">{feature.icon}</div>
             <div>

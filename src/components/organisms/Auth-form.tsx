@@ -42,11 +42,11 @@ export default function AuthForm({
     }
 
     return (
-        <div className={cn("flex flex-col", className)}>
+        <div className={cn("flex flex-col", className)} >
             <img
                 src="src/assets/LogoHUSI.png"
                 alt="Imagen del slide"
-                className="h-auto w-auto max-h-[300px] max-w-[300px] flex self-center dark:brightness-[0.2] dark:grayscale rounded-xl"
+                className=" h-auto w-auto max-h-[300px] max-w-[300px] flex self-center dark:brightness-[0.2] dark:grayscale rounded-xl"
             />
 
             <Tabs defaultValue="login" className="space-y-4">
@@ -73,7 +73,7 @@ export default function AuthForm({
 
                 {/* Login */}
                 <TabsContent value="login" className="space-y-4">
-                    <h1 className="text-2xl font-bold text-center">Login to your account</h1>
+                    <h1 className="text-2xl font-bold text-center">Iniciar Sesion</h1>
                     <form onSubmit={handleLoginSubmit} className="grid gap-6">
                         <DynamicForm
                             formDataConfig={loginFields}
@@ -81,32 +81,31 @@ export default function AuthForm({
                             initialData={{}}
                         />
                         <Button type="submit" className="w-full">
-                            Login
+                            Iniciar Sesion
                         </Button>
-                        <div className="relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t after:border-border">
-                            <span className="relative z-10 bg-background px-2 text-muted-foreground">
-                                Or continue with
-                            </span>
-                        </div>
-                        <Button variant="outline" className="w-full">
-                            GitHub
-                        </Button>
+
                     </form>
                 </TabsContent>
 
                 {/* Registry */}
-                <TabsContent value="registry" className="space-y-4">
-                    <h1 className="text-2xl font-bold text-center">Create your account</h1>
-                    <form onSubmit={handleRegistrySubmit} className="grid gap-6">
+                <TabsContent value="registry" className="space-y-4 ">
+                    <h1 className="text-2xl font-bold text-center ">Create your account</h1>
+                    <form
+                        onSubmit={handleRegistrySubmit}
+                        className="flex flex-col "
+                    >
+                        {/* <div className="overflow-y-scroll max-h-90"> */}
                         <DynamicForm
                             formDataConfig={registryFields}
                             onChange={handleRegistryChange}
                             initialData={{}}
                         />
+                        {/* </div> */}
                         <Button type="submit" className="w-full">
                             Register
                         </Button>
                     </form>
+
                 </TabsContent>
             </Tabs>
         </div>

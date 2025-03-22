@@ -3,15 +3,18 @@ import { FormField } from "@/components/molecules/Dynamic-form"
 
 //LOGIN
 const loginFields: FormField[] = [
-    { type: "email", key: "email", placeholder: "Enter your email" },
-    { type: "password", key: "password", placeholder: "Enter your password" },
+    { type: "email", key: "email", placeholder: "Ingresa tu correo institucional" },
+    { type: "password", key: "password", placeholder: "Ingresa tu contraseña" },
 ]
 
 // REGISTRY
 const registryFields: FormField[] = [
-    { type: "user", key: "username", placeholder: "Enter your username" },
+    { type: "user", key: "name", placeholder: "Enter your name" },
+    { type: "user", key: "last name", placeholder: "Enter your last name" },
     { type: "email", key: "email", placeholder: "Enter your email" },
     { type: "password", key: "password", placeholder: "Choose a strong password" },
+    
+
 ]
 
 

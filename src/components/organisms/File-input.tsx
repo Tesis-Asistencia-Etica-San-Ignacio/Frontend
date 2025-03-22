@@ -170,9 +170,9 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
                             />
                         </svg>
                         <p className="mb-2 text-sm text-gray-500">
-                            <span className="font-semibold">Click to upload</span> or drag and drop
+                            <span className="font-semibold">Click para subir archivos</span> o arrastra y suelta
                         </p>
-                        <p className="text-xs text-gray-500">up to {MAX_FILES} files, PDF or images</p>
+                        <p className="text-xs text-gray-500">hasta {MAX_FILES} archivos PDF</p>
                         <input
                             {...props}
                             ref={ref}

@@ -32,7 +32,7 @@ export function CarouselPlugin() {
     );
 
     return (
-        <div className="flex flex-col   justify-center items-center">
+        <div className="flex flex-col w-full justify-center items-center">
             <Carousel
                 opts={{ loop: true }}
                 plugins={[plugin.current]}
@@ -42,7 +42,7 @@ export function CarouselPlugin() {
                 <CarouselContent>
                     {slides.map((slide, index) => (
                         <CarouselItem key={index}>
-                            <div className="p-1 relative ">
+                            <div className="p-0 relative">
                                 <Card>
                                     <CardContent className="p-0 relative">
                                         <div className="aspect-square relative">
@@ -51,7 +51,7 @@ export function CarouselPlugin() {
                                                 alt="Imagen del slide"
                                                 className=" h-full w-full object-cover dark:brightness-[0.2] dark:grayscale rounded-xl"
                                             />
-                                            <div className="absolute bottom-0 left-8   bg-opacity-50 p-2 rounded-xl">
+                                            <div className="absolute bottom-10 left-8   bg-opacity-50 p-2 rounded-xl">
                                                 <h3 className="text-white text-3xl font-bold">
                                                     {slide.title}
                                                 </h3>
