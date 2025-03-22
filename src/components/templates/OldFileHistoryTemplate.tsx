@@ -2,7 +2,7 @@ import tasks from "../screens/dataForTableExample/tasks.json"
 import { columns } from "../molecules/table/Columns"
 import { DataTable } from "../organisms/Data-table"
 
-export default function TaskPage() {
+export default function OldFileHistoryTemplate() {
   return (
     <div className="hidden h-full flex-1 flex-col space-y-8 p-8 md:flex">
       <div className="flex items-center justify-between space-y-2">
@@ -13,7 +13,7 @@ export default function TaskPage() {
           </p>
         </div>
       </div>
-      <DataTable data={tasks} columns={columns} />
+      <DataTable data={tasks} columns={columns}  />
     </div>
   )
 }

@@ -1,9 +1,7 @@
-"use client"
-
+import React from "react"
 import { Row } from "@tanstack/react-table"
 import { MoreHorizontal } from "lucide-react"
-
-import { Button } from "../../atoms/ui/button"
+import { Button } from "@/components/atoms/ui/button"
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,24 +9,43 @@ import {
   DropdownMenuRadioGroup,
   DropdownMenuRadioItem,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuSub,
   DropdownMenuSubContent,
   DropdownMenuSubTrigger,
   DropdownMenuTrigger,
-} from "../../atoms/ui/dropdown-menu"
+  DropdownMenuShortcut,
+} from "@/components/atoms/ui/dropdown-menu"
 
-import { labels } from "../../screens/dataForTableExample/data"
-import { taskSchema } from "../../screens/dataForTableExample/schema"
+type RadioGroupConfig = {
+  name: string
+  valueKey: string            // p.e. "label"
+  options: { value: string; label: string }[]
+}
+
+type ActionItem = {
+  label: string
+  shortcut?: string
+  onClick?: (rowData: any) => void
+  subMenu?: {
+    radioGroup?: RadioGroupConfig
+  }[]
+}
 
 interface DataTableRowActionsProps<TData> {
   row: Row<TData>
+  actionItems?: ActionItem[]
 }
 
 export function DataTableRowActions<TData>({
   row,
+  actionItems = [],
 }: DataTableRowActionsProps<TData>) {
-  const task = taskSchema.parse(row.original)
+  // Si no hay items, no se muestra nada
+  if (!actionItems.length) {
+    return null
+  }
+
+  const rowData = row.original
 
   return (
     <DropdownMenu>
@@ -41,28 +58,72 @@ export function DataTableRowActions<TData>({
           <span className="sr-only">Open menu</span>
         </Button>
       </DropdownMenuTrigger>
+
       <DropdownMenuContent align="end" className="w-[160px]">
-        <DropdownMenuItem>Edit</DropdownMenuItem>
-        <DropdownMenuItem>Make a copy</DropdownMenuItem>
-        <DropdownMenuItem>Favorite</DropdownMenuItem>
-        <DropdownMenuSeparator />
-        <DropdownMenuSub>
-          <DropdownMenuSubTrigger>Labels</DropdownMenuSubTrigger>
-          <DropdownMenuSubContent>
-            <DropdownMenuRadioGroup value={task.label}>
-              {labels.map((label) => (
-                <DropdownMenuRadioItem key={label.value} value={label.value}>
-                  {label.label}
-                </DropdownMenuRadioItem>
-              ))}
-            </DropdownMenuRadioGroup>
-          </DropdownMenuSubContent>
-        </DropdownMenuSub>
-        <DropdownMenuSeparator />
-        <DropdownMenuItem>
-          Delete
-          <DropdownMenuShortcut>⌘⌫</DropdownMenuShortcut>
-        </DropdownMenuItem>
+        {actionItems.map((action, idx) => {
+          // Si tiene subMenu
+          if (action.subMenu && action.subMenu.length > 0) {
+            return (
+              <React.Fragment key={idx}>
+                <DropdownMenuSub>
+                  <DropdownMenuSubTrigger>
+                    {action.label}
+                  </DropdownMenuSubTrigger>
+                  <DropdownMenuSubContent>
+                    {action.subMenu.map((sub, sIdx) => {
+                      if (sub.radioGroup) {
+                        // Ejemplo: sub.radioGroup => { name, valueKey, options[] }
+                        const currentValue = (rowData as any)[sub.radioGroup.valueKey]
+                        return (
+                          <DropdownMenuRadioGroup
+                            key={sIdx}
+                            value={currentValue}
+                          >
+                            {sub.radioGroup.options.map((opt) => (
+                              <DropdownMenuRadioItem 
+                                key={opt.value} 
+                                value={opt.value}
+                                onSelect={() => {
+                                  // Lógica de click en cada radio
+                                  console.log(`Selected ${opt.value} for ${sub.radioGroup?.name}`)
+                                }}
+                              >
+                                {opt.label}
+                              </DropdownMenuRadioItem>
+                            ))}
+                          </DropdownMenuRadioGroup>
+                        )
+                      }
+                      // Caso sub-ítems “normales”, si quisieras
+                      return (
+                        <DropdownMenuItem key={sIdx}>
+                          {action.label} sub item
+                        </DropdownMenuItem>
+                      )
+                    })}
+                  </DropdownMenuSubContent>
+                </DropdownMenuSub>
+                <DropdownMenuSeparator />
+              </React.Fragment>
+            )
+          }
+          // Item normal (sin subMenu)
+          return (
+            <DropdownMenuItem
+              key={idx}
+              onClick={() => {
+                if (action.onClick) {
+                  action.onClick(rowData)
+                }
+              }}
+            >
+              {action.label}
+              {action.shortcut && (
+                <DropdownMenuShortcut>{action.shortcut}</DropdownMenuShortcut>
+              )}
+            </DropdownMenuItem>
+          )
+        })}
       </DropdownMenuContent>
     </DropdownMenu>
   )

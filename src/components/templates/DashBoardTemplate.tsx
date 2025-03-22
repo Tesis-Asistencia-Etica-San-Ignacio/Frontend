@@ -62,7 +62,6 @@ export default function DashboardTemplate({ cardsData }: DashboardTemplateProps)
                                         <PieChartComponent />
                                     </CardContent>
                                 </Card>
-
                             </div>
                         </TabsContent>
                         <TabsContent value="analytics" className="space-y-4">

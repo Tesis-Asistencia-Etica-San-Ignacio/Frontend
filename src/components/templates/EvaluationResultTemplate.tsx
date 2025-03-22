@@ -20,7 +20,7 @@ export default function EvaluationResultTemplate () {
   }
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 p-8">
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
