@@ -4,9 +4,8 @@ import { BlurFade } from "../atoms/magicui/blur-fade";
 export default function TextSection() {
     return (
       <div className="space-y-6">
-      
         <BlurFade delay={0.25} inView>
-          <h1 className="text-4xl md:text-5xl font-bold text-gray-900">
+          <h1 className="text-5xl md:text-6xl font-bold text-gray-900">
             Bienvenido a{" "}
             <AuroraText>
               Nuestra Plataforma

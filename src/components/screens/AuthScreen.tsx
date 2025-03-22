@@ -9,12 +9,11 @@ const loginFields: FormField[] = [
 
 // REGISTRY
 const registryFields: FormField[] = [
-    { type: "user", key: "name", placeholder: "Enter your name" },
     { type: "user", key: "last name", placeholder: "Enter your last name" },
     { type: "email", key: "email", placeholder: "Enter your email" },
     { type: "password", key: "password", placeholder: "Choose a strong password" },
+    { type: "password", key: "password", placeholder: "Choose a strong password" },
     
-
 ]
 
 

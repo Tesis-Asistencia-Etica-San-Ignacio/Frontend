@@ -11,6 +11,7 @@ const imageUrls = [
     "src/assets/husi2.jpg",
     "src/assets/Decoracion.jpg",
     "src/assets/bg-Medicina.jpg",
+    
   ];
   
   export default function BlurGallery() {
@@ -20,9 +21,9 @@ const imageUrls = [
           {imageUrls.map((imageUrl, idx) => (
             <BlurFade key={idx} delay={0.25 + idx * 0.05} inView>
               <img
-                className="mb-4 size-full rounded-lg object-contain"
-                src={imageUrl}
-                alt={`Imagen ${idx + 1}`}
+              className="mb-4 w-full h-auto rounded-lg object-contain"
+              src={imageUrl}
+              alt={`Imagen ${idx + 1}`}
               />
             </BlurFade>
           ))}
