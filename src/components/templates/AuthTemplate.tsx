@@ -9,7 +9,7 @@ interface AuthTemplateProps {
 
 export default function AuthTemplate({ loginFields, registryFields }: AuthTemplateProps) {
   return (
-    <main className="grid min-h-svh lg:grid-cols-2 h-screen w-screen p-8 gap-8">
+    <main className="grid min-h-svh xl:grid-cols-2 h-screen w-screen p-8 gap-8 overflow-x-hidden">
       <section className="flex items-center justify-center h-full overflow-hidden rounded-xl">
         <CarouselPlugin />
       </section>
