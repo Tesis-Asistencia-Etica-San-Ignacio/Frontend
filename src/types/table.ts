@@ -30,5 +30,5 @@ export interface ColumnConfig {
     textKey?: string
     items?: ColumnItem[]
     actionItems?: ActionItem[]
-    
+    searchable?: boolean
 }

@@ -1,3 +1,4 @@
+
 import * as React from "react"
 import { Column } from "@tanstack/react-table"
 import { Check, PlusCircle } from "lucide-react"
@@ -22,7 +23,7 @@ import {
 import { Separator } from "../../atoms/ui/separator"
 
 interface DataTableFacetedFilterProps<TData, TValue> {
-  column?: Column<TData, TValue>
+  column: Column<TData, TValue>
   title?: string
   options: {
     label: string
@@ -36,8 +37,8 @@ export function DataTableFacetedFilter<TData, TValue>({
   title,
   options,
 }: DataTableFacetedFilterProps<TData, TValue>) {
-  const facets = column?.getFacetedUniqueValues()
-  const selectedValues = new Set(column?.getFilterValue() as string[])
+  const facets = column.getFacetedUniqueValues()
+  const selectedValues = new Set(column.getFilterValue() as string[])
 
   return (
     <Popover>
@@ -45,21 +46,15 @@ export function DataTableFacetedFilter<TData, TValue>({
         <Button variant="outline" size="sm" className="h-8 border-dashed">
           <PlusCircle />
           {title}
-          {selectedValues?.size > 0 && (
+          {selectedValues.size > 0 && (
             <>
               <Separator orientation="vertical" className="mx-2 h-4" />
-              <Badge
-                variant="secondary"
-                className="rounded-sm px-1 font-normal lg:hidden"
-              >
+              <Badge variant="secondary" className="rounded-sm px-1 font-normal lg:hidden">
                 {selectedValues.size}
               </Badge>
               <div className="hidden space-x-1 lg:flex">
                 {selectedValues.size > 2 ? (
-                  <Badge
-                    variant="secondary"
-                    className="rounded-sm px-1 font-normal"
-                  >
+                  <Badge variant="secondary" className="rounded-sm px-1 font-normal">
                     {selectedValues.size} selected
                   </Badge>
                 ) : (
@@ -80,6 +75,7 @@ export function DataTableFacetedFilter<TData, TValue>({
           )}
         </Button>
       </PopoverTrigger>
+
       <PopoverContent className="w-[200px] p-0" align="start">
         <Command>
           <CommandInput placeholder={title} />
@@ -98,9 +94,7 @@ export function DataTableFacetedFilter<TData, TValue>({
                         selectedValues.add(option.value)
                       }
                       const filterValues = Array.from(selectedValues)
-                      column?.setFilterValue(
-                        filterValues.length ? filterValues : undefined
-                      )
+                      column.setFilterValue(filterValues.length ? filterValues : undefined)
                     }}
                   >
                     <div
@@ -111,13 +105,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                           : "opacity-50 [&_svg]:invisible"
                       )}
                     >
-                      <Check />
+                      <Check className="h-4 w-4" />
                     </div>
                     {option.icon && (
                       <option.icon className="mr-2 h-4 w-4 text-muted-foreground" />
                     )}
                     <span>{option.label}</span>
-                    {facets?.get(option.value) && (
+                    {facets.get(option.value) && (
                       <span className="ml-auto flex h-4 w-4 items-center justify-center font-mono text-xs">
                         {facets.get(option.value)}
                       </span>
@@ -126,12 +120,13 @@ export function DataTableFacetedFilter<TData, TValue>({
                 )
               })}
             </CommandGroup>
+
             {selectedValues.size > 0 && (
               <>
                 <CommandSeparator />
                 <CommandGroup>
                   <CommandItem
-                    onSelect={() => column?.setFilterValue(undefined)}
+                    onSelect={() => column.setFilterValue(undefined)}
                     className="justify-center text-center"
                   >
                     Clear filters

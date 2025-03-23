@@ -16,6 +16,7 @@ const columnsConfig: ColumnConfig[] =[
         id: "id",
         accessorKey: "id",
         headerLabel: "Task ID",
+        searchable: true,
     },
     {
         id: "title",
@@ -24,17 +25,18 @@ const columnsConfig: ColumnConfig[] =[
         renderType: "badgeWithText",
         badgeKey: "label",
         textKey: "text",
+        searchable: true,
     },
     {
         id: "status",
         accessorKey: "status",
         headerLabel: "status",
-        // Definimos un array de items con value, label e icon (opcional).
+        // Definicion un array de items con value, label e icon (opcional).
         items: [
             {
                 value: "backlog",
                 label: "backlog",
-                // Importa el ícono que desees
+                // Importar el ícono
                 icon: HelpCircle,
             },
             {
@@ -53,7 +55,7 @@ const columnsConfig: ColumnConfig[] =[
         id: "priority",
         accessorKey: "priority",
         headerLabel: "Priority",
-        // Definimos un array de items con value, label e icon (opcional).
+        // Definicion un array de items con value, label e icon (opcional).
         items: [
             {
                 value: "low",
@@ -93,6 +95,7 @@ const columnsConfig: ColumnConfig[] =[
                                 { value: "bug", label: "Bug" },
                                 { value: "feature", label: "Feature" },
                                 { value: "documentation", label: "Documentation" },
+                                
                             ],
                         },
                     },
@@ -114,7 +117,7 @@ const tableData = [
             }
         ],
         "status": "todo",
-        "priority": "medium"
+        "priority": "medium", "hola": "hola"
     },
     {
         "id": "TASK-7878",
@@ -125,7 +128,7 @@ const tableData = [
             }
         ],
         "status": "done",
-        "priority": "medium"
+        "priority": "medium", "hola": "hola"
     },
     {
         "id": "TASK-7839",
@@ -136,7 +139,18 @@ const tableData = [
             }
         ],
         "status": "backlog",
-        "priority": "high"
+        "priority": "high", "hola": "hola"
+    },
+    {
+        "id": "TASK-7839",
+        "title": [
+            {
+                "text": "We need to bypass the neural TCP card!",
+                "label": "bug"
+            }
+        ],
+        "status": "backlog",
+        "priority": "high", "hola": "hola"
     },
 ]
 
