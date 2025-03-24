@@ -1,9 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { userApi, QUERY_KEYS } from '../../lib/api';
-
-const deleteUser = async (id: string): Promise<void> => {
-  await userApi.delete(`/user/${id}`);
-};
+import { QUERY_KEYS } from '../../lib/api';
+import { deleteUser } from '../../services/userService';
 
 export function useDeleteUser() {
   const queryClient = useQueryClient();

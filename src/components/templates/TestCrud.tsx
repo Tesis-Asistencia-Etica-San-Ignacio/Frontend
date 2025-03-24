@@ -19,11 +19,11 @@ export default function TestCrud() {
 
   const handleCreate = () => {
     createUser.mutate({
-      name: "lala2boba",
+      name: "EVA",
       last_name: "Blanco",
-      email: "lalabob2a@example.com",
+      email: "EVA@example.com",
       password: "123456",
-      type: "INVESTIGADOR", // Asegúrate de usar los valores correctos
+      type: "EVALUADOR", // Asegúrate de usar los valores correctos
     }, {
       onSuccess: (data) => console.log("Usuario creado:", data),
     });

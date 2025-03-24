@@ -1,3 +1,4 @@
+// src/components/organisms/Auth-form.tsx
 import React, { useState } from "react"
 import { cn } from "@/lib/utils"
 import { Button } from "@/components/atoms/ui/button"
@@ -8,17 +9,23 @@ import {
     TabsList,
     TabsTrigger,
 } from "@/components/atoms/ui/tabs"
+import { LoginInput,User } from "../../types"
+
 
 interface AuthFormProps {
     loginFields: FormField[]
     registryFields: FormField[]
+    onLogin: (values: LoginInput) => void
+    onRegister: (values: User) => void
     className?: string
 }
 
 export default function AuthForm({
     loginFields,
     registryFields,
-    className
+    onLogin,
+    onRegister,
+    className,
 }: AuthFormProps) {
     const [loginData, setLoginData] = useState<{ [key: string]: any }>({})
     const [registryData, setRegistryData] = useState<{ [key: string]: any }>({})
@@ -33,24 +40,24 @@ export default function AuthForm({
 
     const handleLoginSubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Login data:", loginData)
+        onLogin(loginData as LoginInput)
     }
 
     const handleRegistrySubmit = (e: React.FormEvent) => {
         e.preventDefault()
-        console.log("Registry data:", registryData)
+        onRegister(registryData as User)
     }
 
     return (
-        <div className={cn("flex flex-col h-full min-h-0", className)} >
+        <div className={cn("flex flex-col h-full min-h-0", className)}>
             <img
                 src="src/assets/LogoHUSI.png"
                 alt="Imagen del slide"
-                className=" h-auto w-auto max-h-[300px] max-w-[300px] flex self-center dark:brightness-[0.2] dark:grayscale rounded-xl"
+                className="h-auto w-auto max-h-[300px] max-w-[300px] flex self-center dark:brightness-[0.2] dark:grayscale rounded-xl"
             />
 
             <Tabs defaultValue="login" className="flex flex-col flex-1 min-h-0">
-                <TabsList className="flex items-center justify-center gap-2  rounded-full  self-center px-3 py-7">
+                <TabsList className="flex items-center justify-center gap-2 rounded-full self-center px-3 py-7">
                     <TabsTrigger value="login" className={cn("px-4 py-2 text-sm font-medium rounded-full")}>
                         Iniciar Sesión
                     </TabsTrigger>
@@ -59,8 +66,6 @@ export default function AuthForm({
                     </TabsTrigger>
                 </TabsList>
 
-
-                {/* Login */}
                 <TabsContent value="login" className="flex flex-col flex-1 min-h-0 space-y-4">
                     <h1 className="text-2xl font-bold text-center">Iniciar Sesion</h1>
                     <form onSubmit={handleLoginSubmit} className="flex flex-col flex-1 min-h-0">
@@ -70,18 +75,16 @@ export default function AuthForm({
                                 onChange={handleLoginChange}
                                 initialData={{}}
                             />
-                        <Button type="submit" className="w-full mb-4">
-                            Iniciar Sesion
-                        </Button>
+                            <Button type="submit" className="w-full mb-4">
+                                Iniciar Sesion
+                            </Button>
                         </div>
                     </form>
                 </TabsContent>
 
-                {/* Registry */}
-                <TabsContent value="registry"className="flex flex-col flex-1 min-h-0 space-y-4">
+                <TabsContent value="registry" className="flex flex-col flex-1 min-h-0 space-y-4">
                     <h1 className="text-2xl font-bold text-center">Create your account</h1>
                     <form onSubmit={handleRegistrySubmit} className="flex flex-col flex-1 min-h-0">
-                        {/* Aquí viene el scroll */}
                         <div className="flex-1 min-h-0 overflow-y-auto">
                             <DynamicForm
                                 formDataConfig={registryFields}
@@ -89,12 +92,11 @@ export default function AuthForm({
                                 initialData={{}}
                             />
                         </div>
-                        <Button type="submit" className="w-full  mb-4">
+                        <Button type="submit" className="w-full mb-4">
                             Register
                         </Button>
                     </form>
                 </TabsContent>
-
             </Tabs>
         </div>
     )

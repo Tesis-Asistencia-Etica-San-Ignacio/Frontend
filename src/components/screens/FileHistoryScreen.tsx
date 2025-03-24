@@ -35,18 +35,18 @@ const columnsConfig: ColumnConfig[] =[
         items: [
             {
                 value: "backlog",
-                label: "backlog",
+                label: "Backlog",
                 // Importar el ícono
                 icon: HelpCircle,
             },
             {
                 value: "todo",
-                label: "todo",
+                label: "Todo",
                 icon: Circle,
             },
             {
                 value: "done",
-                label: "done",
+                label: "Done",
                 icon: CheckCircle,
             },
         ],
