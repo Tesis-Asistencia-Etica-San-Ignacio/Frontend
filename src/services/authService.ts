@@ -1,4 +1,3 @@
-// src/services/authService.ts
 import { authApi } from '../lib/api/authApi';
 import { LoginInput, LoginResponse } from '../types';
 
@@ -13,7 +12,6 @@ export const getSession = async (): Promise<{ userType: string }> => {
     return { userType: data.userType }
 }
 
-// Logout opcional si lo usas
 export const logout = async () => {
     await authApi.post("/auth/logout")
 }

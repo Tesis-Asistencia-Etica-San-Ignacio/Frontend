@@ -1,4 +1,3 @@
-// src/components/templates/AuthTemplate.tsx
 import AuthForm from "@/components/organisms/Auth-form"
 import { FormField } from "@/components/molecules/Dynamic-form"
 import { CarouselPlugin } from "../molecules/Carousel"

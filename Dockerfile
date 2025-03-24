@@ -3,11 +3,11 @@ FROM node:18-alpine as builder
 WORKDIR /app
 # Copia los archivos de dependencias
 COPY package*.json ./
-RUN npm install
+RUN bun install
 # Copia todo el proyecto
 COPY . .
 # Ejecuta la build (asegúrate de tener "build": "vite build" en package.json)
-RUN npm run build
+RUN bun run build
 
 # Stage 2: Servir la aplicación
 FROM nginx:stable-alpine

@@ -1,21 +1,27 @@
-import { useAuthContext } from "@/context/AuthContext"
-import { lazy, Suspense } from "react"
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom"
+// src/routes/index.tsx
+import { useAuthContext } from "@/context/AuthContext";
+import { lazy, Suspense } from "react";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
-const Auth = lazy(() => import("../components/screens/AuthScreen"))
-const Layout = lazy(() => import("../components/templates/Layout"))
-const Dashboard = lazy(() => import("../components/screens/DashboardScreen"))
-const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"))
-const FileHistory = lazy(() => import("../components/screens/FileHistoryScreen"))
-const Landing = lazy(() => import("../components/templates/LandingTemplate"))
-const Prueba = lazy(() => import("../components/templates/TestCrud"))
-const Evaluation = lazy(() => import("../components/templates/EvaluationResultTemplate"))
+// Lazy de componentes principales
+const Auth = lazy(() => import("../components/screens/AuthScreen"));
+const Layout = lazy(() => import("../components/templates/Layout"));
+const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
+const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"));
+const FileHistory = lazy(() => import("../components/screens/FileHistoryScreen"));
+const Landing = lazy(() => import("../components/templates/LandingTemplate"));
+const Prueba = lazy(() => import("../components/templates/TestCrud"));
+const Evaluation = lazy(() => import("../components/templates/EvaluationResultTemplate"));
+
+// Lazy de rutas de rol
+const EvaluatorRoutes = lazy(() => import("./EvaluatorRoutes"));
+const ResearcherRoutes = lazy(() => import("./ResearcherRoutes"));
 
 export const AppRoutes = () => {
-    const { userType, isAuthLoading } = useAuthContext()
+    const { isAuthLoading } = useAuthContext();
 
     if (isAuthLoading) {
-        return <div>Cargando sesión...</div>
+        return <div>Cargando sesión...</div>;
     }
 
     return (
@@ -25,32 +31,23 @@ export const AppRoutes = () => {
                     <Route path="/" element={<Navigate to="/auth" />} />
                     <Route path="/auth" element={<Auth />} />
 
-                    {/* Rutas protegidas */}
                     <Route path="/" element={<Layout />}>
-                        <Route
-                            path="estadisticas"
-                            element={userType === "EVALUADOR" ? <Dashboard /> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="subir-archivos"
-                            element={userType === "EVALUADOR" ? <Dropfiles /> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="historial-archivos"
-                            element={userType === "EVALUADOR" ? <FileHistory /> : <Navigate to="/auth" />}
-                        />
-                        <Route path="inicio" element={<Landing />} />
-                        <Route
-                            path="evaluacion"
-                            element={userType === "INVESTIGADOR" ? <Evaluation /> : <Navigate to="/auth" />}
-                        />
-                        <Route
-                            path="prueba"
-                            element={userType === "INVESTIGADOR" ? <Prueba /> : <Navigate to="/auth" />}
-                        />
+                        {/* Rutas para evaluadores */}
+                        <Route element={<EvaluatorRoutes />}>
+                            <Route path="estadisticas" element={<Dashboard />} />
+                            <Route path="subir-archivos" element={<Dropfiles />} />
+                            <Route path="historial-archivos" element={<FileHistory />} />
+                            <Route path="inicio" element={<Landing />} />
+                        </Route>
+
+                        {/* Rutas para investigadores */}
+                        <Route element={<ResearcherRoutes />}>
+                            <Route path="evaluacion" element={<Evaluation />} />
+                            <Route path="prueba" element={<Prueba />} />
+                        </Route>
                     </Route>
                 </Routes>
             </Suspense>
         </BrowserRouter>
-    )
-}
+    );
+};
