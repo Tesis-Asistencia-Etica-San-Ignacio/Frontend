@@ -74,6 +74,126 @@ const tableData = [
         "ethicsLaw": "Ley 5",
         "result": "notapproved",
     },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
+    {
+        "id": "TASK-222",
+        "ethicsLaw": "Ley 3",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-333",
+        "ethicsLaw": "Ley 4",
+        "result": "approved",
+    },
+    {
+        "id": "TASK-444",
+        "ethicsLaw": "Ley 5",
+        "result": "notapproved",
+    },
 ]
 
 export default function EvaluationScreen() {

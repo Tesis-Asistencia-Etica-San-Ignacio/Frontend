@@ -1,16 +1,11 @@
-import { EvaluationHeader } from "../organisms/Evaluation-header";
-// import { TextArea } from "../atoms/ui/text-area"
-import { Button } from "../atoms/ui/button"
-import tasks from "../screens/dataForTableExample/evaluation.json"
-import { evaluationColumns } from "../molecules/table/Columns-evaluation-result"
-import { DataTable } from "../organisms/Data-table-evaluation"
+import { EvaluationHeader } from "../molecules/Evaluation-header";
 import React from "react"
-import { DynamicDataTable } from "../organisms/DynamicDataTable" // Adjust the path as needed
-import { Task } from "../screens/dataForTableExample/schema-evaluation"
+import { DynamicDataTable } from "../organisms/DynamicDataTable"
 import { ColumnConfig } from "@/types/table"
+import EthicalEvaluationBox from "../molecules/EthicalEvaluationBox";
 
 interface EvaluationResultTemplateProps {
-  readonly data: any[]; 
+  readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
 }
 
@@ -27,51 +22,14 @@ export default function EvaluationResultTemplate({ data, columnsConfig }: Evalua
   };
 
   return (
-    <div className="space-y-4 p-8">
+    <div className=" p-8 space-y-4">
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
           <DynamicDataTable data={data} columnsConfig={columnsConfig} onRowClick={handleRowClick}
             selectedRowId={selectedTask?.id} />
         </div>
-        <div className="border p-4 rounded-md">
-          <h2 className="font-semibold mb-2">Extracto documento</h2>
-          {selectedTask ? (
-            <p>{selectedTask.ethicsLaw}</p>
-          ) : (
-            <p className="text-muted-foreground">
-              Selecciona una fila para ver el extracto.
-            </p>
-          )}
-        </div>
-      </div>
-      <div className="flex justify-end space-x-2">
-        <Button variant="outline">Descargar resultado</Button>
-        <Button>Enviar resultado</Button>
-      </div>
-
-
-      <EvaluationHeader title="Resultado de la evaluación:" />
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
-          <DataTable
-            data={tasks}
-            columns={evaluationColumns}
-            onRowClick={handleRowClick}
-            selectedRowId={selectedTask?.id}
-          />
-        </div>
-        {/* <div className="border p-4 rounded-md">
-          <h2 className="font-semibold mb-2">Extracto documento</h2>
-          {selectedTask ? (
-            <p>{selectedTask.title}</p>
-          ) : (
-            <p className="text-muted-foreground">
-              Selecciona una fila para ver el extracto.
-            </p>
-          )}
-        </div> */}
-        <EthicalEvaluationBox />
+        <EthicalEvaluationBox selectedTask={selectedTask} />
       </div>
     </div>
   );
