@@ -11,7 +11,7 @@ import { priorities } from "../../screens/dataForTableExample/data"
 import { DataTableFacetedFilter } from "./Data-table-faceted-filter"
 
 interface DataTableToolbarProps<TData> {
-  table: Table<TData>
+  readonly table: Table<TData>
 }
 
 const statusOptions = [

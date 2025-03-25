@@ -5,9 +5,16 @@ import tasks from "../screens/dataForTableExample/evaluation.json"
 import { evaluationColumns } from "../molecules/table/Columns-evaluation-result"
 import { DataTable } from "../organisms/Data-table-evaluation"
 import React from "react"
+import { DynamicDataTable } from "../organisms/DynamicDataTable" // Adjust the path as needed
 import { Task } from "../screens/dataForTableExample/schema-evaluation"
+import { ColumnConfig } from "@/types/table"
 
-export default function EvaluationResultTemplate () {
+interface EvaluationResultTemplateProps {
+  readonly data: any[]; // or define a more specific type for the data array
+  readonly columnsConfig: ColumnConfig[];
+}
+
+export default function EvaluationResultTemplate ({data, columnsConfig}: EvaluationResultTemplateProps) {
   const [selectedTask, setSelectedTask] = React.useState<Task | null>(null)
 
   const handleRowClick = (task: Task) => {
@@ -24,12 +31,7 @@ export default function EvaluationResultTemplate () {
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
-          <DataTable
-            data={tasks}
-            columns={evaluationColumns}
-            onRowClick={handleRowClick}
-            selectedRowId={selectedTask?.id}
-          />
+        <DynamicDataTable data={data} columnsConfig={columnsConfig} />
         </div>
         <div className="border p-4 rounded-md">
           <h2 className="font-semibold mb-2">Extracto documento</h2>
@@ -46,6 +48,7 @@ export default function EvaluationResultTemplate () {
         <Button variant="outline">Descargar resultado</Button>
         <Button>Enviar resultado</Button>
       </div>
+      
     </div>
   )
 }

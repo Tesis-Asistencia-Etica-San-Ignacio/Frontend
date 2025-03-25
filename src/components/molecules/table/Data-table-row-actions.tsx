@@ -32,8 +32,8 @@ type ActionItem = {
 }
 
 interface DataTableRowActionsProps<TData> {
-  row: Row<TData>
-  actionItems?: ActionItem[]
+  readonly row: Row<TData>
+  readonly actionItems?: ReadonlyArray<ActionItem>
 }
 
 export function DataTableRowActions<TData>({

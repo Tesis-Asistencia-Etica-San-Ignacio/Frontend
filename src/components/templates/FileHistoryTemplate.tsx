@@ -2,8 +2,8 @@ import { ColumnConfig } from "@/types/table"
 import { DynamicDataTable } from "../organisms/DynamicDataTable"
 
 interface FileHistoryTemplateProps {
-  data: any[]
-  columnsConfig: ColumnConfig[]  
+  readonly data: any[]
+  readonly columnsConfig: ColumnConfig[]  
 }
 
 export default function FileHistoryTemplate({data, columnsConfig}: FileHistoryTemplateProps) {
