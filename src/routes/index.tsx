@@ -28,7 +28,6 @@ export const AppRoutes = () => {
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Cargando...</div>}>
         <Routes>
           <Route path="/" element={<Navigate to="/auth" />} />
           <Route path="/auth" element={<Auth />} />
@@ -42,13 +41,12 @@ export const AppRoutes = () => {
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="evaluacion" element={<Evaluation />} />
               <Route path="prueba" element={<Prueba />} />
             </Route>
+              <Route path="evaluacion" element={<Evaluation />} />
             <Route path="historial-archivos" element={<FileHistory />} />
           </Route>
         </Routes>
-      </Suspense>
     </BrowserRouter>
   );
 };

@@ -21,15 +21,14 @@ const columnsConfig: ColumnConfig[] =[
         id: "ethicsLaw",
         accessorKey: "ethicsLaw",
         headerLabel: "Ley Ética",
-        renderType: "badgeWithText",
-        badgeKey: "label",
-        textKey: "text",
         searchable: true,
     },
     {
         id: "result",
         accessorKey: "result",
         headerLabel: "Resultado",
+        renderType: "badgeWithText",
+        badgeVariant: "approved",
         // Definicion un array de items con value, label e icon (opcional).
         items: [
             {
@@ -37,11 +36,13 @@ const columnsConfig: ColumnConfig[] =[
                 label: "Aprobado",
                 // Importar el ícono
                 icon: CheckCircle,
+                badgeVariant: "approved",
             },
             {
                 value: "notapproved",
                 label: "No aprobado",
-                icon: Circle, // TODO: PONER UN INCONO DE X
+                icon: Circle, 
+                badgeVariant: "notapproved",
             },
         ],
     },

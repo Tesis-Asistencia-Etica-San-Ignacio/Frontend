@@ -5,6 +5,7 @@ export interface ColumnItem {
     value: string
     label: string
     icon?: React.ComponentType<React.SVGProps<SVGSVGElement>>
+    badgeVariant?: string
 }
 
 export interface ActionItem {
@@ -31,4 +32,5 @@ export interface ColumnConfig {
     items?: ColumnItem[]
     actionItems?: ActionItem[]
     searchable?: boolean
+    badgeVariant?: string
 }
