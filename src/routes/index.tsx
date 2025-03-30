@@ -43,9 +43,9 @@ export const AppRoutes = () => {
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="evaluacion" element={<Evaluation />} />
               <Route path="prueba" element={<Prueba />} />
             </Route>
+              <Route path="evaluacion" element={<Evaluation />} />
           </Route>
         </Routes>
       </Suspense>
