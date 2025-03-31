@@ -1,4 +1,3 @@
-import OldFileHistoryTemplate from "../templates/OldFileHistoryTemplate"
 import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
@@ -159,9 +158,6 @@ export default function FileHistoryScreen() {
         <div>
             {/* Tabla dinámica (arriba) */}
             <FileHistoryTemplate data={tableData} columnsConfig={columnsConfig} />
-
-            {/* Tabla antigua (abajo) */}
-            <OldFileHistoryTemplate />
         </div>
     )
 }

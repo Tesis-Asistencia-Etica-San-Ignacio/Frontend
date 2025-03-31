@@ -10,6 +10,7 @@ const columnsConfig: ColumnConfig[] =[
     {
         id: "select",
         type: "selection",
+        
     },
     {
         id: "id",
