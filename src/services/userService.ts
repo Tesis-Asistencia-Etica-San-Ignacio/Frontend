@@ -4,7 +4,7 @@ import { CreateUserInput, UpdateUserInput, User } from '../types';
 
 
 export const createUser = async (newUser: CreateUserInput): Promise<User> => {
-    const { data } = await userApi.post<User>('/user', newUser);
+    const { data } = await userApi.post<User>('/user/investigador', newUser);
     return data;
 };
 

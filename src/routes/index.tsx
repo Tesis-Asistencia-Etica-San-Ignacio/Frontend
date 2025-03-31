@@ -12,7 +12,6 @@ const FileHistory = lazy(
   () => import("../components/screens/FileHistoryScreen")
 );
 const Landing = lazy(() => import("../components/templates/LandingTemplate"));
-const Prueba = lazy(() => import("../components/templates/TestCrud"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 
 // Lazy de rutas de rol
@@ -43,9 +42,8 @@ export const AppRoutes = () => {
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="prueba" element={<Prueba />} />
-            </Route>
               <Route path="evaluacion" element={<Evaluation />} />
+            </Route>
           </Route>
         </Routes>
       </Suspense>

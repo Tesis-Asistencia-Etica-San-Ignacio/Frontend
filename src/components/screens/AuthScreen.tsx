@@ -3,6 +3,8 @@ import { FormField } from "@/components/molecules/Dynamic-form";
 import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import { useGeneratePdf } from '@/hooks/useGeneratePdf';
+
 
 const loginFields: FormField[] = [
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional" },
@@ -20,9 +22,10 @@ export default function AuthScreen() {
   const { userType, login, createAccount } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
+  //esto lo tengo que quitar (es para crear los pdf)
+  const { mutate: generatePdfMutation } = useGeneratePdf();
 
   useEffect(() => {
-    // Si ya estás en la ruta correspondiente, no navegues de nuevo (para evitar bucles)
     if (userType === "EVALUADOR" && location.pathname !== "/estadisticas") {
       navigate("/estadisticas");
     } else if (userType === "INVESTIGADOR" && location.pathname !== "/evaluacion") {
@@ -32,6 +35,11 @@ export default function AuthScreen() {
 
   // Inicia sesión y deja que el useEffect haga la navegación
   const handleLogin = async (credentials: { email: string; password: string }) => {
+    /* generatePdfMutation({
+      userName: credentials.email,
+      userType: userType || "INVESTIGADOR",
+      date: new Date().toLocaleString()
+    }); */
     await login(credentials.email, credentials.password);
   };
 

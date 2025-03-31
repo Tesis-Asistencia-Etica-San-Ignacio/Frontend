@@ -59,8 +59,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
 
     const createAccount = async (userData: any) => {
-        await createUserMutation.mutateAsync({ ...userData, type: "INVESTIGADOR" })
-    }
+        await createUserMutation.mutateAsync(userData);
+    };
 
     const value: IAuthContext = {
         userType,

@@ -3,7 +3,6 @@ export interface User {
   last_name: string;
   email: string;
   password: string;
-  type: 'EVALUADOR' | 'INVESTIGADOR';
 }
 
 // Crea un usuario sin incluir el campo id
