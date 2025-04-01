@@ -11,7 +11,6 @@ import { useCreateUser } from "@/hooks/user/useCreateUserHook"
 
 interface IAuthContext {
     userType: string | null
-    isAuthLoading: boolean
     login: (email: string, password: string) => Promise<void>
     logout: () => Promise<void>
     createAccount: (userData: any) => Promise<void>
@@ -21,7 +20,6 @@ const AuthContext = createContext<IAuthContext | undefined>(undefined)
 
 export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [userType, setUserType] = useState<string | null>(null)
-    const [isAuthLoading, setIsAuthLoading] = useState(true)
 
     useEffect(() => {
         checkSession()
@@ -33,8 +31,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
             setUserType(data.userType)
         } catch {
             setUserType(null)
-        } finally {
-            setIsAuthLoading(false)
         }
     }
 
@@ -64,7 +60,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const value: IAuthContext = {
         userType,
-        isAuthLoading,
         login,
         logout,
         createAccount,

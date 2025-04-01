@@ -10,12 +10,7 @@ export interface SpinnerProps extends React.HTMLAttributes<HTMLDivElement> {
 const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
     ({ className, size = "md", variant = "default", ...props }, ref) => {
         return (
-            <div
-                ref={ref}
-                role="status"
-                className={cn("flex items-center justify-center", className)}
-                {...props}
-            >
+            <div ref={ref} role="status" className={cn("flex items-center justify-center", className)} {...props}>
                 <Loader2
                     className={cn(
                         "animate-spin",
@@ -26,15 +21,15 @@ const Spinner = React.forwardRef<HTMLDivElement, SpinnerProps>(
                         },
                         {
                             "text-muted-foreground": variant === "default",
-                            "text-primary": variant === "primary",
+                            "text-[var(--color-loaders)]": variant === "primary",
                             "text-secondary": variant === "secondary",
-                        },
+                        }
                     )}
                 />
                 <span className="sr-only">Loading...</span>
             </div>
         )
-    },
+    }
 )
 Spinner.displayName = "Spinner"
 

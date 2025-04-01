@@ -1,5 +1,5 @@
 // src/routes/index.tsx
-import { useAuthContext } from "@/context/AuthContext";
+import { LoadingFallback } from "@/components/molecules/LoadingFallback";
 import { lazy, Suspense } from "react";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 
@@ -19,15 +19,10 @@ const EvaluatorRoutes = lazy(() => import("./EvaluatorRoutes"));
 const ResearcherRoutes = lazy(() => import("./ResearcherRoutes"));
 
 export const AppRoutes = () => {
-  const { isAuthLoading } = useAuthContext();
-
-  if (isAuthLoading) {
-    return <div>Cargando sesión...</div>;
-  }
 
   return (
     <BrowserRouter>
-      <Suspense fallback={<div>Cargando...</div>}>
+      <Suspense fallback={<LoadingFallback />}>
         <Routes>
           <Route path="/" element={<Navigate to="/auth" />} />
           <Route path="/auth" element={<Auth />} />

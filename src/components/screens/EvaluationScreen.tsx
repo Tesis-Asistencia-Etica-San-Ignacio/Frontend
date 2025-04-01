@@ -5,13 +5,8 @@ import { ColumnConfig } from "@/types/table"
 
 
 //Definimos columnas en JSON
-const columnsConfig: ColumnConfig[] =[
+const columnsConfig: ColumnConfig[] = [
     // Columna para la selección de filas (checkbox).
-    {
-        id: "select",
-        type: "selection",
-        
-    },
     {
         id: "id",
         accessorKey: "id",
@@ -24,6 +19,7 @@ const columnsConfig: ColumnConfig[] =[
         headerLabel: "Ley Ética",
         searchable: true,
     },
+    
     {
         id: "result",
         accessorKey: "result",
@@ -42,7 +38,7 @@ const columnsConfig: ColumnConfig[] =[
             {
                 value: "notapproved",
                 label: "No aprobado",
-                icon: Circle, 
+                icon: Circle,
                 badgeVariant: "notapproved",
             },
         ],
@@ -56,8 +52,8 @@ const tableData = [
         "result": "approved",
     },
     {
-        "id": "TASK-111",
-        "ethicsLaw": "Ley 2",
+        "id": "TASK-111 TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111",
+        "ethicsLaw": "Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2",
         "result": "notapproved",
     },
     {

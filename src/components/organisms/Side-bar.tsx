@@ -8,8 +8,8 @@ import {
 } from "lucide-react"
 
 
-import { NavMain } from "../molecules/side-navigation/nav-main"
-import { NavUser } from "../molecules/side-navigation/nav-user"
+import { NavMain } from "../molecules/side-navigation/Nav-main"
+import { NavUser } from "../molecules/side-navigation/Nav-user"
 import {
     Sidebar,
     SidebarContent,
