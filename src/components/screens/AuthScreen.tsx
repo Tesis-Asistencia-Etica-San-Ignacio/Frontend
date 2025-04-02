@@ -4,19 +4,39 @@ import { useAuthContext } from "@/context/AuthContext";
 import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useGeneratePdf } from '@/hooks/useGeneratePdf';
+import { Slide } from "../molecules/Carousel";
 
 
 const loginFields: FormField[] = [
-  { type: "email", key: "email", placeholder: "Ingresa tu correo institucional" ,required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña",required: true },
+  { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
 ];
 
 const registryFields: FormField[] = [
-  { type: "user", key: "name", placeholder: "Ingresa tu nombre",required: true },
-  { type: "user", key: "last_name", placeholder: "Ingresa tu apeliido",required: true },
-  { type: "email", key: "email", placeholder: "Ingresa tu correo institucional",required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña",required: true },
+  { type: "user", key: "name", placeholder: "Ingresa tu nombre", required: true },
+  { type: "user", key: "last_name", placeholder: "Ingresa tu apeliido", required: true },
+  { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
 ];
+
+const slides: Slide[] = [
+  {
+    imageUrl: "src/assets/bg-Medicina.jpg",
+    title: "Bienvenido",
+    description: "Al sistema de asistencia a la evaluación ética del HUSI",
+  },
+  {
+    imageUrl: "src/assets/anime-4k-pictures-s6fzu24pgsaxtsfb.jpg",
+    title: "Otra sección",
+    description: "Información relevante para el usuario",
+  },
+  {
+    imageUrl: "src/assets/bg-Medicina.jpg",
+    title: "Último Slide",
+    description: "Pequeña descripción final",
+  },
+]
+
 
 //Ejemplo de uso
 /* const registryFields: FormField[][] = [
@@ -150,6 +170,7 @@ export default function AuthScreen() {
       registryFields={registryFields}
       onLogin={handleLogin}
       onRegister={handleRegister}
+      slides={slides}
     />
   );
 }

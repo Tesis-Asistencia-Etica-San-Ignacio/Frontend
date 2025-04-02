@@ -1,35 +1,25 @@
-import * as React from "react";
-import Autoplay from "embla-carousel-autoplay";
+import * as React from "react"
+import Autoplay from "embla-carousel-autoplay"
 
-import { Card, CardContent } from "@/components/atoms/ui/card";
+import { Card, CardContent } from "@/components/atoms/ui/card"
 import {
     Carousel,
     CarouselContent,
     CarouselItem,
-} from "@/components/atoms/ui/carousel";
+} from "@/components/atoms/ui/carousel"
 
-const slides = [
-    {
-        imageUrl: "src/assets/bg-Medicina.jpg",
-        title: "Bienvenido",
-        description: "Al sistema de asistencia a la evaluación ética del HUSI",
-    },
-    {
-        imageUrl: "src/assets/anime-4k-pictures-s6fzu24pgsaxtsfb.jpg",
-        title: "Otra sección",
-        description: "Información relevante para el usuario",
-    },
-    {
-        imageUrl: "src/assets/bg-Medicina.jpg",
-        title: "Último Slide",
-        description: "Pequeña descripción final",
-    },
-];
+export interface Slide {
+    imageUrl: string
+    title: string
+    description: string
+}
 
-export function CarouselPlugin() {
-    const plugin = React.useRef(
-        Autoplay({ delay: 2000, stopOnInteraction: true })
-    );
+interface CarouselPluginProps {
+    slides: Slide[]
+}
+
+export function CarouselPlugin({ slides }: CarouselPluginProps) {
+    const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: true }))
 
     return (
         <div className="flex flex-col w-full justify-center items-center">
@@ -49,15 +39,11 @@ export function CarouselPlugin() {
                                             <img
                                                 src={slide.imageUrl}
                                                 alt="Imagen del slide"
-                                                className=" h-full w-full object-cover dark:brightness-[0.2] dark:grayscale rounded-xl"
+                                                className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale rounded-xl"
                                             />
-                                            <div className="absolute bottom-10 left-8   bg-opacity-50 p-2 rounded-xl">
-                                                <h3 className="text-white text-3xl font-bold">
-                                                    {slide.title}
-                                                </h3>
-                                                <p className="text-white text-xl w-8/12">
-                                                    {slide.description}
-                                                </p>
+                                            <div className="absolute bottom-10 left-8 bg-opacity-50 p-2 rounded-xl">
+                                                <h3 className="text-white text-3xl font-bold">{slide.title}</h3>
+                                                <p className="text-white text-xl w-8/12">{slide.description}</p>
                                             </div>
                                         </div>
                                     </CardContent>
@@ -68,5 +54,5 @@ export function CarouselPlugin() {
                 </CarouselContent>
             </Carousel>
         </div>
-    );
+    )
 }
