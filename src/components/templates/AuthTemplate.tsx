@@ -1,5 +1,5 @@
 import AuthForm from "@/components/organisms/Auth-form"
-import { FormField } from "@/components/molecules/Dynamic-form"
+import { FormField } from "@/types/formTypes"
 import { CarouselPlugin } from "../molecules/Carousel"
 import { LoginInput,User } from "../../types"
 

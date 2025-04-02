@@ -33,11 +33,11 @@ export const AppRoutes = () => {
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
               <Route path="inicio" element={<Landing />} />
-              <Route path="historial-archivos" element={<FileHistory />} />
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
               <Route path="evaluacion" element={<Evaluation />} />
+              <Route path="historial-archivos" element={<FileHistory />} />
             </Route>
           </Route>
         </Routes>
