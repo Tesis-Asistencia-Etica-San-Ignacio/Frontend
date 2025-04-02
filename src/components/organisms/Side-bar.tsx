@@ -38,14 +38,14 @@ const data = {
         },
         {
             title: "Historial de archivos",
-            url: "/historial-archivos",
+            url: "/evaluacion",
             icon: FileStack,
         },
-        {
+       /*  {
             title: "Historial de casos",
             url: "#",
             icon: History,
-        },
+        }, */
         {
             title: "Estadísticas",
             url: "estadisticas",

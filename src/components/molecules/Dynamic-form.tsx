@@ -1,125 +1,235 @@
-import React, { useState, useEffect, useRef, JSX } from "react"
-import { Input } from "@/components/atoms/ui/input"
+import React, { useEffect, forwardRef, useImperativeHandle } from "react"
+import { useForm, FormProvider } from "react-hook-form"
+import { z } from "zod"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { cn } from "@/lib/utils"
+import {
+    FormControl,
+    FormField as ShadcnFormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/atoms/ui/form"
+import { Input } from "@/components/atoms/ui/input"
+import {
+    Select,
+    SelectTrigger,
+    SelectValue,
+    SelectContent,
+    SelectItem,
+} from "@/components/atoms/ui/select"
+import { Textarea } from "@/components/atoms/ui/textarea"
+import type {
+    FormField,
+    SelectFormField,
+    CustomFormField,
+    TextAreaFormField,
+    FieldType,
+} from "@/types/formTypes"
 
-export interface FormField {
-    type:
-    | "email"
-    | "date"
-    | "select"
-    | "custom"
-    | "password"
-    | "extension-phone"
-    | "phone"
-    | "document"
-    | "address"
-    | "user"
-    key: string
-    placeholder?: string
-    options?: { value: string; label: string }[]
-    component?: JSX.Element
+function baseValidationForType(type: FieldType): z.ZodString {
+    let schema = z.string().trim()
+    switch (type) {
+        case "email":
+            schema = schema.email("El email no es válido").max(50, "Máximo 50 caracteres")
+            break
+        case "password":
+            schema = schema.min(6, "Mínimo 6 caracteres").max(50, "Máximo 50 caracteres")
+            break
+        case "phone":
+            schema = schema.regex(/^\d+$/, "Solo dígitos").max(10, "Máximo 10 dígitos")
+            break
+        case "extension-phone":
+            schema = schema.regex(/^\d+$/, "Solo dígitos").max(2, "Máximo 2 dígitos")
+            break
+        case "document":
+            schema = schema.regex(/^\d+$/, "Solo dígitos").max(10, "Máximo 10 dígitos")
+            break
+        case "user":
+            schema = schema.max(40, "Máximo 40 caracteres")
+            break
+        case "address":
+            schema = schema.max(100, "Máximo 100 caracteres")
+            break
+        default:
+            break
+    }
+    return schema
 }
 
-interface DynamicFormProps {
-    formDataConfig: FormField[]
+function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string> {
+    let schema = baseValidationForType(field.type)
+    if (field.required) {
+        schema = schema.nonempty("Este campo es requerido")
+    }
+    if (typeof field.minLength !== "undefined") {
+        schema = schema.min(field.minLength, `Mínimo ${field.minLength} caracteres`)
+    }
+    if (typeof field.maxLength !== "undefined") {
+        schema = schema.max(field.maxLength, `Máximo ${field.maxLength} caracteres`)
+    }
+    return schema
+}
+
+/** Aplana si es un array de arrays */
+function flattenFields(data: FormField[] | FormField[][]): FormField[] {
+    if (!Array.isArray(data) || data.length === 0) return []
+    if (Array.isArray(data[0])) return (data as FormField[][]).flat()
+    return data as FormField[]
+}
+
+export interface DynamicFormHandles {
+    handleSubmit: <T>(onValid: (data: { [key: string]: any }) => T) => (e?: React.BaseSyntheticEvent) => Promise<void>
+}
+
+export interface DynamicFormProps {
+    formDataConfig: FormField[] | FormField[][]
+    onSubmit?: (data: { [key: string]: any }) => void
     onChange?: (data: { [key: string]: any }) => void
     containerClassName?: string
-    editable?: boolean
     initialData?: { [key: string]: any }
 }
 
-export const DynamicForm: React.FC<DynamicFormProps> = ({
-    formDataConfig = [],
+export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
+    formDataConfig,
     onChange,
     containerClassName,
-    editable = true,
     initialData = {},
-}) => {
-    const [formData, setFormData] = useState<{ [key: string]: any }>(initialData)
-    const [formErrors, setFormErrors] = useState<{ [key: string]: string | undefined }>({})
-    const isUserEditing = useRef(false)
-    const isFirstRender = useRef(true)
+}, ref) => {
+    const flatFields = flattenFields(formDataConfig)
+    const shape: Record<string, z.ZodType<string, any, string>> = {}
+
+    flatFields.forEach((field) => {
+        shape[field.key] = buildZodSchemaForField(field)
+    })
+
+    const finalSchema = z.object(shape)
+
+    const form = useForm({
+        resolver: zodResolver(finalSchema),
+        defaultValues: initialData,
+        mode: "onChange",
+    })
+
+    const {
+        control,
+        watch,
+        formState: { errors },
+        handleSubmit,
+    } = form
+
+    useImperativeHandle(ref, () => ({
+        handleSubmit,
+    }))
 
     useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false
-            return
-        }
-        if (isUserEditing.current) {
-            onChange?.(formData)
-        }
-    }, [formData, onChange])
+        const subscription = watch((values) => {
+            onChange?.(values)
+        })
+        return () => subscription.unsubscribe()
+    }, [watch, onChange])
 
-    const handleInputChange = (fieldKey: string, value: string, errorMsg?: string) => {
-        isUserEditing.current = true
-        setFormData((prev) => ({ ...prev, [fieldKey]: value }))
-        setFormErrors((prev) => ({ ...prev, [fieldKey]: errorMsg }))
-    }
+    const renderField = (field: FormField) => (
+        <ShadcnFormField
+            key={field.key}
+            control={control}
+            name={field.key}
+            render={({ field: controllerField }) => (
+                <FormItem
+                    // Múltiples items en una fila:
+                    className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col")}
+                    style={field.width ? { width: `${field.width}%` } : {}}
+                >
+                    {field.placeholder && <FormLabel>{field.placeholder}</FormLabel>}
+                    <FormControl>
+                        {(() => {
+                            if (field.type === "custom") {
+                                const customField = field as CustomFormField
+                                return customField.component
+                            }
+                            if (field.type === "select") {
+                                const selectField = field as SelectFormField
+                                return (
+                                    <Select
+                                        value={controllerField.value || ""}
+                                        onValueChange={controllerField.onChange}
+                                    >
+                                        <SelectTrigger className="w-full">
+                                            <SelectValue placeholder={selectField.selectPlaceholder || selectField.placeholder} />
+                                        </SelectTrigger>
+                                        <SelectContent>
+                                            {selectField.options.map((opt) => (
+                                                <SelectItem key={opt.value} value={opt.value}>
+                                                    {opt.label}
+                                                </SelectItem>
+                                            ))}
+                                        </SelectContent>
+                                    </Select>
+                                )
+                            }
+                            if (field.type === "textarea") {
+                                const textareaField = field as TextAreaFormField
+                                return (
+                                    <Textarea
+                                        autoAdjust={textareaField.autoAdjust}
+                                        placeholder={textareaField.placeholder}
+                                        value={controllerField.value || ""}
+                                        onChange={controllerField.onChange}
+                                    />
+                                )
+                            }
+                            return (
+                                <Input
+                                    inputType={field.type}
+                                    placeholder={field.placeholder}
+                                    autoComplete={
+                                        field.type === "email"
+                                            ? "email"
+                                            : field.type === "password"
+                                                ? "current-password"
+                                                : field.type === "user"
+                                                    ? "username"
+                                                    : "off"
+                                    }
+                                    value={controllerField.value || ""}
+                                    onChange={controllerField.onChange}
+                                />
+                            )
+                        })()}
+                    </FormControl>
+                    <FormMessage className="min-h-[1.25rem]">
+                        {errors[field.key]?.message as string}
+                    </FormMessage>
+                </FormItem>
+            )}
+        />
+    )
 
-    const renderField = (field: FormField, index: number) => {
-        // Custom
-        if (field.type === "custom" && field.component) {
-            return (
-                <div className="mb-4" key={field.key + index}>
-                    {field.component}
+    const isMultipleRows =
+        Array.isArray(formDataConfig) &&
+        formDataConfig.length > 0 &&
+        Array.isArray(formDataConfig[0])
+
+    const renderRows = () => {
+        if (isMultipleRows) {
+            return (formDataConfig as FormField[][]).map((row, i) => (
+                <div key={i} className="flex flex-wrap gap-4 mb-4">
+                    {row.map((field) => renderField(field))}
                 </div>
-            )
+            ))
         }
-
-        // Select
-        if (field.type === "select") {
-            return (
-                <div className="mb-4" key={field.key + index}>
-                    <label className="block mb-1">{field.placeholder}</label>
-                    <select
-                        className="block w-full rounded-md border p-2 text-sm"
-                        disabled={!editable}
-                        value={formData[field.key] || ""}
-                        onChange={(e) => handleInputChange(field.key, e.target.value, undefined)}
-                    >
-                        <option value="">Seleccione una opción</option>
-                        {field.options?.map((opt) => (
-                            <option key={opt.value} value={opt.value}>
-                                {opt.label}
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )
-        }
-
-        // Date
-        if (field.type === "date") {
-            return (
-                <div className="mb-4" key={field.key + index}>
-                    <label className="block mb-1">{field.placeholder}</label>
-
-                </div>
-            )
-        }
-
-        // Para email, password, phone, user, etc.
-        return (
-            <div className="mb-4" key={field.key + index}>
-                <label className="block mb-1">{field.placeholder}</label>
-                <Input
-                    inputType={field.type !== "custom" ? field.type : undefined}
-                    disabled={!editable}
-                    placeholder={field.placeholder}
-                    value={formData[field.key] || ""}
-                    onChange={(event) => handleInputChange(field.key, event.target.value)}
-                />
-
-                {formErrors[field.key] && (
-                    <p className="mt-1 text-xs text-red-600">{formErrors[field.key]}</p>
-                )}
+        return (formDataConfig as FormField[]).map((field) => (
+            <div key={field.key} className="mb-4">
+                {renderField(field)}
             </div>
-        )
+        ))
     }
 
     return (
-        <div className={cn("space-y-2", containerClassName)}>
-            {formDataConfig.map((field, idx) => renderField(field, idx))}
-        </div>
+        <FormProvider {...form}>
+            <div className={cn(containerClassName)}>
+                {renderRows()}
+            </div>
+        </FormProvider>
     )
-}
+})

@@ -4,7 +4,6 @@ import { ColumnConfig } from "@/types/table"
 
 
 
-//Definimos columnas en JSON
 const columnsConfig: ColumnConfig[] =[
     // Columna para la selección de filas (checkbox).
     {

@@ -1,9 +1,6 @@
-"use client"
-
 import * as React from "react"
 import { Button } from "@/components/atoms/ui/button"
 import { cn } from "@/lib/utils"
-import { z } from "zod"
 import {
   Mail,
   Lock,
@@ -15,7 +12,7 @@ import {
   EyeOff as EyeOffIcon,
 } from "lucide-react"
 
-type InputType =
+export type InputType =
   | "email"
   | "document"
   | "password"
@@ -26,59 +23,51 @@ type InputType =
   | "search"
   | undefined
 
-function getConfigForType(type: InputType) {
+
+export function getConfigForType(type: InputType) {
   switch (type) {
     case "email":
       return {
-        schema: z.string().email("El email no es válido").max(50),
         maxLength: 50,
         icon: <Mail className="w-5 h-5 text-gray-400" />,
       }
     case "password":
       return {
-        schema: z.string().min(6).max(50),
         maxLength: 50,
         icon: <Lock className="w-5 h-5 text-gray-400" />,
       }
     case "phone":
       return {
-        schema: z.string().regex(/^\d+$/, "Solo dígitos").max(10),
         maxLength: 10,
         icon: <Phone className="w-5 h-5 text-gray-400" />,
       }
     case "extension-phone":
       return {
-        schema: z.string().regex(/^\d+$/, "Solo dígitos").max(2),
         maxLength: 2,
         icon: <Phone className="w-5 h-5 text-gray-400" />,
       }
     case "document":
       return {
-        schema: z.string().regex(/^\d+$/, "Solo dígitos").max(10),
         maxLength: 10,
         icon: <User className="w-5 h-5 text-gray-400" />,
       }
     case "user":
       return {
-        schema: z.string().min(4).max(40),
         maxLength: 40,
         icon: <User className="w-5 h-5 text-gray-400" />,
       }
     case "address":
       return {
-        schema: z.string().max(100),
         maxLength: 100,
         icon: <MapPin className="w-5 h-5 text-gray-400" />,
       }
     case "search":
       return {
-        schema: z.string().max(100),
         maxLength: 100,
         icon: <SearchIcon className="w-5 h-5 text-gray-400" />,
       }
     default:
       return {
-        schema: z.string().max(100),
         maxLength: 100,
         icon: undefined,
       }
@@ -109,8 +98,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, inputType, icon, value = "", onChange, maxLength, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
-    const {maxLength: defaultMaxLength, icon: defaultIcon } =
-      getConfigForType(inputType)
+    const { maxLength: defaultMaxLength, icon: defaultIcon } = getConfigForType(inputType)
 
     let nativeType: React.HTMLInputTypeAttribute = "text"
     if (inputType === "password") {

@@ -1,4 +1,3 @@
-// /src/pages/DashboardScreen.tsx
 import DashboardTemplate from "../templates/DashBoardTemplate";
 
 const cardsData = [
