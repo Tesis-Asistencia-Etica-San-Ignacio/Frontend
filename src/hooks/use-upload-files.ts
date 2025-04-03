@@ -1,12 +1,12 @@
 // src/hooks/useUploadFiles.ts
-import { useState, useCallback } from 'react';
-import { toast } from 'sonner';
+import { useState, useCallback } from "react";
+import { toast } from "sonner";
 
 export interface FileWithUrl {
-  file: File;       
+  file: File;
   name: string;
   size: number;
-  url: string;      
+  url: string;
   error?: boolean;
 }
 
@@ -26,13 +26,11 @@ function useUploadFiles() {
       formData.append("file", fileObj.file);
 
       try {
-        const token = localStorage.getItem("token");
+        const token = localStorage.getItem("refreshToken");
+        console.log("Token:", token);
         const response = await fetch("http://localhost:3000/api/files/upload", {
             method: "POST",
-            headers: {
-              // No modifiques el Content-Type; FormData lo gestiona automáticamente
-              Authorization: `Bearer ${token}`,
-            },
+            credentials: "include", // <--- envía las cookies al backend
             body: formData,
           });
         if (response.ok) {
