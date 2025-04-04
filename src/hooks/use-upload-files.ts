@@ -8,6 +8,7 @@ export interface FileWithUrl {
   size: number;
   url: string;
   error?: boolean;
+  progress: number
 }
 
 function useUploadFiles() {

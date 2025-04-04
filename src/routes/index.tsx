@@ -32,7 +32,6 @@ export const AppRoutes = () => {
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
               <Route path="inicio" element={<Landing />} />
-              {/* </Route> */}
               <Route path="historial-archivos-evaluados" element={<FileHistory />} />
             </Route>
             {/* Rutas para investigadores */}
