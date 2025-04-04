@@ -1,6 +1,8 @@
 import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
+import { useEffect } from "react"
+import { authApi } from "@/lib/api/authApi"
 
 
 
@@ -153,6 +155,18 @@ const tableData = [
 ]
 
 export default function FileHistoryScreen() {
+    useEffect(() => {
+        async function fetchEvaluaciones() {
+          try {
+            const response = await authApi.get("/evaluacion/my");
+            console.log("Evaluaciones del usuario:", response.data);
+          } catch (error) {
+            console.error("Error al obtener evaluaciones:", error);
+          }
+        }
+        fetchEvaluaciones();
+      }, []);
+      
     return (
         <div>
             {/* Tabla dinámica (arriba) */}

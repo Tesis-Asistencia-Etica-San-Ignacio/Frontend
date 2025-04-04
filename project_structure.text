@@ -7,8 +7,6 @@
 - index.html
 - package.json
 - project_structure.text
-- public
-  - vite.svg
 - README.md
 - src
   - App.tsx
@@ -29,14 +27,13 @@
     - Sonriendo.jpg
   - components
     - atoms
-      - badge.tsx
-      - card.tsx
       - magicui
         - aurora-text.tsx
         - blur-fade.tsx
         - text-animate.tsx
       - popover-form.tsx
       - README.md
+      - spinner.tsx
       - ui
         - avatar.tsx
         - badge.tsx
@@ -68,7 +65,7 @@
     - molecules
       - Blur-gallery.tsx
       - Carousel.tsx
-      - Date-range-picker.tsx
+      - date-range-picker.tsx
       - Dynamic-form.tsx
       - EthicalEvaluationBox.tsx
       - Evaluation-header.tsx
@@ -78,11 +75,12 @@
         - Bar-Chart.tsx
         - Line-Chart.tsx
         - Pie-Chart.tsx
+      - LoadingFallback.tsx
       - side-navigation
         - nav-main.tsx
-        - Nav-projects.tsx
-        - Nav-user.tsx
-        - Team-switcher.tsx
+        - nav-projects.tsx
+        - nav-user.tsx
+        - team-switcher.tsx
       - Stats-card.tsx
       - table
         - Data-table-column-header.tsx
@@ -93,8 +91,8 @@
         - Data-table-view-options.tsx
       - Text-section.tsx
       - top-navigation
-        - Main-nav.tsx
-        - User-nav.tsx
+        - main-nav.tsx
+        - user-nav.tsx
     - organisms
       - Auth-form.tsx
       - Data-table.tsx
@@ -120,8 +118,6 @@
       - FileHistoryTemplate.tsx
       - LandingTemplate.tsx
       - Layout.tsx
-      - OldFileHistoryTemplate.tsx
-      - TestCrud.tsx
   - context
     - AuthContext.tsx
   - hooks
@@ -129,6 +125,7 @@
     - use-mobile.ts
     - use-toast.ts
     - use-upload-file.ts
+    - useGeneratePdf.ts
     - user
       - useCreateUserHook.ts
       - useDeleteUserHook.ts
@@ -137,9 +134,10 @@
       - useUpdateUserHook.ts
   - lib
     - api
-      - authApi.tsx
+      - authApi.ts
       - constants.ts
       - index.ts
+      - pdfApi.ts
       - userApi.ts
     - utils
       - index.ts
@@ -150,6 +148,7 @@
     - ResearcherRoutes.tsx
   - services
     - authService.ts
+    - pdfService.ts
     - userService.ts
   - styles
     - index.css
