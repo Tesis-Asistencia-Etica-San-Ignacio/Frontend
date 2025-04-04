@@ -26,19 +26,9 @@ export default function AuthForm({
     onRegister,
     className,
 }: AuthFormProps) {
-    const [loginData, setLoginData] = useState<{ [key: string]: any }>({})
-    const [registryData, setRegistryData] = useState<{ [key: string]: any }>({})
 
     const loginFormRef = useRef<DynamicFormHandles>(null)
     const registryFormRef = useRef<DynamicFormHandles>(null)
-
-    const handleLoginChange = (updatedData: { [key: string]: any }) => {
-        setLoginData(updatedData)
-    }
-
-    const handleRegistryChange = (updatedData: { [key: string]: any }) => {
-        setRegistryData(updatedData)
-    }
 
     const handleLoginSubmit = (e: React.FormEvent) => {
         e.preventDefault()
@@ -83,7 +73,6 @@ export default function AuthForm({
                             <DynamicForm
                                 ref={loginFormRef}
                                 formDataConfig={loginFields}
-                                onChange={handleLoginChange}
                             />
                             <Button type="submit" className="w-full mb-4">
                                 Iniciar Sesión
@@ -99,7 +88,6 @@ export default function AuthForm({
                             <DynamicForm
                                 ref={registryFormRef}
                                 formDataConfig={registryFields}
-                                onChange={handleRegistryChange}
                             />
                         </div>
                         <Button type="submit" className="w-full mb-4">

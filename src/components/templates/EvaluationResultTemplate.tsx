@@ -2,14 +2,17 @@ import { EvaluationHeader } from "../molecules/Evaluation-header";
 import React from "react"
 import { DynamicDataTable } from "../organisms/DynamicDataTable"
 import { ColumnConfig } from "@/types/table"
-import EthicalEvaluationBox from "../molecules/EthicalEvaluationBox";
+import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
+import { FormField } from "@/types/formTypes";
 
 interface EvaluationResultTemplateProps {
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
+  modalFormFields: FormField[][];
+  onModalSubmit?: (data: any) => Promise<void> | void;
 }
 
-export default function EvaluationResultTemplate({ data, columnsConfig }: EvaluationResultTemplateProps) {
+export default function EvaluationResultTemplate({ data, columnsConfig, modalFormFields, onModalSubmit }: EvaluationResultTemplateProps) {
   const [selectedTask, setSelectedTask] = React.useState<any | null>(null)
 
   const handleRowClick = (data: any) => {
@@ -29,7 +32,11 @@ export default function EvaluationResultTemplate({ data, columnsConfig }: Evalua
           <DynamicDataTable data={data} columnsConfig={columnsConfig} onRowClick={handleRowClick}
             selectedRowId={selectedTask?.id} />
         </div>
-        <EthicalEvaluationBox selectedTask={selectedTask} />
+        <EthicalEvaluationBox
+          selectedTask={selectedTask}
+          modalFormFields={modalFormFields}
+          onModalSubmit={onModalSubmit}
+        />
       </div>
     </div>
   );

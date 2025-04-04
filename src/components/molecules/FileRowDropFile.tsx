@@ -9,7 +9,7 @@ export interface FileRowProps extends React.HTMLAttributes<HTMLTableRowElement> 
     name: string
     size: number
     error?: boolean
-    progress?: number // Si quieres manejar progreso real
+    progress?: number
     onRemove?: () => void
 }
 
@@ -21,8 +21,8 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
 
         return (
             <tr ref={ref} className={cn("", className)} {...props}>
-                {/* Preview */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                {/* Previsualización */}
+                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-100">
                     <div className="relative flex h-12 w-20 items-center justify-center">
                         {error ? (
                             <span className="text-red-500">Error</span>
@@ -36,19 +36,19 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
                     </div>
                 </td>
                 {/* Nombre */}
-                <td className="px-6 py-4 truncate whitespace-normal text-sm font-medium">
-                    <span>{name}</span>
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium bg-amber-200">
+                    <span className="block truncate max-w-[150px] sm:max-w-full">{name}</span>
                 </td>
-                {/* Tamaño (KB) */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700">
+                {/* Tamaño (KB) - se oculta en pantallas pequeñas */}
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 bg-amber-300 hidden sm:table-cell">
                     {(size / 1024).toFixed(1)} KB
                 </td>
-                {/* Status (Progress) */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
-                    <Progress value={progress ?? 100} isError={error} className="w-20" />
+                {/* Status (Progress) - se oculta en pantallas aún más pequeñas */}
+                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-400 hidden lg:table-cell">
+                    <Progress value={progress ?? 0} isError={error} />
                 </td>
                 {/* Acciones */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm">
+                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-500">
                     {onRemove && (
                         <Button variant="destructive" size="sm" onClick={onRemove}>
                             <Trash2 className="w-4 h-4" />

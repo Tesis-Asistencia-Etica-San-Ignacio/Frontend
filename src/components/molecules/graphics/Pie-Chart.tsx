@@ -42,8 +42,7 @@ const renderCustomizedLabel = ({
 export const PieChartComponent: React.FC = () => {
     return (
         <div className="flex flex-col items-center w-full">
-            {/* Se ajusta el tamaño del contenedor sin altura fija */}
-            <ResponsiveContainer width="100%" aspect={1.5}>
+            <ResponsiveContainer width="100%" height={350}>
                 <PieChart>
                     <Pie
                         data={data}

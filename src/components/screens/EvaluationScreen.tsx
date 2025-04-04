@@ -1,7 +1,50 @@
 import EvaluationResultTemplate from "../templates/EvaluationResultTemplate"
 import { CheckCircle, Circle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
+import { FormField } from "@/types/formTypes";
 
+
+const modalFormFields: FormField[][] = [
+    
+    [
+        {
+            type: "email",
+            key: "email",
+            placeholder: "Tu correo institucional",
+            required: true,
+        },
+        {
+            type: "select",
+            key: "country",
+            placeholder: "País",
+            required: true,
+            options: [
+                { value: "mx", label: "México" },
+                { value: "us", label: "Estados Unidos" },
+            ],
+            selectPlaceholder: "Selecciona un país",
+        },
+    ],
+    [
+        {
+            type: "password",
+            key: "password",
+            placeholder: "Contraseña",
+            required: true,
+            minLength: 6,
+            maxLength: 50,
+        },
+        {
+            type: "textarea",
+            key: "bio",
+            placeholder: "Biografía (auto ajustable)",
+            required: false,
+            autoAdjust: false,
+            width: 50,
+        },
+
+    ],
+];
 
 
 const columnsConfig: ColumnConfig[] = [
@@ -18,7 +61,7 @@ const columnsConfig: ColumnConfig[] = [
         headerLabel: "Ley Ética",
         searchable: true,
     },
-    
+
     {
         id: "result",
         accessorKey: "result",
@@ -193,10 +236,19 @@ const tableData = [
 ]
 
 export default function EvaluationScreen() {
+    const handleModalFormSubmit = async (data: any) => {
+        console.log("Registro:", data);
+    };
+
     return (
         <div>
             {/* Tabla dinámica (arriba) */}
-            <EvaluationResultTemplate data={tableData} columnsConfig={columnsConfig} />
+            <EvaluationResultTemplate
+                data={tableData}
+                columnsConfig={columnsConfig}
+                modalFormFields={modalFormFields}
+                onModalSubmit={handleModalFormSubmit}
+            />
         </div>
     )
 }

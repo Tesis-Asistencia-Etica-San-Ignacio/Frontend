@@ -1,23 +1,25 @@
-// FileInput.tsx
 import React, { forwardRef, useReducer, useState, ChangeEvent, DragEvent } from "react"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
 
-import FileRow from "@/components/molecules/File-row"
+import FileRow from "@/components/molecules/FileRowDropFile"
 import { cn } from "@/lib/utils"
 
-const MAX_FILES = 10
+const MAX_FILES = 30
+const SIMULATION_SPEED = 50000 // bytes por segundo, velocidad simulada para procesar el archivo
 
 interface FileWithUrl {
     name: string
     size: number
     url: string // blob local para preview
     error?: boolean
+    progress: number
 }
 
 type Action =
     | { type: "ADD_FILES"; payload: FileWithUrl[] }
     | { type: "REMOVE_FILE"; payload: number }
+    | { type: "UPDATE_PROGRESS"; payload: { index: number, progress: number } }
 
 type State = FileWithUrl[]
 
@@ -26,7 +28,7 @@ function fileReducer(state: State, action: Action): State {
         case "ADD_FILES": {
             // Comprobamos si rebasamos el límite
             if (state.length + action.payload.length > MAX_FILES) {
-                // ACA SE PERSONALIZA COMO SON LAS
+                // ACA SE PERSONALIZA COMO SON LAS TOAST
                 toast("Límite alcanzado", {
                     description: `Ya tienes ${state.length} archivos, y el máximo es ${MAX_FILES}.`,
                     closeButton: true,
@@ -40,6 +42,11 @@ function fileReducer(state: State, action: Action): State {
             const newState = [...state]
             newState.splice(action.payload, 1)
             return newState
+        }
+        case "UPDATE_PROGRESS": {
+            return state.map((file, idx) =>
+                idx === action.payload.index ? { ...file, progress: action.payload.progress } : file
+            )
         }
         default:
             return state
@@ -58,6 +65,22 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
         const isImage = /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(file.name)
         const isPdf = /\.pdf$/i.test(file.name)
         return isImage || isPdf
+    }
+
+    // Función para simular la carga del archivo basada en su tamaño
+    const simulateProgress = (index: number, fileSize: number) => {
+        const totalDuration = (fileSize / SIMULATION_SPEED) * 1000; // duración total en ms
+        const updateInterval = 100; // intervalo de actualización en ms
+        const progressIncrement = (updateInterval / totalDuration) * 100;
+        let progress = 0;
+        const interval = setInterval(() => {
+            progress += progressIncrement;
+            if (progress >= 100) {
+                progress = 100;
+                clearInterval(interval);
+            }
+            dispatch({ type: "UPDATE_PROGRESS", payload: { index, progress: Math.round(progress) } });
+        }, updateInterval);
     }
 
     // Drag & drop events
@@ -97,9 +120,16 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
                 size: file.size,
                 url: URL.createObjectURL(file),
                 error: !isValid,
+                progress: 0,
             }
         })
+        const startIndex = files.length;
         dispatch({ type: "ADD_FILES", payload: newFiles })
+        newFiles.forEach((file, i) => {
+            if (!file.error) {
+                simulateProgress(startIndex + i, file.size);
+            }
+        })
     }
 
     // Input de archivos (click en el contenedor)
@@ -121,9 +151,16 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
                 size: file.size,
                 url: URL.createObjectURL(file),
                 error: !isValid,
+                progress: 0,
             }
         })
+        const startIndex = files.length;
         dispatch({ type: "ADD_FILES", payload: newFiles })
+        newFiles.forEach((file, i) => {
+            if (!file.error) {
+                simulateProgress(startIndex + i, file.size);
+            }
+        })
     }
 
     // Eliminar archivo
@@ -192,19 +229,19 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
                                         <thead className="bg-gray-200 ">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Preview
+                                                    Previsualización
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Name
+                                                    Nombre
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hidden sm:table-cell">
+                                                    Tamaño
+                                                </th>
+                                                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">
+                                                    Progreso
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Size
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Actions
+                                                    Acciones
                                                 </th>
                                             </tr>
                                         </thead>
@@ -216,7 +253,7 @@ const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...prop
                                                     name={file.name}
                                                     size={file.size}
                                                     error={file.error}
-                                                    // progress={100} // Podrías cambiarlo si hay lógica real de subida
+                                                    progress={file.progress}
                                                     onRemove={() => handleRemoveFile(index)}
                                                 />
                                             ))}
