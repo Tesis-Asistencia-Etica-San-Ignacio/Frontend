@@ -22,7 +22,7 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
         return (
             <tr ref={ref} className={cn("", className)} {...props}>
                 {/* Previsualización */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-100">
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
                     <div className="relative flex h-12 w-20 items-center justify-center">
                         {error ? (
                             <span className="text-red-500">Error</span>
@@ -36,19 +36,19 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
                     </div>
                 </td>
                 {/* Nombre */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium bg-amber-200">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
                     <span className="block truncate max-w-[150px] sm:max-w-full">{name}</span>
                 </td>
                 {/* Tamaño (KB) - se oculta en pantallas pequeñas */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 bg-amber-300 hidden sm:table-cell">
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 hidden sm:table-cell">
                     {(size / 1024).toFixed(1)} KB
                 </td>
                 {/* Status (Progress) - se oculta en pantallas aún más pequeñas */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-400 hidden lg:table-cell">
+                <td className="px-6 py-4 whitespace-nowrap text-sm  hidden lg:table-cell">
                     <Progress value={progress ?? 0} isError={error} />
                 </td>
                 {/* Acciones */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm bg-amber-500">
+                <td className="px-6 py-4 whitespace-nowrap text-sm ">
                     {onRemove && (
                         <Button variant="destructive" size="sm" onClick={onRemove}>
                             <Trash2 className="w-4 h-4" />

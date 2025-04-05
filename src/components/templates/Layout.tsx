@@ -1,6 +1,6 @@
 import { Outlet } from "react-router-dom"
 
-import { AppSidebar } from "../organisms/Side-bar"
+import { AppSidebar } from "../organisms/AppSideBar"
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -15,6 +15,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "../atoms/ui/sidebar"
+import { Main } from "../atoms/Main"
 
 export default function Layout() {
   return (
@@ -42,7 +43,9 @@ export default function Layout() {
         </header>
 
         {/* Aquí se renderizan las rutas hijas */}
-        <Outlet />
+        <Main fixed>
+          <Outlet />
+        </Main>
       </SidebarInset>
     </SidebarProvider>
   )

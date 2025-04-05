@@ -25,7 +25,7 @@ export default function EvaluationResultTemplate({ data, columnsConfig, modalFor
   };
 
   return (
-    <div className=" p-8 space-y-4">
+    <section className=" pb-8 space-y-4">
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
@@ -38,6 +38,6 @@ export default function EvaluationResultTemplate({ data, columnsConfig, modalFor
           onModalSubmit={onModalSubmit}
         />
       </div>
-    </div>
+    </section>
   );
 }

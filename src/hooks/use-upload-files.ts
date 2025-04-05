@@ -1,4 +1,3 @@
-// src/hooks/useUploadFiles.ts
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 

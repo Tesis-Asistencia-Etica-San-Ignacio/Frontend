@@ -8,5 +8,5 @@ export default function ResearcherRoutes() {
         return <Outlet />
     }
 
-    return <Navigate to="/auth" />
+    return <Navigate to="/no-autorizado" />
 }

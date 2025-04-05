@@ -13,7 +13,7 @@ export function EvaluationHeader({
   return (
     <div className="flex items-center justify-between">
       {/* Título a la izquierda */}
-      <h1 className="text-2xl font-bold">{title}</h1>
+      <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
 
       {/* Botón con ícono a la derecha */}
       <Button variant="outline" size="icon" onClick={onEdit}>
