@@ -1,6 +1,5 @@
-"use client"
 
-import { BadgeCheck, Bell, ChevronsUpDown, CreditCard, LogOut, Sparkles } from "lucide-react"
+import { BrainCircuit, ChevronsUpDown, LogOut, Palette, User } from "lucide-react"
 
 import { Avatar, AvatarFallback, AvatarImage } from "../../atoms/ui/avatar"
 import {
@@ -14,6 +13,7 @@ import {
 } from "../../atoms/ui/dropdown-menu"
 import { SidebarMenu, SidebarMenuButton, SidebarMenuItem, useSidebar } from "../../atoms/ui/sidebar"
 import { useAuthContext } from "@/context/AuthContext"
+import { Link } from "react-router-dom"
 
 export function NavUser({
     user,
@@ -76,30 +76,29 @@ export function NavUser({
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <Sparkles />
-                                Upgrade to Pro
+                            <DropdownMenuItem asChild>
+                                <Link to='/ajustes/cuenta'>
+                                    <User />
+                                    Cuenta
+                                </Link>
                             </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
+                            <DropdownMenuItem asChild>
+                                <Link to='/ajustes/prompts'>
+                                    <BrainCircuit />
+                                    Prompts
+                                </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <CreditCard />
-                                Billing
-                            </DropdownMenuItem>
-                            <DropdownMenuItem>
-                                <Bell />
-                                Notifications
+                            <DropdownMenuItem asChild>
+                                <Link to='/ajustes/apariencia'>
+                                    <Palette />
+                                    Apariencia
+                                </Link>
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
-                            Log out
+                            Cerrar sesión
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

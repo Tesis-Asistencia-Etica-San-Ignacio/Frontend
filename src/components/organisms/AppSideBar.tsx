@@ -3,12 +3,13 @@ import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } fr
 import { NavGroup } from "@/components/molecules/side-navigation/NavGroup"
 import { NavUser } from "@/components/molecules/side-navigation/Nav-user"
 import { sidebarData } from "@/data/sidebar-data"
+import logo from "@/assets/Logo_HUSI_Blanco.png"
 
 export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
-                <img src="src/assets/Logo_HUSI_Blanco.png" alt="Logo Hospital Universitario San Ignacio" />
+                <img src={logo} alt="Logo Hospital Universitario San Ignacio" />
             </SidebarHeader>
             <SidebarContent>
                 {sidebarData.navGroups.map((group) => (
