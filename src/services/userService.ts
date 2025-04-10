@@ -1,4 +1,3 @@
-// src/services/userService.ts
 import { userApi } from '../lib/api';
 import { CreateUserInput, UpdateUserInput, User } from '../types';
 

@@ -2,10 +2,23 @@ import * as React from "react"
 import { Sidebar, SidebarContent, SidebarFooter, SidebarHeader, SidebarRail } from "@/components/atoms/ui/sidebar"
 import { NavGroup } from "@/components/molecules/side-navigation/NavGroup"
 import { NavUser } from "@/components/molecules/side-navigation/Nav-user"
-import { sidebarData } from "@/data/sidebar-data"
 import logo from "@/assets/Logo_HUSI_Blanco.png"
+import { User, } from "@/types/userType"
+import { SidebarData } from "@/types/sideBar"
 
-export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
+interface AppSidebarProps extends React.ComponentProps<typeof Sidebar> {
+    user: User | null
+    sidebarData: SidebarData
+    onLogout: () => Promise<void>
+    getInitials: () => string
+}
+export function AppSidebar({
+    user,
+    sidebarData,
+    onLogout,
+    getInitials,
+    ...props
+}: AppSidebarProps) {
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>
@@ -17,7 +30,7 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
                 ))}
             </SidebarContent>
             <SidebarFooter>
-                <NavUser user={sidebarData.user} />
+                <NavUser user={user} onLogout={onLogout} getInitials={getInitials} />
             </SidebarFooter>
             <SidebarRail />
         </Sidebar>

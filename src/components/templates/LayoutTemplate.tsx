@@ -1,26 +1,45 @@
 import { Outlet } from "react-router-dom"
-
-import { AppSidebar } from "../organisms/AppSideBar"
+import {
+  SidebarProvider,
+  SidebarInset,
+  SidebarTrigger
+} from "../atoms/ui/sidebar"
+import { Main } from "../atoms/Main"
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbLink,
   BreadcrumbList,
   BreadcrumbPage,
-  BreadcrumbSeparator,
+  BreadcrumbSeparator
 } from "../atoms/ui/breadcrumb"
 import { Separator } from "../atoms/ui/separator"
-import {
-  SidebarInset,
-  SidebarProvider,
-  SidebarTrigger,
-} from "../atoms/ui/sidebar"
-import { Main } from "../atoms/Main"
+import { AppSidebar } from "../organisms/AppSideBar"
+import type { SidebarData } from "@/types/sideBar"
+import type { User } from "@/types/userType"
 
-export default function Layout() {
+interface LayoutTemplateProps {
+  user: User | null
+  sidebarData: SidebarData
+  onLogout: () => Promise<void>
+  getInitials: () => string
+}
+
+export default function LayoutTemplate({
+  user,
+  sidebarData,
+  onLogout,
+  getInitials,
+}: LayoutTemplateProps) {
+  
   return (
     <SidebarProvider>
-      <AppSidebar />
+      <AppSidebar
+        user={user}
+        sidebarData={sidebarData}
+        onLogout={onLogout}
+        getInitials={getInitials}
+      />
       <SidebarInset>
         <header className="flex h-16 shrink-0 items-center gap-2 transition-[width,height] ease-linear group-has-[[data-collapsible=icon]]/sidebar-wrapper:h-12">
           <div className="flex items-center gap-2 px-4">
@@ -29,9 +48,7 @@ export default function Layout() {
             <Breadcrumb>
               <BreadcrumbList>
                 <BreadcrumbItem className="hidden md:block">
-                  <BreadcrumbLink href="#">
-                    Building Your Application
-                  </BreadcrumbLink>
+                  <BreadcrumbLink href="#">Building Your Application</BreadcrumbLink>
                 </BreadcrumbItem>
                 <BreadcrumbSeparator className="hidden md:block" />
                 <BreadcrumbItem>
@@ -41,8 +58,6 @@ export default function Layout() {
             </Breadcrumb>
           </div>
         </header>
-
-        {/* Aquí se renderizan las rutas hijas */}
         <Main fixed>
           <Outlet />
         </Main>

@@ -1,13 +1,9 @@
-export interface User {
-    name: string;
-    email: string;
-    avatar: string;
-}
 
 interface BaseNavItem {
     title: string;
     badge?: string;
     icon?: React.ElementType;
+    roles?: string[];
 }
 
 export type NavLink = BaseNavItem & {
@@ -28,6 +24,5 @@ export interface NavGroup {
 }
 
 export interface SidebarData {
-    user: User;
     navGroups: NavGroup[];
 }

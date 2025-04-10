@@ -2,9 +2,13 @@ import { useAuthContext } from "@/context/AuthContext"
 import { Navigate, Outlet } from "react-router-dom"
 
 export default function EvaluatorRoutes() {
-    const { userType } = useAuthContext()
+    const { user } = useAuthContext()
 
-    if (userType === "EVALUADOR") {
+    if (!user) {
+        return <Navigate to="/auth" />;
+    }
+
+    if (user?.type === "EVALUADOR") {
         return <Outlet />
     }
 

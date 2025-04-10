@@ -2,9 +2,12 @@ import { useAuthContext } from "@/context/AuthContext"
 import { Navigate, Outlet } from "react-router-dom"
 
 export default function ResearcherRoutes() {
-    const { userType } = useAuthContext()
+    const { user } = useAuthContext()
+    if (!user) {
+        return <Navigate to="/auth" />;
+    }
 
-    if (userType === "INVESTIGADOR") {
+    if (user?.type === "INVESTIGADOR") {
         return <Outlet />
     }
 

@@ -2,68 +2,31 @@ import { LayoutGrid, Upload, FileStack, ChartLine, Settings, User, Palette, Brai
 import type { SidebarData } from "../types/sideBar";
 
 export const sidebarData: SidebarData = {
-  user: {
-    name: 'satnaing',
-    email: 'satnaingdev@gmail.com',
-    avatar: '/avatars/shadcn.jpg',
-  },
   navGroups: [
     {
-      title: 'Menú',
+      title: "Menú",
       items: [
-        {
-          title: "Inicio",
-          url: "/inicio",
-          icon: LayoutGrid,
-        },
-        {
-          title: "Subir archivos",
-          url: "/subir-archivos",
-          icon: Upload,
-        },
-        {
-          title: "Evaluación",
-          url: "/evaluacion",
-          icon: FileStack,
-        },
-        {
-          title: "Historial de archivos",
-          url: "/historial-archivos",
-          icon: FileStack,
-        },
-        {
-          title: "Estadísticas",
-          url: "/estadisticas",
-          icon: ChartLine,
-        },
-      ],
+        { title: "Inicio", url: "/inicio", icon: LayoutGrid, roles: ["EVALUADOR"] },
+        { title: "Subir archivos", url: "/subir-archivos", icon: Upload, roles: ["EVALUADOR"] },
+        { title: "Evaluación", url: "/evaluacion", icon: FileStack, roles: ["INVESTIGADOR"] },
+        { title: "Historial", url: "/historial-archivos-evaluados", icon: FileStack, roles: ["EVALUADOR"] },
+        { title: "Historial", url: "/historial-archivos", icon: FileStack, roles: ["INVESTIGADOR"] },
+        { title: "Estadísticas", url: "/estadisticas", icon: ChartLine, roles: ["EVALUADOR"] }
+      ]
     },
     {
-      title: 'Otros',
+      title: "Otros",
       items: [
         {
-          title: 'Ajustes',
+          title: "Ajustes",
           icon: Settings,
           items: [
-            {
-              title: 'Cuenta',
-              url: '/ajustes/cuenta',
-              icon: User,
-            },
-            {
-              title: 'Prompts',
-              url: '/ajustes/prompts',
-              icon: BrainCircuit,
-            },
-            {
-              title: 'Apariencia',
-              url: '/ajustes/apariencia',
-              icon: Palette,
-            },
-            
-          ],
+            { title: "Cuenta", url: "/ajustes/cuenta", icon: User },
+            { title: "Prompts", url: "/ajustes/prompts", icon: BrainCircuit },
+            { title: "Apariencia", url: "/ajustes/apariencia", icon: Palette }
+          ]
         }
-      ],
-    },
-  ],
+      ]
+    }
+  ]
 };

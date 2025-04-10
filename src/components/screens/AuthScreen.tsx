@@ -130,20 +130,21 @@ const slides: Slide[] = [
 ] */
 
 export default function AuthScreen() {
-  const { userType, login, createAccount } = useAuthContext();
+  const { user, login, createAccount } = useAuthContext();
   const navigate = useNavigate();
   const location = useLocation();
   //esto lo tengo que quitar (es para crear los pdf)
   const { mutate: generatePdfMutation } = useGeneratePdf();
 
   useEffect(() => {
-    if (userType === "EVALUADOR" && location.pathname !== "/estadisticas") {
-      navigate("/estadisticas");
-    } else if (userType === "INVESTIGADOR" && location.pathname !== "/historial-archivos") {
-      navigate("/historial-archivos");
+    if (user) {
+      if (user.type === "EVALUADOR" && location.pathname !== "/estadisticas") {
+        navigate("/estadisticas");
+      } else if (user.type === "INVESTIGADOR" && location.pathname !== "/historial-archivos") {
+        navigate("/historial-archivos");
+      }
     }
-  }, [userType, location.pathname, navigate]);
-
+  }, [user, location.pathname, navigate]);
   // Inicia sesión y deja que el useEffect haga la navegación
   const handleLogin = async (credentials: { email: string; password: string }) => {
     /* generatePdfMutation({

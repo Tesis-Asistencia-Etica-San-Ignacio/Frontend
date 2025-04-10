@@ -2,7 +2,9 @@ export interface User {
   name: string;
   last_name: string;
   email: string;
+  type: string;
   password: string;
+  avatar: string;
 }
 
 // Crea un usuario sin incluir el campo id

@@ -1,5 +1,5 @@
 import { authApi } from '../lib/api/authApi';
-import { LoginInput, LoginResponse } from '../types';
+import { LoginInput, LoginResponse, User } from '../types';
 
 
 export const login = async (credentials: LoginInput): Promise<{ userType: string }> => {
@@ -7,9 +7,9 @@ export const login = async (credentials: LoginInput): Promise<{ userType: string
     return { userType: data.userType };
 };
 
-export const getSession = async (): Promise<{ userType: string }> => {
+export const getSession = async (): Promise<User> => {
     const { data } = await authApi.get("/auth/me")
-    return { userType: data.userType }
+    return data;
 }
 
 export const logout = async () => {
