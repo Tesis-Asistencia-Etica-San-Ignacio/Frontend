@@ -4,6 +4,8 @@ import { DynamicDataTable } from "../organisms/DynamicDataTable"
 import { ColumnConfig } from "@/types/table"
 import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
 import { FormField } from "@/types/formTypes";
+import PdfRenderer from "../organisms/PdfRenderer";
+import tallerPdf from "@/assets/taller_emergentes.pdf";
 
 interface EvaluationResultTemplateProps {
   readonly data: any[];
@@ -26,6 +28,7 @@ export default function EvaluationResultTemplate({ data, columnsConfig, modalFor
 
   return (
     <section className=" pb-8 space-y-4">
+      <PdfRenderer url={tallerPdf} />
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">

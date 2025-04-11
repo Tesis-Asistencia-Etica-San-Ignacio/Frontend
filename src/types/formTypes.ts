@@ -1,4 +1,3 @@
-// /src/types/formTypes.ts
 import { JSX } from "react"
 
 /**

@@ -45,10 +45,10 @@ export const AppRoutes = () => {
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="evaluacion" element={<Evaluation />} />
               <Route path="historial-archivos" element={<FileHistory />} />
               {/* </Route> */}
             </Route>
+              <Route path="evaluacion" element={<Evaluation />} />
           </Route>
         </Routes>
       </Suspense>

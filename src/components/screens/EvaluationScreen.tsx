@@ -2,10 +2,12 @@ import EvaluationResultTemplate from "../templates/EvaluationResultTemplate"
 import { CheckCircle, Circle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 import { FormField } from "@/types/formTypes";
+import PdfRenderer from "../organisms/PdfRenderer";
+import tallerPdf from "@/assets/taller_emergentes.pdf";
 
 
 const modalFormFields: FormField[][] = [
-    
+
     [
         {
             type: "email",
@@ -27,12 +29,12 @@ const modalFormFields: FormField[][] = [
     ],
     [
         {
-            type: "password",
-            key: "password",
-            placeholder: "Contraseña",
-            required: true,
-            minLength: 6,
-            maxLength: 50,
+            type: "custom",
+            key: "customField",
+            placeholder: "Campo personalizado",
+            component: (
+                <PdfRenderer url={tallerPdf} />
+            ),
         },
         {
             type: "textarea",
@@ -127,112 +129,7 @@ const tableData = [
         "id": "TASK-444",
         "ethicsLaw": "Ley 5",
         "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    },
+    }
 ]
 
 export default function EvaluationScreen() {

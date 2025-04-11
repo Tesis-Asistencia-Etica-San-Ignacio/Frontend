@@ -57,6 +57,7 @@ function baseValidationForType(type: FieldType): z.ZodString {
     return schema
 }
 
+
 function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string> {
     let schema = baseValidationForType(field.type)
     if (field.required) {
