@@ -7,6 +7,7 @@ import { useGeneratePdf } from '@/hooks/useGeneratePdf';
 import { Slide } from "../molecules/Carousel";
 
 
+
 const loginFields: FormField[] = [
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
   { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
@@ -166,6 +167,7 @@ export default function AuthScreen() {
   };
 
   return (
+    
     <AuthTemplate
       loginFields={loginFields}
       registryFields={registryFields}

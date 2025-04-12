@@ -35,14 +35,15 @@ const modalFormFields: FormField[][] = [
             component: (
                 <PdfRenderer url={tallerPdf} />
             ),
+            width: 50,
+            required: false,
         },
         {
             type: "textarea",
             key: "bio",
             placeholder: "Biografía (auto ajustable)",
             required: false,
-            autoAdjust: false,
-            width: 50,
+            autoAdjust: true,
         },
 
     ],

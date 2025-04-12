@@ -10,7 +10,7 @@ import {
     FormLabel,
     FormMessage,
 } from "@/components/atoms/ui/form"
-import { Input } from "@/components/atoms/ui/input"
+import { Input } from "@/components/atoms/ui/input-form"
 import {
     Select,
     SelectTrigger,
@@ -62,6 +62,9 @@ function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string
     let schema = baseValidationForType(field.type)
     if (field.required) {
         schema = schema.nonempty("Este campo es requerido")
+    }
+    else {
+        z.optional(z.string());
     }
     if (typeof field.minLength !== "undefined") {
         schema = schema.min(field.minLength, `Mínimo ${field.minLength} caracteres`)
@@ -138,7 +141,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
             render={({ field: controllerField }) => (
                 <FormItem
                     // Múltiples items en una fila:
-                    className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col")}
+                    className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col p-0.5")}
                     style={field.width ? { width: `${field.width}%` } : {}}
                 >
                     {field.placeholder && <FormLabel>{field.placeholder}</FormLabel>}

@@ -43,6 +43,7 @@ export default function EthicalEvaluationBox({
           onSubmit={onModalSubmit}
           submitButtonText="Enviar resultado"
           width="70%"
+          height="80%"
           successContent={
             <div className="p-4 flex flex-col items-center justify-center h-full">
               <h3 className="text-lg font-semibold mb-2">¡Enviado exitosamente!</h3>

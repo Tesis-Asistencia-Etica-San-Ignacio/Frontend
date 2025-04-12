@@ -13,41 +13,57 @@ interface PdfFullscreenProps {
 
 const PdfFullscreen = ({ fileUrl }: PdfFullscreenProps) => {
   const [isOpen, setIsOpen] = useState(false);
-  const [numPages, setNumPages] = useState<number>();
-  const { width, ref } = useResizeDetector();
+  const [numPages, setNumPages] = useState<number>(0);
+
+  // Detecta el ancho dentro del diálogo
+  const { width, ref } = useResizeDetector({
+    refreshMode: "throttle",
+    refreshRate: 100,
+  });
 
   return (
     <Dialog
       open={isOpen}
-      onOpenChange={(v) => {
-        if (!v) {
-          setIsOpen(v);
+      onOpenChange={(open) => {
+        if (!open) {
+          setIsOpen(false);
         }
       }}
     >
       <DialogTrigger onClick={() => setIsOpen(true)} asChild>
-        <Button variant="ghost" aria-label="fullscreen">
+        <Button variant="ghost" aria-label="fullscreen" type="button">
           <Expand className="h-4 w-4" />
         </Button>
       </DialogTrigger>
+
       <DialogContent className="max-w-7xl w-full">
+        {/* SimpleBar para scroll vertical si el PDF es extenso */}
         <SimpleBar autoHide={false} className="max-h-[calc(100vh-10rem)] mt-6">
-          <div ref={ref}>
+          <div ref={ref} className="overflow-x-auto">
             <Document
               loading={
                 <div className="flex justify-center">
                   <Loader2 className="my-24 h-6 w-6 animate-spin" />
                 </div>
               }
-              onLoadError={() => {
-                /* Removido el toast */
-              }}
-              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               file={fileUrl}
+              onLoadError={(err) => console.error("Error loading PDF:", err)}
+              onLoadSuccess={({ numPages }) => setNumPages(numPages)}
               className="max-h-full"
             >
-              {new Array(numPages).fill(0).map((_, i) => (
-                <Page key={i} pageNumber={i + 1} width={width} />
+              {Array.from({ length: numPages }, (_, i) => i + 1).map((pageIndex) => (
+                <Page
+                  key={pageIndex}
+                  pageNumber={pageIndex}
+                  // Ajustamos cada página al ancho detectado
+                  width={width || 700} // fallback 700px si no se detecta ancho
+                  loading={
+                    <div className="flex justify-center">
+                      <Loader2 className="my-24 h-6 w-6 animate-spin" />
+                    </div>
+                  }
+                  className="mb-8" // pequeña separación entre páginas
+                />
               ))}
             </Document>
           </div>

@@ -9,7 +9,6 @@ import { toast } from "sonner";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import type { FormField } from "@/types/formTypes";
 
-/** Configuración del título (texto y alineación). */
 export interface TitleConfig {
     text: string;
     align?: "left" | "center";
@@ -31,6 +30,7 @@ export interface ModalFormProps {
     submitButtonText?: string;
     /** Ancho del modal (ejemplo: "800px" o "50%"). */
     width?: string;
+    height?: string;
     /**
      * Contenido opcional que se muestra en lugar del formulario
      * cuando el envío es exitoso.
@@ -46,6 +46,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
     onSubmit,
     submitButtonText = "Enviar",
     width = "50%",
+    height = "50%",
     successContent,
 }) => {
     const [loading, setLoading] = useState(false);
@@ -83,14 +84,14 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="p-6" style={{ width, maxWidth: "90vw" }}>
+            <DialogContent className="p-6" style={{ width, maxWidth: "90vw", height, maxHeight: "90vw", overflow: "auto"}}>
                 <div className="flex flex-col h-full">
                     {/* Título con alineación configurable */}
                     <div className={`mb-4 ${title.align === "center" ? "text-center" : "text-left"}`}>
                         <ShadcnDialogTitle>{title.text}</ShadcnDialogTitle>
                     </div>
                     {/* Área del formulario con scroll interno */}
-                    <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0 overflow-y-auto">
+                    <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0">
                         {showSuccess && successContent ? (
                             successContent
                         ) : (
