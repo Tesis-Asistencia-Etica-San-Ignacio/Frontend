@@ -46,9 +46,9 @@ export const AppRoutes = () => {
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
               <Route path="historial-archivos" element={<FileHistory />} />
+              <Route path="evaluacion" element={<Evaluation />} />
               {/* </Route> */}
             </Route>
-              <Route path="evaluacion" element={<Evaluation />} />
           </Route>
         </Routes>
       </Suspense>
