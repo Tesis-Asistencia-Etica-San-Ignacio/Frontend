@@ -2,7 +2,7 @@ import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 import { useEffect } from "react"
-import { authApi } from "@/lib/api/authApi"
+import useGetFilesByUserHook from "../../hooks/file/useGetFilesByUserHook";
 
 
 
@@ -155,17 +155,13 @@ const tableData = [
 ]
 
 export default function FileHistoryScreen() {
+    //const { files, getFilesByUser, loading } = useGetFilesByUserHook();
+    const { getFilesByUser } = useGetFilesByUserHook();
+
     useEffect(() => {
-        async function fetchEvaluaciones() {
-          try {
-            const response = await authApi.get("/evaluacion/my");
-            console.log("Evaluaciones del usuario:", response.data);
-          } catch (error) {
-            console.error("Error al obtener evaluaciones:", error);
-          }
-        }
-        fetchEvaluaciones();
-      }, []);
+        getFilesByUser();
+      }, [getFilesByUser]);
+    
       
     return (
         <div>
