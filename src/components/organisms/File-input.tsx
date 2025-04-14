@@ -1,7 +1,7 @@
 import React, { forwardRef, useReducer, useState, ChangeEvent, DragEvent } from "react"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
-import useUploadFiles, { FileWithUrl } from "@/hooks/use-upload-files"
+import useUploadFiles, { FileWithUrl } from "@/hooks/file/use-upload-files"
 import FileRow from "@/components/molecules/FileRowDropFile"
 import { Button } from "@/components/atoms/ui/button"
 import { cn } from "@/lib/utils"
