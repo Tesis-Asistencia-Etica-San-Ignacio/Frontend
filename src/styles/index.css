@@ -48,7 +48,6 @@
 	--color-loaders: #5DA9E9;
 }
 
-
 @layer base {
 	:root {
 		--background: hsl(0 0% 100%);
@@ -87,31 +86,12 @@
 		--sidebar-border: #005cbf;
 		--sidebar-ring: #005cbf;
 	}
-
-
 }
-
-/* Modo claro */
-:-webkit-autofill,
-:-webkit-autofill:hover,
-:-webkit-autofill:focus {
-	box-shadow: 0 0 0 1000px var(--background) inset !important;
-	-webkit-text-fill-color: var(--foreground) !important;
-}
-
-/* Modo oscuro */
-.dark :-webkit-autofill,
-.dark :-webkit-autofill:hover,
-.dark :-webkit-autofill:focus {
-	box-shadow: 0 0 0 1000px var(--background) inset !important;
-	-webkit-text-fill-color: var(--foreground) !important;
-}
-
 
 .dark {
 	--background: hsl(218, 36%, 18%);
 	--foreground: hsl(0 0% 98%);
-	--card: hsl(0 0% 3.9%);
+	--card: #2d3f5f;
 	--card-foreground: hsl(0 0% 98%);
 	--popover: hsl(218, 36%, 18%);
 	--popover-foreground: hsl(0 0% 98%);
@@ -143,8 +123,24 @@
 	--sidebar-accent-foreground: #fcfcfc;
 	--sidebar-border: #101b4a;
 	--sidebar-ring: #707070;
-
 }
+
+/* Modo claro */
+:-webkit-autofill,
+:-webkit-autofill:hover,
+:-webkit-autofill:focus {
+	box-shadow: 0 0 0 1000px var(--background) inset !important;
+	-webkit-text-fill-color: var(--foreground) !important;
+}
+
+/* Modo oscuro */
+.dark :-webkit-autofill,
+.dark :-webkit-autofill:hover,
+.dark :-webkit-autofill:focus {
+	box-shadow: 0 0 0 1000px var(--background) inset !important;
+	-webkit-text-fill-color: var(--foreground) !important;
+}
+
 
 
 .CollapsibleContent {

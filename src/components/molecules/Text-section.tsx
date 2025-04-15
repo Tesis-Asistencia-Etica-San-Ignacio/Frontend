@@ -5,7 +5,7 @@ export default function TextSection() {
     return (
       <div className="space-y-6">
         <BlurFade delay={0.25} inView>
-          <h1 className="text-5xl md:text-6xl font-bold text-gray-900">
+          <h1 className="text-5xl md:text-6xl font-bold text-primary">
             Bienvenido a{" "}
             <AuroraText>
               Nuestra Plataforma
@@ -14,13 +14,13 @@ export default function TextSection() {
         </BlurFade>
   
         <BlurFade delay={0.5} inView>
-          <p className="text-lg text-gray-600">
+          <p className="text-lg text-primary">
             Unimos la innovación y la tecnología para brindarte las mejores soluciones.
           </p>
         </BlurFade>
   
         <BlurFade delay={0.75} inView>
-          <Button variant="landing" size="lg">Empezar ahora</Button>
+          <Button variant="blue" size="lg">Empezar ahora</Button>
         </BlurFade>
       </div>
     );

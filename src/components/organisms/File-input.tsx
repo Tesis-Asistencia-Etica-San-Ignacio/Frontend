@@ -214,7 +214,7 @@ const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HT
                             <div className="min-w-full">
                                 <div className="overflow-hidden border border-gray-300 rounded-3xl">
                                     <table className="min-w-full divide-y divide-gray-300">
-                                        <thead className="bg-gray-200">
+                                        <thead className="bg-muted">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                                                     Previsualización
@@ -249,7 +249,7 @@ const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HT
                                     </table>
                                     <label
                                         htmlFor="more-files"
-                                        className="flex items-center justify-center py-2 border-t border-gray-300 bg-gray-50 cursor-pointer hover:bg-gray-100 transition"
+                                        className="flex items-center justify-center py-2 border-t border-gray-300 bg-muted/80 cursor-pointer hover:bg-gray-100 transition"
                                     >
                                         <Plus className="w-6 h-6 text-gray-500" />
                                         <input

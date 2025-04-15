@@ -1,22 +1,26 @@
-import React, { useState, useRef } from "react"
-import { cn } from "@/lib/utils"
-import { Button } from "@/components/atoms/ui/button"
-import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form"
+import React, { useRef } from "react";
+import { cn } from "@/lib/utils";
+import { Button } from "@/components/atoms/ui/button";
+import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import {
     Tabs,
     TabsContent,
     TabsList,
     TabsTrigger,
-} from "@/components/atoms/ui/tabs"
-import type { FormField } from "@/types/formTypes"
-import { LoginInput, User } from "../../types"
+} from "@/components/atoms/ui/tabs";
+import type { FormField } from "@/types/formTypes";
+import { LoginInput, User } from "../../types";
+
+// Importa las imágenes
+import logoLight from "@/assets/LogoHUSI.png";
+import logoDark from "@/assets/Logo_HUSI_Blanco.png";
 
 interface AuthFormProps {
-    loginFields: FormField[]
-    registryFields: FormField[]
-    onLogin: (values: LoginInput) => void
-    onRegister: (values: User) => void
-    className?: string
+    loginFields: FormField[];
+    registryFields: FormField[];
+    onLogin: (values: LoginInput) => void;
+    onRegister: (values: User) => void;
+    className?: string;
 }
 
 export default function AuthForm({
@@ -27,34 +31,42 @@ export default function AuthForm({
     className,
 }: AuthFormProps) {
 
-    const loginFormRef = useRef<DynamicFormHandles>(null)
-    const registryFormRef = useRef<DynamicFormHandles>(null)
+    const loginFormRef = useRef<DynamicFormHandles>(null);
+    const registryFormRef = useRef<DynamicFormHandles>(null);
 
     const handleLoginSubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         if (loginFormRef.current) {
             loginFormRef.current.handleSubmit((data) => {
-                onLogin(data as LoginInput)
-            })()
+                onLogin(data as LoginInput);
+            })();
         }
-    }
+    };
 
     const handleRegistrySubmit = (e: React.FormEvent) => {
-        e.preventDefault()
+        e.preventDefault();
         if (registryFormRef.current) {
             registryFormRef.current.handleSubmit((data) => {
-                onRegister(data as User)
-            })()
+                onRegister(data as User);
+            })();
         }
-    }
+    };
 
     return (
         <div className={cn("flex flex-col h-full min-h-0", className)}>
-            <img
-                src="src/assets/LogoHUSI.png"
-                alt="Imagen del slide"
-                className="h-auto w-auto max-h-[300px] max-w-[300px] self-center rounded-xl"
-            />
+            <div className="self-center">
+                <img
+                    src={logoLight}
+                    alt="Imagen del slide"
+                    className="block dark:hidden h-auto w-auto max-h-[300px] max-w-[300px] rounded-xl"
+                />
+                <img
+                    src={logoDark}
+                    alt="Imagen del slide"
+                    className="hidden dark:block h-auto w-auto max-h-[300px] max-w-[300px] rounded-xl m-5"
+                />
+            </div>
+
 
             <Tabs defaultValue="login" className="flex flex-col flex-1 min-h-0">
                 <TabsList className="flex items-center justify-center gap-2 rounded-full self-center px-3 py-7">
@@ -97,5 +109,5 @@ export default function AuthForm({
                 </TabsContent>
             </Tabs>
         </div>
-    )
+    );
 }

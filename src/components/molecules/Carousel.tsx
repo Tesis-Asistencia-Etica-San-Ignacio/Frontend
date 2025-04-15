@@ -39,7 +39,7 @@ export function CarouselPlugin({ slides }: CarouselPluginProps) {
                                             <img
                                                 src={slide.imageUrl}
                                                 alt="Imagen del slide"
-                                                className="h-full w-full object-cover dark:brightness-[0.2] dark:grayscale rounded-xl"
+                                                className="h-full w-full object-cover  rounded-xl"
                                             />
                                             <div className="absolute bottom-10 left-8 bg-opacity-50 p-2 rounded-xl">
                                                 <h3 className="text-white text-3xl font-bold">{slide.title}</h3>

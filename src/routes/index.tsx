@@ -38,9 +38,9 @@ export const AppRoutes = () => {
             </Route>
             {/* Rutas para evaluadores */}
             <Route element={<EvaluatorRoutes />}>
+              <Route path="inicio" element={<Landing />} />
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
-              <Route path="inicio" element={<Landing />} />
               <Route path="historial-archivos-evaluados" element={<FileHistory />} />
               <Route path="evaluacion" element={<Evaluation />} />
             </Route>

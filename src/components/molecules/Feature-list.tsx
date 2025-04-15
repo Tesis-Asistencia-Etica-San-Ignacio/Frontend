@@ -24,12 +24,12 @@ export default function FeatureList() {
   return (
     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
       {features.map((feature, index) => (
-        <Card key={index} className="p-6 bg-[#101828] text-white shadow-md">
+        <Card key={index} className="p-6 bg-card text-white shadow-md">
           <CardContent className="flex items-center gap-4">
             <div className="text-blue-400 text-3xl">{feature.icon}</div>
             <div>
             
-              <TextAnimate animation="fadeIn" by="line" as="h3" className="text-xl font-semibold">
+              <TextAnimate animation="fadeIn" by="line" as="h3" className="text-xl text-foreground font-semibold">
                 {feature.title}
               </TextAnimate>
 

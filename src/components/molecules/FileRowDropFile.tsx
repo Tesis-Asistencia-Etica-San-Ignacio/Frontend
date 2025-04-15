@@ -40,7 +40,7 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
                     <span className="block truncate max-w-[150px] sm:max-w-full">{name}</span>
                 </td>
                 {/* Tamaño (KB) - se oculta en pantallas pequeñas */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-700 hidden sm:table-cell">
+                <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell">
                     {(size / 1024).toFixed(1)} KB
                 </td>
                 {/* Status (Progress) - se oculta en pantallas aún más pequeñas */}
