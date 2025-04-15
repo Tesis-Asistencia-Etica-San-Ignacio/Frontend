@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { authApi } from "@/lib/api/authApi";
 
 export interface FileItem {
   id: string;
@@ -16,15 +17,8 @@ const useGetFilesHook = () => {
   const getFiles = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch("http://localhost:3000/api/files", {
-        credentials: "include",
-      });
-      if (response.ok) {
-        const data = await response.json();
-        setFiles(data);
-      } else {
-        toast.error("Error al obtener los archivos");
-      }
+      const response = await authApi.get("/files");
+      setFiles(response.data);
     } catch (error) {
       console.error("Error al obtener archivos:", error);
       toast.error("Error al obtener los archivos");

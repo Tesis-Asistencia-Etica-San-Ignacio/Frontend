@@ -1,31 +1,17 @@
+// src/hooks/useUpdateFileHook.ts
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
-
-export interface UpdateFileParams {
-  id: string;
-  name?: string;
-  // Puedes agregar otros campos a actualizar según requieras
-}
+import { updateFile } from "@/services/fileService";
+import type { UpdateFileParams } from "@/types/fileType";
 
 const useUpdateFileHook = () => {
   const [loading, setLoading] = useState(false);
 
-  const updateFile = useCallback(async (params: UpdateFileParams) => {
+  const updateFileCallback = useCallback(async (params: UpdateFileParams) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/files/${params.id}`, {
-        method: "PUT",
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify(params),
-      });
-      if (response.ok) {
-        toast.success("Archivo actualizado correctamente");
-      } else {
-        toast.error("Error al actualizar el archivo");
-      }
+      await updateFile(params);
+      toast.success("Archivo actualizado correctamente");
     } catch (error) {
       console.error("Error al actualizar el archivo:", error);
       toast.error("Error al actualizar el archivo");
@@ -33,7 +19,7 @@ const useUpdateFileHook = () => {
     setLoading(false);
   }, []);
 
-  return { updateFile, loading };
+  return { updateFile: updateFileCallback, loading };
 };
 
 export default useUpdateFileHook;
