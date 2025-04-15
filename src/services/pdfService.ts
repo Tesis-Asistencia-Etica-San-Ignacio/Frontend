@@ -1,4 +1,3 @@
-// src/services/pdfService.ts
 import { pdfApi } from '../lib/api/pdfApi';
 
 export const generatePdf = async (data: { userName: string, userType: string, date: string }): Promise<Blob> => {
