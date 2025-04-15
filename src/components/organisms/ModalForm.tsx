@@ -17,25 +17,12 @@ export interface TitleConfig {
 export interface ModalFormProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    /** Configuración del título del modal. */
     title: TitleConfig;
-    /** Configuración del formulario dinámico. */
     formDataConfig: FormField[] | FormField[][];
-    /**
-     * Función a ejecutar al enviar el formulario.
-     * Recibe los datos del formulario.
-     */
     onSubmit: (data: { [key: string]: any }) => Promise<void> | void;
-    /** Texto del botón de submit. */
     submitButtonText?: string;
-    /** Ancho del modal (ejemplo: "800px" o "50%"). */
     width?: string;
     height?: string;
-    /**
-     * Contenido opcional que se muestra en lugar del formulario
-     * cuando el envío es exitoso.
-     */
-    successContent?: React.ReactElement;
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({
@@ -47,10 +34,8 @@ const ModalForm: React.FC<ModalFormProps> = ({
     submitButtonText = "Enviar",
     width = "50%",
     height = "50%",
-    successContent,
 }) => {
     const [loading, setLoading] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
     const formRef = useRef<DynamicFormHandles>(null);
 
     const handleFormSubmit = (e: React.FormEvent) => {
@@ -60,18 +45,17 @@ const ModalForm: React.FC<ModalFormProps> = ({
             formRef.current.handleSubmit(async (data: any) => {
                 try {
                     await onSubmit(data);
-                    toast("Operación exitosa", {
-                        description: "El formulario se envió correctamente",
+                    toast.success("Correo enviado correctamente", {
+                        description: "El formulario se envió y el correo fue procesado con éxito.",
+                        icon: "✅",
+                        closeButton: true,
                     });
-                    setShowSuccess(true);
-                    // Se cierra la modal inmediatamente después del envío exitoso.
                     setTimeout(() => {
                         onOpenChange(false);
-                        setShowSuccess(false);
-                    }, 0);
+                    }, 500);
                 } catch (error) {
-                    toast("Error en el envío", {
-                        description: "Ocurrió un error al enviar el formulario",
+                    toast.error("Error al enviar el correo", {
+                        description: "Ocurrió un problema al procesar el envío.",
                         icon: "🚫",
                         closeButton: true,
                     });
@@ -84,26 +68,21 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent className="p-6" style={{ width, maxWidth: "90vw", height, maxHeight: "90vw", overflow: "auto"}}>
+            <DialogContent
+                className="p-6"
+                style={{ width, maxWidth: "90vw", height, maxHeight: "90vw", overflow: "auto" }}
+            >
                 <div className="flex flex-col h-full">
-                    {/* Título con alineación configurable */}
                     <div className={`mb-4 ${title.align === "center" ? "text-center" : "text-left"}`}>
                         <ShadcnDialogTitle>{title.text}</ShadcnDialogTitle>
                     </div>
-                    {/* Área del formulario con scroll interno */}
                     <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0">
-                        {showSuccess && successContent ? (
-                            successContent
-                        ) : (
-                            <>
-                                <DynamicForm ref={formRef} formDataConfig={formDataConfig} />
-                                <div className="mt-4 flex">
-                                    <Button type="submit" disabled={loading} className="ml-auto">
-                                        {loading ? "Enviando..." : submitButtonText}
-                                    </Button>
-                                </div>
-                            </>
-                        )}
+                        <DynamicForm ref={formRef} formDataConfig={formDataConfig} />
+                        <div className="mt-4 flex">
+                            <Button type="submit" disabled={loading} className="ml-auto">
+                                {loading ? "Enviando..." : submitButtonText}
+                            </Button>
+                        </div>
                     </form>
                 </div>
             </DialogContent>

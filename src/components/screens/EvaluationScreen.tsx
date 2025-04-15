@@ -1,57 +1,54 @@
-import EvaluationResultTemplate from "../templates/EvaluationResultTemplate"
-import { CheckCircle, Circle } from "lucide-react"
-import { ColumnConfig } from "@/types/table"
+import EvaluationResultTemplate from "../templates/EvaluationResultTemplate";
+import { CheckCircle, Circle } from "lucide-react";
+import { ColumnConfig } from "@/types/table";
 import { FormField } from "@/types/formTypes";
 import PdfRenderer from "../organisms/PdfRenderer";
 import tallerPdf from "@/assets/taller_emergentes.pdf";
 
+import { useSendEmail } from "@/hooks/mails/useSendEmailHook";
 
 const modalFormFields: FormField[][] = [
-
     [
         {
             type: "email",
-            key: "email",
-            placeholder: "Tu correo institucional",
+            key: "to",
+            placeholder: "Correo de destino",
             required: true,
         },
         {
             type: "select",
-            key: "country",
-            placeholder: "País",
+            key: "subject",
+            placeholder: "Motivo del correo",
             required: true,
+            selectPlaceholder: "Selecciona un motivo",
             options: [
-                { value: "mx", label: "México" },
-                { value: "us", label: "Estados Unidos" },
+                { value: "Incompletitud", label: "Incompletitud" },
+                { value: "Ortografía", label: "Ortografía" },
+                { value: "Coherencia", label: "Coherencia" },
+                { value: "Aprobación", label: "Aprobación" },
             ],
-            selectPlaceholder: "Selecciona un país",
         },
     ],
     [
         {
             type: "custom",
-            key: "customField",
-            placeholder: "Campo personalizado",
-            component: (
-                <PdfRenderer url={tallerPdf} />
-            ),
-            width: 50,
+            key: "pdfPreview",
+            placeholder: "Vista previa PDF",
+            component: <PdfRenderer url={tallerPdf} />,
             required: false,
+            // width: 50, // si tu form lo maneja
         },
         {
             type: "textarea",
-            key: "bio",
-            placeholder: "Biografía (auto ajustable)",
+            key: "mensajeAdicional",
+            placeholder: "Mensaje adicional",
             required: false,
             autoAdjust: true,
         },
-
     ],
 ];
 
-
 const columnsConfig: ColumnConfig[] = [
-    // Columna para la selección de filas (checkbox).
     {
         id: "id",
         accessorKey: "id",
@@ -64,19 +61,16 @@ const columnsConfig: ColumnConfig[] = [
         headerLabel: "Ley Ética",
         searchable: true,
     },
-
     {
         id: "result",
         accessorKey: "result",
         headerLabel: "Resultado",
         renderType: "badgeWithText",
         badgeVariant: "approved",
-        // Definicion un array de items con value, label e icon (opcional).
         items: [
             {
                 value: "approved",
                 label: "Aprobado",
-                // Importar el ícono
                 icon: CheckCircle,
                 badgeVariant: "approved",
             },
@@ -88,59 +82,56 @@ const columnsConfig: ColumnConfig[] = [
             },
         ],
     },
-]
+];
 
 const tableData = [
     {
-        "id": "TASK-8782",
-        "ethicsLaw": "Ley 1",
-        "result": "approved",
+        id: "TASK-8782",
+        ethicsLaw: "Ley 1",
+        result: "approved",
     },
     {
-        "id": "TASK-111 TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111TASK-111",
-        "ethicsLaw": "Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2 Ley 2",
-        "result": "notapproved",
+        id: "TASK-111",
+        ethicsLaw: "Ley 2 (Texto largo...)",
+        result: "notapproved",
     },
     {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
+        id: "TASK-222",
+        ethicsLaw: "Ley 3",
+        result: "approved",
     },
     {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
+        id: "TASK-333",
+        ethicsLaw: "Ley 4",
+        result: "approved",
     },
     {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
+        id: "TASK-444",
+        ethicsLaw: "Ley 5",
+        result: "notapproved",
     },
-    {
-        "id": "TASK-222",
-        "ethicsLaw": "Ley 3",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-333",
-        "ethicsLaw": "Ley 4",
-        "result": "approved",
-    },
-    {
-        "id": "TASK-444",
-        "ethicsLaw": "Ley 5",
-        "result": "notapproved",
-    }
-]
+];
+
 
 export default function EvaluationScreen() {
+    const { mutateAsync: sendEmailMutation } = useSendEmail();
+
     const handleModalFormSubmit = async (data: any) => {
         console.log("Registro:", data);
+        try {
+            await sendEmailMutation({
+                to: data.to,
+                subject: data.subject,
+                mensajeAdicional: data.mensajeAdicional,
+            });
+            console.log("Correo enviado exitosamente.");
+        } catch (err) {
+            console.error("Error al enviar el correo:", err);
+        }
     };
 
     return (
         <div>
-            {/* Tabla dinámica (arriba) */}
             <EvaluationResultTemplate
                 data={tableData}
                 columnsConfig={columnsConfig}
@@ -148,5 +139,5 @@ export default function EvaluationScreen() {
                 onModalSubmit={handleModalFormSubmit}
             />
         </div>
-    )
+    );
 }

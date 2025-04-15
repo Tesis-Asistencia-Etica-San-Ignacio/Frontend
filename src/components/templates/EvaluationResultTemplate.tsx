@@ -30,6 +30,7 @@ export default function EvaluationResultTemplate({
 
   return (
     <section className="pb-8 space-y-4">
+      
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">

@@ -8,7 +8,7 @@ export const sidebarData: SidebarData = {
       items: [
         { title: "Inicio", url: "/inicio", icon: LayoutGrid, roles: ["EVALUADOR"] },
         { title: "Subir archivos", url: "/subir-archivos", icon: Upload, roles: ["EVALUADOR"] },
-        { title: "Evaluación", url: "/evaluacion", icon: FileStack, roles: ["INVESTIGADOR"] },
+        { title: "Evaluación", url: "/evaluacion", icon: FileStack, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos-evaluados", icon: FileStack, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos", icon: FileStack, roles: ["INVESTIGADOR"] },
         { title: "Estadísticas", url: "/estadisticas", icon: ChartLine, roles: ["EVALUADOR"] }
