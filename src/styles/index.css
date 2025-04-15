@@ -36,6 +36,7 @@
 	--radius-sm: calc(var(--radius) - 4px);
 	--color-muted-text: var(--foreground);
 
+	--color-selected-item-table: var(--selected-item-table);
 	--color-sidebar: var(--sidebar);
 	--color-sidebar-foreground: var(--sidebar-foreground);
 	--color-sidebar-primary: var(--sidebar-primary);
@@ -76,6 +77,7 @@
 		--chart-5: hsl(27 87% 67%);
 		--radius: 0.625rem;
 
+		--selected-item-table: #eff6ff;
 		--sidebar: #003b96;
 		--sidebar-foreground: #ffffff;
 		--sidebar-primary: #0069d9;
@@ -131,6 +133,8 @@
 	--chart-3: hsl(30 80% 55%);
 	--chart-4: hsl(280 65% 60%);
 	--chart-5: hsl(340 75% 55%);
+
+	--selected-item-table: #193962;
 	--sidebar: #030a29;
 	--sidebar-foreground: #fcfcfc;
 	--sidebar-primary: #3c3838;
