@@ -2,7 +2,7 @@ import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 import { useEffect } from "react"
-import useGetFilesByUserHook from "../../hooks/evaluation/useGetEvaluationByUser";
+import useGetEvaluationsByUserHook from "../../hooks/evaluation/useGetEvaluationByUser";
 
 
 
@@ -155,8 +155,7 @@ const tableData = [
 ]
 
 export default function FileHistoryScreen() {
-    //const { files, getFilesByUser, loading } = useGetFilesByUserHook();
-    const { getFilesByUser } = useGetFilesByUserHook();
+    const { getFilesByUser } = useGetEvaluationsByUserHook();
 
     useEffect(() => {
         getFilesByUser();
