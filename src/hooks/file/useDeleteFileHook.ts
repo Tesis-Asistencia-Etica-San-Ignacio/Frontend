@@ -1,21 +1,16 @@
+// src/hooks/useDeleteFileHook.ts
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
+import { deleteFile } from "@/services/fileService";
 
 const useDeleteFileHook = () => {
   const [loading, setLoading] = useState(false);
 
-  const deleteFile = useCallback(async (id: string) => {
+  const deleteFileCallback = useCallback(async (id: string) => {
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:3000/api/files/${id}`, {
-        method: "DELETE",
-        credentials: "include",
-      });
-      if (response.ok) {
-        toast.success("Archivo eliminado correctamente");
-      } else {
-        toast.error("Error al eliminar el archivo");
-      }
+      await deleteFile(id);
+      toast.success("Archivo eliminado correctamente");
     } catch (error) {
       console.error("Error al eliminar el archivo:", error);
       toast.error("Error al eliminar el archivo");
@@ -23,7 +18,7 @@ const useDeleteFileHook = () => {
     setLoading(false);
   }, []);
 
-  return { deleteFile, loading };
+  return { deleteFile: deleteFileCallback, loading };
 };
 
 export default useDeleteFileHook;

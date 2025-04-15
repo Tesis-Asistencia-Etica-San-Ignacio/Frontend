@@ -2,7 +2,7 @@ import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 import { useEffect } from "react"
-import useGetFilesByUserHook from "../../hooks/file/useGetFilesByUserHook";
+import useGetFilesByUserHook from "../../hooks/evaluation/useGetEvaluationByUser";
 
 
 
