@@ -1,8 +1,12 @@
-import { evaluationsApi } from "@/lib/api/evaluationsApi"
+import { evaluationsApi } from "@/lib/api/evaluationsApi";
 import type { FileItem } from "@/types/fileType";
 
 export const getEvaluationsByUser = async (): Promise<FileItem[]> => {
-    const response = await evaluationsApi.get("/evaluacion/my");
-    const evaluations = response.data;
-    return evaluations;
-  };
+  const response = await evaluationsApi.get("/evaluacion/my");
+  const evaluations = response.data;
+  return evaluations;
+};
+
+export const deleteEvaluation = async (evaluationId: string): Promise<void> => {
+  await evaluationsApi.delete(`/evaluacion/${evaluationId}`);
+};

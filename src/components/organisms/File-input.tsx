@@ -1,7 +1,8 @@
 import React, { forwardRef, useReducer, useState, ChangeEvent, DragEvent } from "react"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
-import useUploadFiles, { FileWithUrl } from "@/hooks/file/use-upload-files"
+import useCreateEvaluation from "@/hooks/evaluation/useCreateEvaluationHook"
+import type { FileWithUrl } from "@/types/fileType"
 import FileRow from "@/components/molecules/FileRowDropFile"
 import { Button } from "@/components/atoms/ui/button"
 import { cn } from "@/lib/utils"
@@ -44,12 +45,11 @@ function fileReducer(state: State, action: Action): State {
     }
 }
 
-export interface InputProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> { }
 
-const FileInput = forwardRef<HTMLInputElement, InputProps>(({ className, ...props }, ref) => {
+const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">>(({ className, ...props }, ref) => {
     const [files, dispatch] = useReducer(fileReducer, [])
     const [dragActive, setDragActive] = useState(false)
-    const { uploadFiles, loading } = useUploadFiles()
+    const { uploadFiles, loading } = useCreateEvaluation()
     const noFiles = files.length === 0
 
     const validateFileType = (file: File) => {

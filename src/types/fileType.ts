@@ -1,6 +1,6 @@
 // Interfaz base que contiene las propiedades comunes de un archivo
 export interface BaseFile {
-    id: string;
+    id?: string;
     name: string;
     size: number;
     url: string;
