@@ -101,10 +101,10 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     initialData = {},
 }, ref) => {
     const flatFields = flattenFields(formDataConfig)
-    const shape: Record<string, z.ZodType<string, any, string>> = {}
+    const shape: Record<string,z.ZodDefault<z.ZodType<string, any, string>>> = {}
 
     flatFields.forEach((field) => {
-        shape[field.key] = buildZodSchemaForField(field)
+        shape[field.key] = buildZodSchemaForField(field).default("")
     })
 
     const finalSchema = z.object(shape)
