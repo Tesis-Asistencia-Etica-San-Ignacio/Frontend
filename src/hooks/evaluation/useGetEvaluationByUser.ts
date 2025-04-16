@@ -1,11 +1,9 @@
-// src/hooks/useGetFilesByUserHook.ts
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { getEvaluationsByUser } from "@/services/evaluationService";
 
 const useGetEvaluationsByUserHook = () => {
-  // Si necesitas almacenar los archivos, puedes descomentar y usar useState.
-  // const [files, setFiles] = useState<FileItem[]>([]);
+  const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
 
   const getEvaluationsByUserCallback = useCallback(async () => {
@@ -13,6 +11,7 @@ const useGetEvaluationsByUserHook = () => {
     try {
       const data = await getEvaluationsByUser();
       console.log("Evaluaciones del usuario:", data);
+      setFiles(data);
     } catch (error) {
       console.error("Error al obtener los archivos del usuario:", error);
       toast.error("Error al obtener los archivos del usuario");
@@ -20,7 +19,7 @@ const useGetEvaluationsByUserHook = () => {
     setLoading(false);
   }, []);
 
-  return { getFilesByUser: getEvaluationsByUserCallback, loading };
+  return { files, getFilesByUser: getEvaluationsByUserCallback, loading };
 };
 
 export default useGetEvaluationsByUserHook;

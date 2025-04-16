@@ -32,7 +32,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
       <div className="flex flex-1 flex-col-reverse items-start gap-y-2 sm:flex-row sm:items-center sm:space-x-2">
         {/* Input => globalFilter */}
         <Input
-          placeholder="Search..."
+          placeholder="Buscar..."
           value={String(globalFilterValue || "")}
           onChange={(e) => table.setGlobalFilter(e.target.value)}
           className="h-8 w-[150px] lg:w-[250px]"
@@ -63,7 +63,7 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             }}
             className="h-8 px-2 lg:px-3"
           >
-            Reset
+            Borrar filtros
             <X />
           </Button>
         )}

@@ -15,7 +15,7 @@ const loginFields: FormField[] = [
 
 const registryFields: FormField[] = [
   { type: "user", key: "name", placeholder: "Ingresa tu nombre", required: true },
-  { type: "user", key: "last_name", placeholder: "Ingresa tu apeliido", required: true },
+  { type: "user", key: "last_name", placeholder: "Ingresa tu apellido", required: true },
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
   { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
 ];
