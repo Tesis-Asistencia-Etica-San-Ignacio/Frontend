@@ -42,7 +42,7 @@ export const AppRoutes = () => {
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
               <Route path="historial-archivos-evaluados" element={<FileHistory />} />
-              <Route path="evaluacion" element={<Evaluation />} />
+              <Route path="evaluacion/:evaluationId" element={<Evaluation />} />
             </Route>
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>

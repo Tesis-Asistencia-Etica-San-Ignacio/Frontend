@@ -1,5 +1,4 @@
-// src/services/ethicalNormService.ts
-import { evaluationsApi } from "@/lib/api/evaluationsApi"; // Puedes usar la misma instancia o crear otra si lo requieres
+import { evaluationsApi } from "@/lib/api/evaluationsApi"; 
 import { EthicalNormResponseDto, UpdateEthicalRuleParams } from "@/types/ethicalNormTypes";
 
 
