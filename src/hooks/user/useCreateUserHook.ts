@@ -3,8 +3,6 @@ import { QUERY_KEYS } from '../../lib/api';
 import { CreateUserInput, User } from '../../types';
 import { createUser } from '../../services/userService';
 
-
-
 export function useCreateUser() {
   const queryClient = useQueryClient();
   return useMutation<User, Error, CreateUserInput>({

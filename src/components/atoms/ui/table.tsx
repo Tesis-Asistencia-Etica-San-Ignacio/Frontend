@@ -9,21 +9,30 @@ import {
 
 export function Table({ className, ...props }: React.ComponentProps<"table">) {
   return (
-    <TooltipProvider>
-      <div data-slot="table-container" className="relative w-full overflow-x-auto">
+    <div
+      data-slot="table-container"
+      className="relative w-full overflow-x-auto"
+    >
+      {/* Solo envolvemos al <table> en el provider, 
+          así el wrapper <div> sigue idéntico al original */}
+      <TooltipProvider delayDuration={2000}>
         <table
           data-slot="table"
           className={cn("w-full caption-bottom text-sm", className)}
           {...props}
         />
-      </div>
-    </TooltipProvider>
+      </TooltipProvider>
+    </div>
   )
 }
 
 export function TableHeader({ className, ...props }: React.ComponentProps<"thead">) {
   return (
-    <thead data-slot="table-header" className={cn("[&_tr]:border-b", className)} {...props} />
+    <thead
+      data-slot="table-header"
+      className={cn("[&_tr]:border-b", className)}
+      {...props}
+    />
   )
 }
 
@@ -99,7 +108,7 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
   const innerSpan = (
     <span
       ref={spanRef}
-      className="block truncate max-w-[250px] cursor-pointer"
+      className="truncate align-middle max-w-[250px]"
     >
       {children}
     </span>

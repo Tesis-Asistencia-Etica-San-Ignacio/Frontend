@@ -6,6 +6,7 @@
 - eslint.config.js
 - index.html
 - package.json
+- project_structure.text
 - public
   - vite.svg
 - README.md
@@ -118,6 +119,8 @@
       - AuthScreen.tsx
       - DashboardScreen.tsx
       - DropFilesScreen.tsx
+      - ejemplos
+        - EjemploUsoTabla.tsx
       - errors
         - 401.tsx
       - EvaluationScreen.tsx
@@ -147,13 +150,19 @@
   - data
     - sidebar-data.ts
   - hooks
+    - ethicalRules
+      - useGetEthicalRulesByEvaluationIdHook.ts
+      - useUpdateEthicalRulesHook.ts
+    - evaluation
+      - useCreateEvaluationHook.ts
+      - useDeleteEvaluationHook.ts
+      - useGetEvaluationByUser.ts
+      - useUpdateEvaluationHook.ts
     - file
-      - use-upload-files.ts
-      - useDeleteFileHook.ts
-      - useGetFilesByUserHook.ts
-      - useGetFilesHook.ts
       - useUpdateFileHook.ts
     - index.ts
+    - mails
+      - useSendEmailHook.ts
     - use-mobile.ts
     - use-toast.ts
     - useGeneratePdf.ts
@@ -167,6 +176,8 @@
     - api
       - authApi.ts
       - constants.ts
+      - emailApi.ts
+      - evaluationsApi.ts
       - index.ts
       - pdfApi.ts
       - userApi.ts
@@ -179,12 +190,18 @@
     - ResearcherRoutes.tsx
   - services
     - authService.ts
+    - emailService.ts
+    - ethicalNormService.ts
+    - evaluationService.ts
     - pdfService.ts
     - userService.ts
   - styles
     - index.css
   - types
     - authType.ts
+    - ethicalNormTypes.ts
+    - evaluationType.ts
+    - fileType.ts
     - formTypes.ts
     - index.ts
     - sideBar.ts

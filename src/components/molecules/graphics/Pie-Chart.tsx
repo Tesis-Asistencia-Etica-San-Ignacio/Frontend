@@ -1,34 +1,25 @@
-import React from "react";
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts";
+import React from "react"
+import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import type { PieSlice } from "@/types/statsTypes"
 
-const data = [
-    { name: "Group A", value: 400 },
-    { name: "Group B", value: 300 },
-    { name: "Group C", value: 300 },
-    { name: "Group D", value: 200 }
-];
-
-const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"];
-
-const RADIAN = Math.PI / 180;
-const renderCustomizedLabel = ({
+const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
+const RADIAN = Math.PI / 180
+const renderLabel = ({
     cx,
     cy,
     midAngle,
     innerRadius,
     outerRadius,
     percent,
-    index
 }: any) => {
-    const radius = innerRadius + (outerRadius - innerRadius) * 0.5;
-    const x = cx + radius * Math.cos(-midAngle * RADIAN);
-    const y = cy + radius * Math.sin(-midAngle * RADIAN);
-
+    const radius = innerRadius + (outerRadius - innerRadius) * 0.5
+    const x = cx + radius * Math.cos(-midAngle * RADIAN)
+    const y = cy + radius * Math.sin(-midAngle * RADIAN)
     return (
         <text
             x={x}
             y={y}
-            fill="white"
+            fill="#fff"
             textAnchor={x > cx ? "start" : "end"}
             dominantBaseline="central"
             fontSize="12px"
@@ -36,43 +27,59 @@ const renderCustomizedLabel = ({
         >
             {`${(percent * 100).toFixed(0)}%`}
         </text>
-    );
-};
+    )
+}
 
-export const PieChartComponent: React.FC = () => {
+export const PieChartComponent: React.FC<{
+    data: PieSlice[]
+    loading?: boolean
+}> = ({ data, loading }) => {
+    const [chartData, setChartData] = React.useState<PieSlice[]>(data)
+
+    React.useEffect(() => {
+        if (!loading) setChartData(data)
+    }, [data, loading])
+
     return (
-        <div className="flex flex-col items-center w-full">
+        <div className="relative flex flex-col items-center w-full">
             <ResponsiveContainer width="100%" height={350}>
                 <PieChart>
                     <Pie
-                        data={data}
+                        data={chartData}
                         cx="50%"
                         cy="50%"
                         labelLine={false}
-                        label={renderCustomizedLabel}
+                        label={renderLabel}
                         outerRadius="70%"
-                        fill="#8884d8"
                         dataKey="value"
                     >
-                        {data.map((entry, index) => (
-                            <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                        {chartData.map((_, idx) => (
+                            <Cell
+                                key={`cell-${idx}`}
+                                fill={COLORS[idx % COLORS.length]}
+                            />
                         ))}
                     </Pie>
                 </PieChart>
             </ResponsiveContainer>
 
-            {/* Leyenda personalizada */}
             <div className="flex flex-wrap justify-center mt-4">
-                {data.map((entry, index) => (
-                    <div key={`legend-${index}`} className="flex items-center mx-2">
+                {chartData.map((entry, idx) => (
+                    <div key={`legend-${idx}`} className="flex items-center mx-2">
                         <div
                             className="w-4 h-4 rounded-full mr-2"
-                            style={{ backgroundColor: COLORS[index] }}
-                        ></div>
-                        <span className="text-sm font-medium">{entry.name}</span>
+                            style={{ backgroundColor: COLORS[idx] }}
+                        />
+                        <span className="text-sm font-medium">{entry.label}</span>
                     </div>
                 ))}
             </div>
+
+            {loading && (
+                <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+                    <span className="animate-pulse text-sm">Cargando…</span>
+                </div>
+            )}
         </div>
-    );
-};
+    )
+}

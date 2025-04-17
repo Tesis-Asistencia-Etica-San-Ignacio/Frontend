@@ -47,7 +47,6 @@ export const AppRoutes = () => {
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
               <Route path="historial-archivos" element={<FileHistory />} />
-              {/* </Route> */}
             </Route>
           </Route>
         </Routes>

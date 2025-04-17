@@ -1,72 +1,62 @@
-import React from "react"
+// src/components/templates/DashBoardTemplate.tsx
 import { StatsGrid } from "@/components/organisms/Stats-grid"
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "../atoms/ui/tabs"
 import { DatePickerWithRange } from "../molecules/Date-range-picker"
-import { BarChartComponent } from "../molecules/graphics/Bar-Chart"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "../atoms/ui/card"
+import { Card, CardContent, CardHeader, CardTitle } from "../atoms/ui/card"
 import { LineChartComponent } from "../molecules/graphics/Line-Chart"
 import { PieChartComponent } from "../molecules/graphics/Pie-Chart"
-
+import type { StatsCardProps } from "@/components/molecules/Stats-card"
+import type { LinePoint, PieSlice } from "@/types/statsTypes"
 
 export interface DashboardTemplateProps {
-    cardsData: {
-        title: string
-        value: string | number
-        description: string
-        icon?: React.ReactNode
-    }[]
+    cardsData: StatsCardProps[]
+    lineSeries: LinePoint[]
+    pieSeries: PieSlice[]
+    range: { from: Date; to: Date }
+    onRangeChange: (range: { from: Date; to: Date }) => void
+    loading?: boolean
 }
 
-export default function DashboardTemplate({ cardsData }: DashboardTemplateProps) {
+export default function DashboardTemplate({
+    cardsData,
+    lineSeries,
+    pieSeries,
+    range,
+    onRangeChange,
+    loading,
+}: DashboardTemplateProps) {
     return (
         <section>
-            <div className="flex items-center justify-between space-y-2">
+            <div className="flex items-center justify-between space-y-2 mb-3">
                 <h2 className="text-2xl font-bold tracking-tight">Dashboard</h2>
                 <div className="flex items-center space-x-2">
-                    <DatePickerWithRange />
+                    <DatePickerWithRange
+                        from={range.from}
+                        to={range.to}
+                        onChange={onRangeChange}
+                    />
                 </div>
             </div>
-            <Tabs defaultValue="overview" className="space-y-4">
-                <TabsList>
-                    <TabsTrigger value="overview">Overview</TabsTrigger>
-                    <TabsTrigger value="analytics">Analytics</TabsTrigger>
-                    <TabsTrigger value="reports" disabled>
-                        Reports
-                    </TabsTrigger>
-                    <TabsTrigger value="notifications" disabled>
-                        Notifications
-                    </TabsTrigger>
-                </TabsList>
-                <TabsContent value="overview" className="space-y-4">
-                    <StatsGrid cards={cardsData} />
-                    <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
-                        <Card className="col-span-4">
-                            <CardHeader>
-                                <CardTitle>Overview</CardTitle>
-                            </CardHeader>
-                            <CardContent className="pl-2">
-                                <LineChartComponent />
-                            </CardContent>
-                        </Card>
-                        <Card className="col-span-4 lg:col-span-3">
-                            <CardHeader>
-                                <CardTitle>Overview</CardTitle>
-                            </CardHeader>
-                            <CardContent >
-                                <PieChartComponent />
-                            </CardContent>
-                        </Card>
-                    </div>
-                </TabsContent>
-                <TabsContent value="analytics" className="space-y-4">
-                    <BarChartComponent />
-                </TabsContent>
-            </Tabs>
+            <div className="space-y-4">
+                <StatsGrid cards={cardsData} loading={loading} />
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-7">
+                    <Card className="col-span-4">
+                        <CardHeader>
+                            <CardTitle>Evaluadas</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <LineChartComponent data={lineSeries} loading={loading} />
+                        </CardContent>
+                    </Card>
+                    <Card className="col-span-4 lg:col-span-3">
+                        <CardHeader>
+                            <CardTitle>Proporción</CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <PieChartComponent data={pieSeries} loading={loading} />
+                        </CardContent>
+                    </Card>
+                </div>
+            </div>
         </section>
     )
 }

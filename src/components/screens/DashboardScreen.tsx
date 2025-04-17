@@ -1,90 +1,91 @@
-import DashboardTemplate from "../templates/DashBoardTemplate";
+import { useState, useEffect, useMemo } from "react"
+import { formatISO, subMonths, startOfDay } from "date-fns"
+import { ArrowUpRight, CheckCircle, XCircle, CalendarSync } from "lucide-react"
 
-const cardsData = [
-    {
-        title: "Total de consentimientos evaludados",
-        value: "$45,231.89",
-        description: "+20.1% from last month",
-        icon: (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-        ),
-    },
-
-    {
-        title: "Consentimientos aprobados",
-        value: "+2350",
-        description: "+180.1% from last month",
-        icon: (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
-                <circle cx="9" cy="7" r="4" />
-                <path d="M22 21v-2a4 4 0 0 0-3-3.87M16 3.13a4 4 0 0 1 0 7.75" />
-            </svg>
-        ),
-    },
-    {
-        title: "Consentiemientos devueltos",
-        value: "+12,234",
-        description: "+19% from last month",
-        icon: (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <rect width="20" height="14" x="2" y="5" rx="2" />
-                <path d="M2 10h20" />
-            </svg>
-        ),
-    },
-    {
-        title: "Tasa de devolucion completitud/calidad",
-        value: "+573",
-        description: "+201 since last hour",
-        icon: (
-            <svg
-                xmlns="http://www.w3.org/2000/svg"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth="2"
-                className="h-4 w-4 text-muted-foreground"
-            >
-                <path d="M22 12h-4l-3 9L9 3l-3 9H2" />
-            </svg>
-        ),
-    },
-]
+import DashboardTemplate from "@/components/templates/DashBoardTemplate"
+import { useGetEvaluationStats } from "../../hooks/stats/useGetEvaluationStats"
+import type { CardMetric, LinePoint, PieSlice } from "@/types/statsTypes"
+import type { StatsCardProps } from "@/components/molecules/Stats-card"
 
 export default function DashboardScreen() {
-    return <DashboardTemplate cardsData={cardsData} />
+    const [range, setRange] = useState({
+        from: startOfDay(subMonths(new Date(), 1)),
+        to: startOfDay(new Date()),
+    })
+
+    const { data, isLoading } = useGetEvaluationStats(
+        formatISO(range.from, { representation: "date" }),
+        formatISO(range.to, { representation: "date" })
+    )
+
+    // Guarda la última respuesta válida
+    const [cachedData, setCachedData] = useState<{
+        cards: CardMetric[]
+        lineSeries: LinePoint[]
+        pieSeries: PieSlice[]
+    } | null>(null)
+
+    useEffect(() => {
+        if (!isLoading && data) {
+            setCachedData({
+                cards: [
+                    data.cards.total,
+                    data.cards.aprobados,
+                    data.cards.rechazados,
+                    {
+                        title: "Tasa de devolución",
+                        value: data.cards.tasaDevolucion.value * 100,
+                        previousValue: data.cards.tasaDevolucion.previousValue * 100,
+                    },
+                ],
+                lineSeries: data.lineSeries,
+                pieSeries: data.pieSeries,
+            })
+        }
+    }, [isLoading, data])
+
+    const formatDelta = (now: number, prev: number) => {
+        const diff = now - prev
+        const pct = prev ? (diff / prev) * 100 : 0
+        const sign = diff >= 0 ? "+" : ""
+        return `${sign}${pct.toFixed(1)}% vs mes anterior`
+    }
+
+    const cardsData: StatsCardProps[] = useMemo(() => {
+        if (!cachedData) return []
+
+        return cachedData.cards.map((c, i) => {
+            let value: string | number
+            if (i === 3) {
+                value = `${c.value.toFixed(1)} %`
+            } else {
+                value = c.value.toLocaleString()
+            }
+
+            const icons = [
+                <CalendarSync className="h-4 w-4 text-muted-foreground" />,
+                <CheckCircle className="h-4 w-4 text-green-500" />,
+                <XCircle className="h-4 w-4 text-red-500" />,
+                <ArrowUpRight className="h-4 w-4 text-blue-500" />,
+            ] as const
+
+            return {
+                title: c.title,
+                value,
+                description: formatDelta(c.value, c.previousValue),
+                icon: icons[i],
+            }
+        })
+    }, [cachedData])
+
+    return (
+        <DashboardTemplate
+            cardsData={cardsData}
+            lineSeries={cachedData?.lineSeries ?? []}
+            pieSeries={cachedData?.pieSeries ?? []}
+            range={range}
+            onRangeChange={setRange}
+            loading={isLoading}
+        />
+    )
 }
-
-
