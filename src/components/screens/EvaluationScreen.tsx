@@ -1,20 +1,17 @@
-import EvaluationResultTemplate from "../templates/EvaluationResultTemplate";
-import { CheckCircle, Circle } from "lucide-react";
-import { ColumnConfig } from "@/types/table";
-import { FormField } from "@/types/formTypes";
-import PdfRenderer from "../organisms/PdfRenderer";
-import tallerPdf from "@/assets/taller_emergentes.pdf";
-
-import { useSendEmail } from "@/hooks/mails/useSendEmailHook";
+import { useEffect } from "react"
+import { useParams } from "react-router-dom"
+import EvaluationResultTemplate from "../templates/EvaluationResultTemplate"
+import { CheckCircle, Circle } from "lucide-react"
+import { ColumnConfig } from "@/types/table"
+import { FormField } from "@/types/formTypes"
+import PdfRenderer from "../organisms/PdfRenderer"
+import tallerPdf from "@/assets/taller_emergentes.pdf"
+import { useSendEmail } from "@/hooks/mails/useSendEmailHook"
+import useGetEthicalRulesByEvaluationIdHook from "@/hooks/ethicalRules/useGetEthicalRulesByEvaluationIdHook"
 
 const modalFormFields: FormField[][] = [
     [
-        {
-            type: "email",
-            key: "to",
-            placeholder: "Correo de destino",
-            required: true,
-        },
+        { type: "email", key: "to", placeholder: "Correo de destino", required: true },
         {
             type: "select",
             key: "subject",
@@ -36,108 +33,79 @@ const modalFormFields: FormField[][] = [
             placeholder: "Vista previa PDF",
             component: <PdfRenderer url={tallerPdf} />,
             required: false,
-            // width: 50, // si tu form lo maneja
         },
-        {
-            type: "textarea",
-            key: "mensajeAdicional",
-            placeholder: "Mensaje adicional",
-            required: false,
-            autoAdjust: true,
-        },
+        { type: "textarea", key: "mensajeAdicional", placeholder: "Mensaje adicional", required: false, autoAdjust: true },
     ],
-];
+]
 
 const columnsConfig: ColumnConfig[] = [
     {
-        id: "id",
-        accessorKey: "id",
-        headerLabel: "Task ID",
-        searchable: true,
+        id: "codeNumber",
+        accessorKey: "codeNumber",
+        headerLabel: "Número de norma",
     },
     {
-        id: "ethicsLaw",
-        accessorKey: "ethicsLaw",
-        headerLabel: "Ley Ética",
-        searchable: true,
-    },
-    {
-        id: "result",
-        accessorKey: "result",
-        headerLabel: "Resultado",
+        id: "status",
+        accessorKey: "status",
+        headerLabel: "Estado",
         renderType: "badgeWithText",
-        badgeVariant: "approved",
         items: [
-            {
-                value: "approved",
-                label: "Aprobado",
-                icon: CheckCircle,
-                badgeVariant: "approved",
-            },
-            {
-                value: "notapproved",
-                label: "No aprobado",
-                icon: Circle,
-                badgeVariant: "notapproved",
-            },
+            { value: "APROBADO", label: "Aprobado", icon: CheckCircle, badgeVariant: "approved" },
+            { value: "NO_APROBADO", label: "No aprobado", icon: Circle, badgeVariant: "notapproved" },
         ],
     },
-];
+    {
+        id: "description",
+        accessorKey: "description",
+        headerLabel: "Descripción",
+    },
+]
 
-const tableData = [
-    {
-        id: "TASK-8782",
-        ethicsLaw: "Ley 1",
-        result: "approved",
-    },
-    {
-        id: "TASK-111",
-        ethicsLaw: "Ley 2 (Texto largo...)",
-        result: "notapproved",
-    },
-    {
-        id: "TASK-222",
-        ethicsLaw: "Ley 3",
-        result: "approved",
-    },
-    {
-        id: "TASK-333",
-        ethicsLaw: "Ley 4",
-        result: "approved",
-    },
-    {
-        id: "TASK-444",
-        ethicsLaw: "Ley 5",
-        result: "notapproved",
-    },
-];
-
+// Mantener solo los tres campos que queremos
+const transformData = (norms: any[]): any[] =>
+    norms.map(({ codeNumber, status, description }) => ({
+        codeNumber,
+        status,
+        description,
+    }))
 
 export default function EvaluationScreen() {
-    const { mutateAsync: sendEmailMutation } = useSendEmail();
+    const { evaluationId } = useParams()
+    const { norms, fetchNorms, loading } =
+        useGetEthicalRulesByEvaluationIdHook(evaluationId || "")
+    const { mutateAsync: sendEmailMutation } = useSendEmail()
+
+    useEffect(() => {
+        fetchNorms()
+    }, [fetchNorms])
+
+    useEffect(() => {
+        console.log("Evaluación ID:", evaluationId)
+        console.log("Normas éticas:", norms)
+    }, [evaluationId, norms])
 
     const handleModalFormSubmit = async (data: any) => {
-        console.log("Registro:", data);
         try {
             await sendEmailMutation({
                 to: data.to,
                 subject: data.subject,
                 mensajeAdicional: data.mensajeAdicional,
-            });
-            console.log("Correo enviado exitosamente.");
+            })
+            console.log("Correo enviado exitosamente.")
         } catch (err) {
-            console.error("Error al enviar el correo:", err);
+            console.error("Error al enviar el correo:", err)
         }
-    };
+    }
 
     return (
         <div>
+            {loading && <p>Cargando normas...</p>}
             <EvaluationResultTemplate
-                data={tableData}
+                data={transformData(norms)}
                 columnsConfig={columnsConfig}
                 modalFormFields={modalFormFields}
                 onModalSubmit={handleModalFormSubmit}
             />
         </div>
-    );
+    )
 }

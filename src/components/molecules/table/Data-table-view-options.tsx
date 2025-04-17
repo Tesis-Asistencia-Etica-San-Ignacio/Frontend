@@ -3,7 +3,6 @@
 import { DropdownMenuTrigger } from "@radix-ui/react-dropdown-menu"
 import { Table } from "@tanstack/react-table"
 import { Settings2 } from "lucide-react"
-
 import { Button } from "../../atoms/ui/button"
 import {
   DropdownMenu,
@@ -12,6 +11,11 @@ import {
   DropdownMenuLabel,
   DropdownMenuSeparator,
 } from "../../atoms/ui/dropdown-menu"
+import { ColumnConfig } from "@/types/table"
+
+interface DataTableMeta {
+  columnsConfigMap?: Record<string, ColumnConfig>
+}
 
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>
@@ -20,6 +24,9 @@ interface DataTableViewOptionsProps<TData> {
 export function DataTableViewOptions<TData>({
   table,
 }: DataTableViewOptionsProps<TData>) {
+  const meta = table.options.meta as DataTableMeta | undefined
+  const columnsConfigMap = meta?.columnsConfigMap
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -42,14 +49,16 @@ export function DataTableViewOptions<TData>({
               typeof column.accessorFn !== "undefined" && column.getCanHide()
           )
           .map((column) => {
+            const colConfig = columnsConfigMap?.[column.id]
+            const labelToShow = colConfig?.headerLabel || column.id
+
             return (
               <DropdownMenuCheckboxItem
                 key={column.id}
-                className="capitalize"
                 checked={column.getIsVisible()}
                 onCheckedChange={(value) => column.toggleVisibility(!!value)}
               >
-                {column.id}
+                {labelToShow}
               </DropdownMenuCheckboxItem>
             )
           })}
