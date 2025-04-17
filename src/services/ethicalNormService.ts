@@ -1,4 +1,5 @@
-import { evaluationsApi } from "@/lib/api/evaluationsApi"; 
+// src/services/ethicalNormService.ts
+import { requestsApi } from "@/lib/api/requestsApi"; // Puedes usar la misma instancia o crear otra si lo requieres
 import { EthicalNormResponseDto, UpdateEthicalRuleParams } from "@/types/ethicalNormTypes";
 
 
@@ -7,7 +8,7 @@ export const updateEthicalNorm = async (
     updateData: UpdateEthicalRuleParams
   ): Promise<void> => {
     console.log("Updating ethical norm with data:", updateData);
-    await evaluationsApi.put(`/norma-etica/${normId}`, updateData, {
+    await requestsApi.patch(`/norma-etica/${normId}`, updateData, {
       headers: { "Content-Type": "application/json" },
     });
   };
@@ -15,6 +16,6 @@ export const updateEthicalNorm = async (
 export const getEthicalNormsByEvaluationId = async (
     evaluationId: string
   ): Promise<EthicalNormResponseDto[]> => {
-    const response = await evaluationsApi.get(`/ethicalRules/evaluation/${evaluationId}`);
+    const response = await requestsApi.get(`/ethicalRules/evaluation/${evaluationId}`);
     return response.data;
   };

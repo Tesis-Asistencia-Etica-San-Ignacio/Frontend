@@ -1,12 +1,12 @@
 import axios from 'axios';
 
-export const evaluationsApi = axios.create({
+export const requestsApi = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
   withCredentials: true, // Si el backend utiliza cookies httpOnly
 });
 
 // Interceptor para inyectar el token (si es que se guarda en localStorage o en otro lugar)
-evaluationsApi.interceptors.request.use(
+requestsApi.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token'); // O el nombre que uses para tu token
     if (token) {
