@@ -1,4 +1,3 @@
-// src/hooks/useGetAllPrompts.ts
 import { useState, useCallback } from "react";
 import { toast } from "sonner";
 import { getAllPrompts } from "@/services/promptService";
