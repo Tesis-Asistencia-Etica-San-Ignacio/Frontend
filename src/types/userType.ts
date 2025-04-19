@@ -5,6 +5,8 @@ export interface User {
   type: string;
   password: string;
   avatar: string;
+  //quitar
+  _id: string;
 }
 
 // Crea un usuario sin incluir el campo id

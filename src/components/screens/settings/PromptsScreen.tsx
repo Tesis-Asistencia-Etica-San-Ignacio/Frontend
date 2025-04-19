@@ -1,81 +1,106 @@
-import React, { useRef } from "react"
-import { toast } from "@/hooks/use-toast"
+import React, { useRef, useState, useEffect } from "react"
+import { toast } from "sonner"
 import { DynamicFormHandles } from "@/components/molecules/Dynamic-form"
 import PromptsTemplate from "@/components/templates/settings/PromptsTemplate"
-import { FormField } from "@/types/formTypes"
 
-/**
- * Varios textareas para los prompts en una sola columna.
- * Si desearas dejarlos "solo lectura", podrías ajustar la lógica en el DynamicForm.
- */
-const promptsFields: FormField[][] = [
-    [
-        {
-            type: "textarea",
-            key: "prompt1",
-            placeholder: "Prompt #1",
-            required: false,
-        },
-        {
-            type: "textarea",
-            key: "prompt2",
-            placeholder: "Prompt #2",
-            required: false,
-        },
-    ],
-    [
-        {
-            type: "textarea",
-            key: "prompt3",
-            placeholder: "Prompt #3",
-            required: false,
-        },
-        {
-            type: "textarea",
-            key: "prompt4",
-            placeholder: "Prompt #4",
-            required: false,
-        },
-    ],
-    [
-        {
-            type: "textarea",
-            key: "prompt5",
-            placeholder: "Prompt #5",
-            required: false,
-        },
-        {
-            type: "textarea",
-            key: "prompt6",
-            placeholder: "Prompt #6",
-            required: false,
-        },
-    ]
-]
+import useGetPromptsByEvaluator from "@/hooks/prompts/useGetPromptsByEvaluatorHook"
+import useUpdatePromptText from "@/hooks/prompts/useUpdatePromptHook"
+import useRefreshPrompts from "@/hooks/prompts/useRefreshPromptsHook"
+import { useAuthContext } from "@/context/AuthContext"
+import type { FormField } from "@/types/formTypes"
 
 export default function PromptsScreen() {
-    const formRef = useRef<DynamicFormHandles>(null)
+    const { user } = useAuthContext()
+    const evaluatorId = user?._id ?? ""
 
-    function onSubmit() {
-        if (formRef.current) {
-            formRef.current.handleSubmit((data) => {
-                // Lógica para actualizar prompts
-                console.log("Prompts data =>", data)
-                toast({
-                    title: "Prompts actualizados",
-                    description: "Se han guardado los cambios en los prompts.",
-                })
-            })()
+    const formRef = useRef<DynamicFormHandles>(null)
+    const { prompts, fetchPrompts, loading: loadingFetch } =
+        useGetPromptsByEvaluator(evaluatorId)
+    const { updatePromptText, loading: loadingUpdate } = useUpdatePromptText()
+    const { refreshPrompts, loading: loadingRefresh } = useRefreshPrompts()
+
+    const [fields, setFields] = useState<FormField[][]>([])
+    const [initialValues, setInitialValues] = useState<Record<string, string>>({})
+    const [updateOpen, setUpdateOpen] = useState(false)
+    const [resetOpen, setResetOpen] = useState(false)
+    const [confirmValue, setConfirmValue] = useState("")
+
+    useEffect(() => {
+        if (evaluatorId) fetchPrompts()
+    }, [evaluatorId])
+
+    useEffect(() => {
+        const init: Record<string, string> = {}
+        prompts.forEach((p) => (init[p.id] = p.texto))
+        setInitialValues(init)
+
+        const rows: FormField[][] = []
+        for (let i = 0; i < prompts.length; i += 2) {
+            rows.push(
+                prompts.slice(i, i + 2).map((p) => ({
+                    type: "textarea",
+                    key: p.id,
+                    placeholder: "",
+                    required: false,
+                    defaultValue: p.texto,
+                }))
+            )
+        }
+        setFields(rows)
+    }, [prompts])
+
+    const onSubmit = () => {
+        formRef.current?.handleSubmit(async (data) => {
+            const changed = Object.entries(data).filter(
+                ([id, txt]) => txt !== initialValues[id]
+            ) as [string, string][]
+
+            if (!changed.length) {
+                toast.info("Sin cambios – nada que actualizar")
+                return
+            }
+
+            try {
+                for (const [id, txt] of changed) {
+                    await updatePromptText(id, { texto: txt })
+                }
+                setUpdateOpen(false)
+                fetchPrompts()
+            } catch {
+                // los hooks ya muestran toast.error
+            }
+        })()
+    }
+
+    const onConfirmReset = async () => {
+        setResetOpen(false)
+        try {
+            await refreshPrompts(evaluatorId)
+            fetchPrompts()
+        } catch {
+            // el hook ya hizo toast.error
         }
     }
 
     return (
         <PromptsTemplate
             title="Prompts"
-            desc="Modifica los prompts que se utilizarán en la plataforma."
-            fields={promptsFields}
+            desc="Modifica los prompts de la plataforma."
+            fields={fields}
             formRef={formRef}
             onSubmit={onSubmit}
+            onUpdateOpen={setUpdateOpen}
+            updateOpen={updateOpen}
+            onResetOpen={setResetOpen}
+            resetOpen={resetOpen}
+            confirmValue={confirmValue}
+            setConfirmValue={setConfirmValue}
+            onConfirmReset={onConfirmReset}
+            loading={{
+                fetch: loadingFetch,
+                update: loadingUpdate,
+                reset: loadingRefresh,
+            }}
         />
     )
 }

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Button } from "../atoms/ui/button";
-import ModalForm from "../organisms/ModalForm";
+import ModalForm from "./dialogs/ModalForm";
 import type { FormField } from "@/types/formTypes";
 import { Toaster } from "../atoms/ui/sonner";
 
