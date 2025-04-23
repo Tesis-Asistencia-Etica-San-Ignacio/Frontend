@@ -99,6 +99,7 @@ export function NavUser({ user, onLogout, getInitials }: NavUserProps) {
                         <DropdownMenuItem onClick={handleLogout}>
                             <LogOut />
                             Cerrar sesión
+                            <Link to="/"></Link>
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

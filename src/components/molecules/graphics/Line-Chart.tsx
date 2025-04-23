@@ -1,25 +1,20 @@
-import React from "react"
 import {
-    LineChart,
-    Line,
-    XAxis,
-    YAxis,
-    CartesianGrid,
-    Tooltip,
-    Legend,
-    ResponsiveContainer,
-} from "recharts"
-import type { LinePoint } from "@/types/statsTypes"
+    LineChart, Line, XAxis, YAxis,
+    CartesianGrid, Tooltip, Legend, ResponsiveContainer,
+} from 'recharts';
+import { LinePoint, LINE_COLORS } from '@/types/statsTypes';
+import React from 'react';
 
 export const LineChartComponent: React.FC<{
-    data: LinePoint[]
-    loading?: boolean
+    data: LinePoint[];
+    loading?: boolean;
 }> = ({ data, loading }) => {
-    const [chartData, setChartData] = React.useState<LinePoint[]>(data)
+    const [chartData, setChartData] = React.useState<LinePoint[]>(data);
 
-    React.useEffect(() => {
-        if (!loading) setChartData(data)
-    }, [data, loading])
+    React.useEffect(() => { if (!loading) setChartData(data); }, [data, loading]);
+
+    /* Detectar series (todas las claves excepto “date”) */
+    const keys = Object.keys(chartData[0] || {}).filter(k => k !== 'date') || ['evaluadas'];
 
     return (
         <div className="relative">
@@ -30,12 +25,11 @@ export const LineChartComponent: React.FC<{
                     <YAxis />
                     <Tooltip />
                     <Legend />
-                    <Line
-                        type="monotone"
-                        dataKey="evaluadas"
-                        stroke="#8884d8"
-                        activeDot={{ r: 8 }}
-                    />
+                    {keys.map((key, i) => (
+                        <Line key={key} type="monotone" dataKey={key}
+                            stroke={LINE_COLORS[i % LINE_COLORS.length]}
+                            activeDot={{ r: 8 }} />
+                    ))}
                 </LineChart>
             </ResponsiveContainer>
 
@@ -45,5 +39,5 @@ export const LineChartComponent: React.FC<{
                 </div>
             )}
         </div>
-    )
-}
+    );
+};

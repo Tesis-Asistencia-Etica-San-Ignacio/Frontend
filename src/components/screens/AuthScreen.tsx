@@ -27,12 +27,7 @@ const slides: Slide[] = [
     description: "Al sistema de asistencia a la evaluación ética del HUSI",
   },
   {
-    imageUrl: "src/assets/anime-4k-pictures-s6fzu24pgsaxtsfb.jpg",
-    title: "Otra sección",
-    description: "Información relevante para el usuario",
-  },
-  {
-    imageUrl: "src/assets/bg-Medicina.jpg",
+    imageUrl: "src/assets/ponti.jpg",
     title: "Último Slide",
     description: "Pequeña descripción final",
   },

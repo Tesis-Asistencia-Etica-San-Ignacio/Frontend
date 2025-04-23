@@ -1,36 +1,43 @@
-import React from "react"
-import { z, ZodSchema } from "zod"
+import React from "react";
+import { z, ZodSchema } from "zod";
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogFooter,
     DialogTitle,
-} from "@/components/atoms/ui/dialog"
-import { Button } from "@/components/atoms/ui/button"
-
+} from "@/components/atoms/ui/dialog";
+import { Button } from "@/components/atoms/ui/button";
 import {
     Form,
     FormDescription,
-} from "@/components/atoms/ui/form"
-
-import { useForm } from "react-hook-form"
-import { zodResolver } from "@hookform/resolvers/zod"
+} from "@/components/atoms/ui/form";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { toast } from "sonner";
 
 export interface ConfirmDialogProps {
-    open: boolean
-    onOpenChange: (open: boolean) => void
-    handleConfirm: () => Promise<void> | void
-    disabled?: boolean
-    title: React.ReactNode
-    description: React.ReactNode
-    confirmText: string
-    destructive?: boolean
-    /**  
-     * Si proporcionas un esquema Zod, el diálogo funcionará como  
-     * formulario validable. Si no, se usa un esquema vacío.  
-     */
-    schema?: ZodSchema<any>
+    open: boolean;
+    onOpenChange: (open: boolean) => void;
+    handleConfirm: () => Promise<void> | void;
+    disabled?: boolean;
+    title: React.ReactNode;
+    description: React.ReactNode;
+    confirmText: string;
+    destructive?: boolean;
+    schema?: ZodSchema<any>;
+    successToast: {
+        title: string;
+        description: string;
+        icon: React.ReactNode;
+        closeButton: boolean;
+    };
+    errorToast: {
+        title: string;
+        description: string;
+        icon: React.ReactNode;
+        closeButton: boolean;
+    };
 }
 
 export function ConfirmDialog({
@@ -42,32 +49,43 @@ export function ConfirmDialog({
     description,
     confirmText,
     destructive = false,
-    schema = z.object({}), // esquema vacío por defecto
+    schema = z.object({}),
+    successToast,
+    errorToast,
 }: ConfirmDialogProps) {
-    /* ------------------ react‑hook‑form + Zod ------------------ */
     const form = useForm({
         resolver: zodResolver(schema),
         defaultValues: {},
         mode: "onSubmit",
-    })
+    });
 
     const onSubmit = async () => {
-        await handleConfirm()
-    }
+        try {
+            await handleConfirm();
+            toast.success(successToast.title, {
+                description: successToast.description,
+                icon: successToast.icon,
+                closeButton: successToast.closeButton,
+            });
+            onOpenChange(false);
+        } catch {
+            toast.error(errorToast.title, {
+                description: errorToast.description,
+                icon: errorToast.icon,
+                closeButton: errorToast.closeButton,
+            });
+        }
+    };
 
-    /* --------------------------- UI ---------------------------- */
     return (
         <Dialog open={open} onOpenChange={onOpenChange}>
-            <DialogContent style={{maxWidth: "30vw", overflow: "auto" }}>
+            <DialogContent style={{ minWidth: "25vw", maxWidth: "35vw", overflow: "auto" }}>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <DialogHeader>
                             <DialogTitle>{title}</DialogTitle>
                         </DialogHeader>
-
-                        {/* Puedes poner inputs dentro de `description` */}
                         <FormDescription>{description}</FormDescription>
-
                         <DialogFooter>
                             <Button
                                 type="submit"
@@ -81,7 +99,7 @@ export function ConfirmDialog({
                 </Form>
             </DialogContent>
         </Dialog>
-    )
+    );
 }
 
-export default ConfirmDialog
+export default ConfirmDialog;

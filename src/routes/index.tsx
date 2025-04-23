@@ -11,6 +11,7 @@ const FileHistory = lazy(() => import("../components/screens/FileHistoryScreen")
 const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));
+const NotFoundErrorScreen = lazy(() => import("../components/screens/errors/404"));
 
 // rutas de rol
 const EvaluatorRoutes = lazy(() => import("./EvaluatorRoutes"));
@@ -49,6 +50,7 @@ export const AppRoutes = () => {
               <Route path="historial-archivos" element={<FileHistory />} />
             </Route>
           </Route>
+          <Route path="*" element={<NotFoundErrorScreen />} />
         </Routes>
       </Suspense>
     </BrowserRouter>

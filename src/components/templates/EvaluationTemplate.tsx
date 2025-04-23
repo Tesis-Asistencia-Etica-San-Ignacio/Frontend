@@ -1,15 +1,27 @@
-import { EvaluationHeader } from "../molecules/Evaluation-header";
 import React from "react";
+import { EvaluationHeader } from "../molecules/Evaluation-header";
 import { DynamicDataTable } from "../organisms/DynamicDataTable";
-import { ColumnConfig } from "@/types/table";
 import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
-import { FormField } from "@/types/formTypes";
+import type { ColumnConfig } from "@/types/table";
+import type { FormField } from "@/types/formTypes";
 
 interface EvaluationResultTemplateProps {
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
   modalFormFields: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
+  modalSuccessToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  modalErrorToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
 }
 
 export default function EvaluationResultTemplate({
@@ -17,6 +29,8 @@ export default function EvaluationResultTemplate({
   columnsConfig,
   modalFormFields,
   onModalSubmit,
+  modalSuccessToast,
+  modalErrorToast,
 }: EvaluationResultTemplateProps) {
   const [selectedTask, setSelectedTask] = React.useState<any | null>(null);
 
@@ -24,13 +38,12 @@ export default function EvaluationResultTemplate({
     if (selectedTask && selectedTask.id === rowData.id) {
       setSelectedTask(null);
     } else {
-      setSelectedTask(data);
+      setSelectedTask(rowData);
     }
   };
 
   return (
     <section className="pb-8 space-y-4">
-      
       <EvaluationHeader title="Resultado de la evaluación:" />
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-2">
@@ -45,6 +58,8 @@ export default function EvaluationResultTemplate({
           selectedTask={selectedTask}
           modalFormFields={modalFormFields}
           onModalSubmit={onModalSubmit}
+          modalSuccessToast={modalSuccessToast}
+          modalErrorToast={modalErrorToast}
         />
       </div>
     </section>

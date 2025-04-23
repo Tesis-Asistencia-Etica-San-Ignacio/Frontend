@@ -1,4 +1,4 @@
-import { useState } from "react";
+import React, { useState } from "react";
 import { Button } from "../atoms/ui/button";
 import ModalForm from "./dialogs/ModalForm";
 import type { FormField } from "@/types/formTypes";
@@ -8,12 +8,26 @@ interface EthicalEvaluationBoxProps {
   readonly selectedTask?: { readonly ethicsLaw?: string } | null;
   modalFormFields?: FormField[] | FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
+  modalSuccessToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  modalErrorToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
 }
 
 export default function EthicalEvaluationBox({
   selectedTask,
   modalFormFields,
   onModalSubmit,
+  modalSuccessToast,
+  modalErrorToast,
 }: EthicalEvaluationBoxProps) {
   const [modalOpen, setModalOpen] = useState(false);
 
@@ -37,7 +51,6 @@ export default function EthicalEvaluationBox({
         <Button onClick={() => setModalOpen(true)}>Enviar resultado</Button>
       </div>
       {modalFormFields && onModalSubmit && (
-        
         <ModalForm
           open={modalOpen}
           onOpenChange={setModalOpen}
@@ -47,7 +60,8 @@ export default function EthicalEvaluationBox({
           submitButtonText="Enviar resultado"
           width="70%"
           height="80%"
-
+          successToast={modalSuccessToast}
+          errorToast={modalErrorToast}
         />
       )}
     </div>

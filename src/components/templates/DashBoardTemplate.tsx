@@ -1,4 +1,3 @@
-// src/components/templates/DashBoardTemplate.tsx
 import { StatsGrid } from "@/components/organisms/Stats-grid"
 import { DatePickerWithRange } from "../molecules/Date-range-picker"
 import { Card, CardContent, CardHeader, CardTitle } from "../atoms/ui/card"

@@ -1,27 +1,32 @@
-import { userApi } from '../lib/api';
-import { CreateUserInput, UpdateUserInput, User } from '../types';
+import { userApi, noCredsInstance } from '../lib/api/userApi';
+import {
+    CreateUserInput,
+    UpdateUserInput,
+    UpdatePasswordInput,
+    User,
+} from '../types';
 
-
-export const createUser = async (newUser: CreateUserInput): Promise<User> => {
-    const { data } = await userApi.post<User>('/user/investigador', newUser);
+export const createUser = async (
+    newUser: CreateUserInput,
+): Promise<User> => {
+    const { data } = await noCredsInstance.post<User>(
+        '/user/investigador',
+        newUser,
+    );
     return data;
 };
 
-export const getAllUsers = async (): Promise<User[]> => {
-    const { data } = await userApi.get<User[]>('/user');
+// --- update profile (name / last_name / email) ---
+export const updateUser = async (
+    updates: UpdateUserInput,
+): Promise<User> => {
+    const { data } = await userApi.patch<User>('/user/', updates);
     return data;
 };
-
-export const deleteUser = async (id: string): Promise<void> => {
-    await userApi.delete(`/user/${id}`);
-};
-
-export const getUserById = async (id: string): Promise<User> => {
-    const { data } = await userApi.get<User>(`/user/${id}`);
-    return data;
-};
-
-export const updateUser = async ({ id, ...updates }: { id: string } & UpdateUserInput): Promise<User> => {
-    const { data } = await userApi.patch<User>(`/user/${id}`, updates);
+// --- update profile (password) ---
+export const updatePassword = async (
+    payload: UpdatePasswordInput,
+): Promise<User> => {
+    const { data } = await userApi.patch<User>('/user/', payload);
     return data;
 };

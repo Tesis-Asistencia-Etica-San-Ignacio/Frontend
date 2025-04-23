@@ -13,4 +13,13 @@ export interface User {
 export type CreateUserInput = Omit<User, 'id'>;
 
 // Actualiza un usuario sin el campo id
-export type UpdateUserInput = Partial<Omit<User, 'id'>>;
+// types/user.ts
+export interface UpdateUserInput {
+  name?: string;
+  last_name?: string;
+  email?: string;
+}
+
+export interface UpdatePasswordInput {
+  password: string;
+}

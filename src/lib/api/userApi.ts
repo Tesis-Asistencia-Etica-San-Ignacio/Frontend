@@ -2,17 +2,18 @@ import axios from 'axios';
 
 export const userApi = axios.create({
   baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: true,
 });
 
-userApi.interceptors.request.use(
-  config => config,
-  error => Promise.reject(error)
-);
+export const noCredsInstance = axios.create({
+  baseURL: import.meta.env.VITE_BACKEND_URL,
+  withCredentials: false,
+});
 
 userApi.interceptors.response.use(
-  response => response,
-  error => {
-    console.error("API Error:", error);
-    return Promise.reject(error);
-  }
+  r => r,
+  e => {
+    console.error('API Error:', e);
+    return Promise.reject(e);
+  },
 );
