@@ -7,6 +7,7 @@ import "./styles/index.css";
 import App from "./App.tsx";
 import { AuthProvider } from "./context/AuthContext.tsx";
 import { ThemeProvider } from "./context/ThemeContext.tsx";
+import { Toaster } from "sonner";
 
 const queryClient = new QueryClient();
 
@@ -15,6 +16,8 @@ createRoot(document.getElementById("root")!).render(
     <QueryClientProvider client={queryClient}>
       <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
         <AuthProvider>
+          <Toaster />
+
           <App />
         </AuthProvider>
       </ThemeProvider>

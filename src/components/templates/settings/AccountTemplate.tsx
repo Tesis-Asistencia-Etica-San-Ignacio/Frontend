@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Toaster } from "sonner";
 import ContentSection from "@/components/molecules/ContentSection";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import { FormField } from "@/types/formTypes";
@@ -49,8 +48,6 @@ export default function AccountTemplate({
 
     return (
         <div className="flex flex-col w-full">
-            <Toaster />
-
             <ContentSection title={title} desc={desc}>
                 <div className="lg:max-w-xl space-y-4">
                     <DynamicForm

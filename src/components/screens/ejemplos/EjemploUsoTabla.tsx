@@ -160,3 +160,95 @@ export default function Ejemplo() {
         </div>
     )
 }
+
+
+//Ejemplo de uso
+/* const registryFields: FormField[][] = [
+  [
+    {
+      type: "email",
+      key: "email",
+      placeholder: "Tu correo institucional",
+      required: true,
+    },
+    {
+      type: "select",
+      key: "country",
+      placeholder: "País",
+      required: true,
+      options: [
+        { value: "mx", label: "México" },
+        { value: "us", label: "Estados Unidos" },
+      ],
+      selectPlaceholder: "Selecciona un país",
+    },
+  ],
+  [
+    {
+      type: "custom",
+      key: "customField",
+      placeholder: "Campo personalizado",
+      component: (
+        <Button variant="outline" className="w-full">
+          Campo personalizado
+        </Button>
+      ),
+    },
+  ],
+  [
+    {
+      type: "password",
+      key: "password",
+      placeholder: "Contraseña",
+      required: true,
+      minLength: 6,
+      maxLength: 50,
+    },
+    {
+      type: "extension-phone",
+      key: "extension",
+      placeholder: "Extensión",
+      required: false,
+      width: 50,
+    },
+  ],
+  [
+    {
+      type: "phone",
+      key: "phone",
+      placeholder: "Teléfono",
+      required: true,
+      minLength: 7,
+      maxLength: 10,
+    },
+    {
+      type: "document",
+      key: "document",
+      placeholder: "Documento",
+      required: true,
+      minLength: 8,
+    },
+    {
+      type: "address",
+      key: "address",
+      placeholder: "Dirección",
+      required: true,
+    },
+  ],
+  [
+    {
+      type: "user",
+      key: "username",
+      placeholder: "Usuario",
+      required: true,
+    },
+    {
+      type: "textarea",
+      key: "bio",
+      placeholder: "Biografía (auto ajustable)",
+      required: false,
+      autoAdjust: false, 
+      width: 50,
+    },
+  ],
+] */

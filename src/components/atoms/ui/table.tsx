@@ -15,7 +15,7 @@ export function Table({ className, ...props }: React.ComponentProps<"table">) {
     >
       {/* Solo envolvemos al <table> en el provider, 
           así el wrapper <div> sigue idéntico al original */}
-      <TooltipProvider delayDuration={2000}>
+      <TooltipProvider>
         <table
           data-slot="table"
           className={cn("w-full caption-bottom text-sm", className)}
@@ -85,7 +85,12 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
   )
 }
 
-export function TableCell({ className, children, ...props }: React.ComponentProps<"td">) {
+
+export function TableCell({
+  className,
+  children,
+  ...props
+}: React.ComponentProps<"td">) {
   const spanRef = React.useRef<HTMLSpanElement>(null)
   const [isOverflow, setIsOverflow] = React.useState(false)
 
@@ -99,7 +104,6 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
   React.useEffect(() => {
     const el = spanRef.current
     if (!el || typeof ResizeObserver === "undefined") return
-
     const ro = new ResizeObserver(checkOverflow)
     ro.observe(el)
     return () => ro.disconnect()
@@ -108,7 +112,7 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
   const innerSpan = (
     <span
       ref={spanRef}
-      className="truncate align-middle max-w-[250px]"
+      className="block truncate align-middle max-w-[350px]"
     >
       {children}
     </span>
@@ -118,24 +122,35 @@ export function TableCell({ className, children, ...props }: React.ComponentProp
     <td
       data-slot="table-cell"
       className={cn(
-        "p-2 align-middle whitespace-nowrap truncate max-w-[250px] [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        "p-2 align-middle whitespace-nowrap max-w-[250px] [&:has([role=checkbox])]:pr-0 [&>[role=checkbox]]:translate-y-[2px]",
+        isOverflow && "cursor-pointer",
         className
       )}
       {...props}
     >
       {isOverflow ? (
-        <Tooltip>
-          <TooltipTrigger asChild>{innerSpan}</TooltipTrigger>
-          <TooltipContent side="top" align="center">
-            {children}
-          </TooltipContent>
-        </Tooltip>
+        <TooltipProvider>
+          <Tooltip>
+            <TooltipTrigger asChild>{innerSpan}</TooltipTrigger>
+            <TooltipContent
+              side="top"
+              align="center"
+              className={
+                "whitespace-normal break-words min-w-[200px] max-w-[20rem] leading-snug px-2 py-2"
+              }
+            >
+              {children}
+            </TooltipContent>
+          </Tooltip>
+        </TooltipProvider>
       ) : (
         innerSpan
       )}
     </td>
   )
 }
+
+
 
 export function TableCaption({
   className,

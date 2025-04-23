@@ -8,13 +8,10 @@ import {
     DialogTitle,
 } from "@/components/atoms/ui/dialog";
 import { Button } from "@/components/atoms/ui/button";
-import {
-    Form,
-    FormDescription,
-} from "@/components/atoms/ui/form";
+import { Form, FormDescription } from "@/components/atoms/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { toast } from "sonner";
+import { useNotify } from "@/hooks/useNotify";
 
 export interface ConfirmDialogProps {
     open: boolean;
@@ -59,21 +56,15 @@ export function ConfirmDialog({
         mode: "onSubmit",
     });
 
+    const { notifySuccess, notifyError } = useNotify();
+
     const onSubmit = async () => {
         try {
             await handleConfirm();
-            toast.success(successToast.title, {
-                description: successToast.description,
-                icon: successToast.icon,
-                closeButton: successToast.closeButton,
-            });
+            notifySuccess(successToast);
             onOpenChange(false);
         } catch {
-            toast.error(errorToast.title, {
-                description: errorToast.description,
-                icon: errorToast.icon,
-                closeButton: errorToast.closeButton,
-            });
+            notifyError(errorToast);
         }
     };
 

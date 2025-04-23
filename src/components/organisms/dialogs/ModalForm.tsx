@@ -5,9 +5,9 @@ import {
     DialogTitle as ShadcnDialogTitle,
 } from "@/components/atoms/ui/dialog";
 import { Button } from "@/components/atoms/ui/button";
-import { toast } from "sonner";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import type { FormField } from "@/types/formTypes";
+import { useNotify } from "@/hooks/useNotify";
 
 export interface TitleConfig {
     text: string;
@@ -51,31 +51,24 @@ const ModalForm: React.FC<ModalFormProps> = ({
 }) => {
     const [loading, setLoading] = useState(false);
     const formRef = useRef<DynamicFormHandles>(null);
+    const { notifySuccess, notifyError } = useNotify();
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (formRef.current) {
+        if (!formRef.current) return;
+
+        formRef.current.handleSubmit(async (data: any) => {
             setLoading(true);
-            formRef.current.handleSubmit(async (data: any) => {
-                try {
-                    await onSubmit(data);
-                    toast.success(successToast.title, {
-                        description: successToast.description,
-                        icon: successToast.icon,
-                        closeButton: successToast.closeButton,
-                    });
-                    setTimeout(() => onOpenChange(false), 500);
-                } catch {
-                    toast.error(errorToast.title, {
-                        description: errorToast.description,
-                        icon: errorToast.icon,
-                        closeButton: errorToast.closeButton,
-                    });
-                } finally {
-                    setLoading(false);
-                }
-            })();
-        }
+            try {
+                await onSubmit(data);
+                notifySuccess(successToast);
+                setTimeout(() => onOpenChange(false), 500);
+            } catch {
+                notifyError(errorToast);
+            } finally {
+                setLoading(false);
+            }
+        })();
     };
 
     return (
