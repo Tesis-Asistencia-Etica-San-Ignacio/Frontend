@@ -1,11 +1,10 @@
-import AuthTemplate from "@/components/templates/AuthTemplate";
-import { FormField } from "@/types/formTypes";
+// screens/AuthScreen.tsx
+import React, { useEffect } from "react";
 import { useAuthContext } from "@/context/AuthContext";
-import { useEffect } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
+import AuthTemplate from "@/components/templates/AuthTemplate";
+import type { FormField } from "@/types/formTypes";
 import { Slide } from "../molecules/Carousel";
-
-
 
 const loginFields: FormField[] = [
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
@@ -30,9 +29,7 @@ const slides: Slide[] = [
     title: "Último Slide",
     description: "Pequeña descripción final",
   },
-]
-
-
+];
 
 export default function AuthScreen() {
   const { user, login, createAccount } = useAuthContext();
@@ -48,8 +45,8 @@ export default function AuthScreen() {
       }
     }
   }, [user, location.pathname, navigate]);
-  const handleLogin = async (credentials: { email: string; password: string }) => {
 
+  const handleLogin = async (credentials: { email: string; password: string }) => {
     await login(credentials.email, credentials.password);
   };
 
@@ -64,13 +61,12 @@ export default function AuthScreen() {
   };
 
   return (
-
     <AuthTemplate
       loginFields={loginFields}
       registryFields={registryFields}
+      slides={slides}
       onLogin={handleLogin}
       onRegister={handleRegister}
-      slides={slides}
     />
   );
 }

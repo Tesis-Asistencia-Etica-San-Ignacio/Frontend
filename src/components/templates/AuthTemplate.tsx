@@ -1,14 +1,16 @@
-import AuthForm from "@/components/organisms/Auth-form"
-import { FormField } from "@/types/formTypes"
-import { CarouselPlugin, Slide } from "../molecules/Carousel"
-import { LoginInput, User } from "../../types"
+// components/templates/AuthTemplate.tsx
+import React from "react";
+import AuthForm from "@/components/organisms/Auth-form";
+import { FormField } from "@/types/formTypes";
+import { CarouselPlugin, Slide } from "../molecules/Carousel";
+import { LoginInput, User } from "../../types";
 
 interface AuthTemplateProps {
-  loginFields: FormField[]
-  registryFields: FormField[]
-  slides: Slide[]
-  onLogin: (values: LoginInput) => void
-  onRegister: (values: User) => void
+  loginFields: FormField[];
+  registryFields: FormField[];
+  slides: Slide[];
+  onLogin: (values: LoginInput) => Promise<void>;
+  onRegister: (values: User) => Promise<void>;
 }
 
 export default function AuthTemplate({
@@ -20,7 +22,6 @@ export default function AuthTemplate({
 }: AuthTemplateProps) {
   return (
     <main className="grid h-screen w-screen p-8 gap-8 overflow-x-hidden grid-cols-1 xl:grid-cols-2">
-      
       {/* Oculto en moviles/tablets, visible en xl en adelante */}
       <section className="hidden xl:flex items-center justify-center h-full overflow-hidden rounded-xl">
         <CarouselPlugin slides={slides} />
@@ -35,5 +36,5 @@ export default function AuthTemplate({
         />
       </section>
     </main>
-  )
+  );
 }

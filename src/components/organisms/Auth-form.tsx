@@ -1,3 +1,4 @@
+// components/organisms/AuthForm.tsx
 import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/atoms/ui/button";
@@ -10,16 +11,16 @@ import {
 } from "@/components/atoms/ui/tabs";
 import type { FormField } from "@/types/formTypes";
 import { LoginInput, User } from "../../types";
+import { useNotify } from "@/hooks/useNotify";
 
-// Importa las imágenes
 import logoLight from "@/assets/LogoHUSI.png";
 import logoDark from "@/assets/Logo_HUSI_Blanco.png";
 
 interface AuthFormProps {
     loginFields: FormField[];
     registryFields: FormField[];
-    onLogin: (values: LoginInput) => void;
-    onRegister: (values: User) => void;
+    onLogin: (values: LoginInput) => Promise<void>;
+    onRegister: (values: User) => Promise<void>;
     className?: string;
 }
 
@@ -30,26 +31,56 @@ export default function AuthForm({
     onRegister,
     className,
 }: AuthFormProps) {
-
     const loginFormRef = useRef<DynamicFormHandles>(null);
     const registryFormRef = useRef<DynamicFormHandles>(null);
+    const { notifySuccess, notifyError } = useNotify();
 
     const handleLoginSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (loginFormRef.current) {
-            loginFormRef.current.handleSubmit((data) => {
-                onLogin(data as LoginInput);
-            })();
-        }
+        if (!loginFormRef.current) return;
+
+        loginFormRef.current.handleSubmit(async (data) => {
+            try {
+                await onLogin(data as LoginInput);
+                notifySuccess({
+                    title: "¡Bienvenido!",
+                    description: "Has iniciado sesión correctamente.",
+                    icon: "✅",
+                    closeButton: true,
+                });
+            } catch (err: any) {
+                notifyError({
+                    title: "Error al iniciar sesión",
+                    description: err.response?.data?.message ?? "Revise sus credenciales.",
+                    icon: "🚫",
+                    closeButton: true,
+                });
+            }
+        })();
     };
 
     const handleRegistrySubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        if (registryFormRef.current) {
-            registryFormRef.current.handleSubmit((data) => {
-                onRegister(data as User);
-            })();
-        }
+        if (!registryFormRef.current) return;
+
+        registryFormRef.current.handleSubmit(async (data) => {
+            try {
+                await onRegister(data as User);
+                notifySuccess({
+                    title: "Cuenta creada",
+                    description: "Te has registrado exitosamente.",
+                    icon: "✅",
+                    closeButton: true,
+                });
+            } catch (err: any) {
+                notifyError({
+                    title: "Error al registrarse",
+                    description: err.response?.data?.message ?? "No se pudo completar el registro.",
+                    icon: "🚫",
+                    closeButton: true,
+                });
+            }
+        })();
     };
 
     return (
@@ -57,16 +88,15 @@ export default function AuthForm({
             <div className="self-center">
                 <img
                     src={logoLight}
-                    alt="Imagen del slide"
+                    alt="Logo HUSI"
                     className="block dark:hidden h-auto w-auto max-h-[300px] max-w-[300px] rounded-xl"
                 />
                 <img
                     src={logoDark}
-                    alt="Imagen del slide"
+                    alt="Logo HUSI"
                     className="hidden dark:block h-auto w-auto max-h-[300px] max-w-[300px] rounded-xl m-5"
                 />
             </div>
-
 
             <Tabs defaultValue="login" className="flex flex-col flex-1 min-h-0">
                 <TabsList className="flex items-center justify-center gap-2 rounded-full self-center px-3 py-7">
@@ -82,10 +112,7 @@ export default function AuthForm({
                     <h1 className="text-2xl font-bold text-center">Iniciar Sesión</h1>
                     <form onSubmit={handleLoginSubmit} className="flex flex-col flex-1 min-h-0">
                         <div className="flex flex-col flex-1 min-h-0 overflow-y-auto gap-4">
-                            <DynamicForm
-                                ref={loginFormRef}
-                                formDataConfig={loginFields}
-                            />
+                            <DynamicForm ref={loginFormRef} formDataConfig={loginFields} />
                             <Button type="submit" className="w-full mb-4">
                                 Iniciar Sesión
                             </Button>
@@ -96,11 +123,8 @@ export default function AuthForm({
                 <TabsContent value="registry" className="flex flex-col flex-1 min-h-0 space-y-4">
                     <h1 className="text-2xl font-bold text-center">Crea una Cuenta</h1>
                     <form onSubmit={handleRegistrySubmit} className="flex flex-col flex-1 min-h-0">
-                        <div className="flex-1 min-h-0 overflow-y-auto">
-                            <DynamicForm
-                                ref={registryFormRef}
-                                formDataConfig={registryFields}
-                            />
+                        <div className="flex-1 min-h-0 overflow-y-auto gap-4">
+                            <DynamicForm ref={registryFormRef} formDataConfig={registryFields} />
                         </div>
                         <Button type="submit" className="w-full mb-4">
                             Registrarse
