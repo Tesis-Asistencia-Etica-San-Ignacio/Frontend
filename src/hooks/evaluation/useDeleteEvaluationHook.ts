@@ -13,7 +13,7 @@ const useDeleteEvaluationHook = () => {
       toast.success("Evaluación eliminada correctamente");
     } catch (error) {
       console.error("Error al eliminar la evaluación:", error);
-      toast.error("Error al eliminar la evaluación");
+      toast.error("Error al eliminar la evaluación", { closeButton: true });
     }
     setLoading(false);
   }, []);

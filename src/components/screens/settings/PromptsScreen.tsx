@@ -1,3 +1,4 @@
+// screens/PromptsScreen.tsx
 import { useRef, useEffect, useState } from "react";
 import { DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import PromptsTemplate from "@/components/templates/settings/PromptsTemplate";
@@ -6,15 +7,15 @@ import useUpdatePromptText from "@/hooks/prompts/useUpdatePromptHook";
 import useRefreshPrompts from "@/hooks/prompts/useRefreshPromptsHook";
 import type { FormField } from "@/types/formTypes";
 import { ConfirmDialogProps } from "@/components/organisms/dialogs/ConfirmDialog";
+import { useNotify } from "@/hooks/useNotify";
 
 export default function PromptsScreen() {
     const formRef = useRef<DynamicFormHandles>(null);
-
     const { prompts, fetchPrompts } = useGetMyPrompts();
     const { updatePromptText } = useUpdatePromptText();
     const { refreshPrompts } = useRefreshPrompts();
+    const { notifySuccess, notifyError, notifyInfo } = useNotify();
 
-    /* ----- construir campos e initialData ----- */
     const [fields, setFields] = useState<FormField[][]>([]);
     const [initialValues, setInitialValues] = useState<Record<string, string>>({});
 
@@ -24,39 +25,25 @@ export default function PromptsScreen() {
 
     useEffect(() => {
         const init: Record<string, string> = {};
-        prompts.forEach((p) => (init[p.id] = p.texto));
-        setInitialValues(init);
-
         const rows: FormField[][] = [];
-        for (let i = 0; i < prompts.length; i += 2) {
-            rows.push(
-                prompts.slice(i, i + 2).map((p) => ({
-                    type: "textarea",
-                    key: p.id,
-                    placeholder: "",
-                    required: false,
-                }))
-            );
-        }
+        prompts.forEach((p, i) => {
+            init[p.id] = p.texto;
+            if (i % 2 === 0) rows.push([]);
+            rows[rows.length - 1].push({
+                type: "textarea",
+                key: p.id,
+                placeholder: p.nombre ?? `Prompt ${i + 1}`,
+                required: false,
+            });
+        });
+        setInitialValues(init);
         setFields(rows);
     }, [prompts]);
 
-    /* ---- toasts ---- */
-    const updateSuccessToast: ConfirmDialogProps["successToast"] = {
-        title: "Prompts actualizados",
-        description: "Se guardaron los cambios.",
-        icon: "✅",
-        closeButton: true,
-    };
-    const updateErrorToast: ConfirmDialogProps["errorToast"] = {
-        title: "Error de actualización",
-        description: "Uno o más prompts no pudieron guardarse.",
-        icon: "🚫",
-        closeButton: true,
-    };
+    /* toasts solo para reset */
     const resetSuccessToast: ConfirmDialogProps["successToast"] = {
         title: "Prompts reiniciados",
-        description: "Se restauraron los prompts al estado base.",
+        description: "Se restauraron al estado base.",
         icon: "✅",
         closeButton: true,
     };
@@ -67,6 +54,55 @@ export default function PromptsScreen() {
         closeButton: true,
     };
 
+    const handleConfirmUpdate = async (formData: Record<string, string>) => {
+        const changed = Object.entries(formData).filter(
+            ([id, txt]) => txt !== initialValues[id]
+        ) as [string, string][];
+
+        if (!changed.length) {
+            notifyInfo({
+                title: "Sin cambios",
+                description: "No hay prompts modificados.",
+                closeButton: true,
+            });
+            return;
+        }
+
+        for (const [id, texto] of changed) {
+            try {
+                await updatePromptText(id, { texto });
+                notifySuccess({
+                    title: "Prompt actualizado",
+                    description: `Prompt ${id} guardado correctamente.`,
+                    icon: "✅",
+                    closeButton: true,
+                });
+            } catch (e: any) {
+                notifyError({
+                    title: `Error en prompt ${id}`,
+                    description: e?.response?.data?.message ?? "No se pudo guardar el prompt.",
+                    icon: "🚫",
+                    closeButton: true,
+                });
+            }
+        }
+
+        fetchPrompts();
+    };
+
+    const handleConfirmReset = async () => {
+        try {
+            await refreshPrompts();
+            notifySuccess(resetSuccessToast);
+            fetchPrompts();
+        } catch (e: any) {
+            notifyError({
+                ...resetErrorToast,
+                description: e?.response?.data?.message ?? resetErrorToast.description,
+            });
+        }
+    };
+
     return (
         <PromptsTemplate
             title="Prompts"
@@ -74,9 +110,9 @@ export default function PromptsScreen() {
             fields={fields}
             formRef={formRef}
             initialValues={initialValues}
-            onUpdatePrompt={(id, texto) => updatePromptText(id, { texto })}
-            onResetPrompts={refreshPrompts}
-            confirmUpdateToast={{ success: updateSuccessToast, error: updateErrorToast }}
+            onConfirmUpdate={handleConfirmUpdate}
+            onConfirmReset={handleConfirmReset}
+            /* no pasamos confirmUpdateToast -> no habrá toast del dialog */
             confirmResetToast={{ success: resetSuccessToast, error: resetErrorToast }}
         />
     );

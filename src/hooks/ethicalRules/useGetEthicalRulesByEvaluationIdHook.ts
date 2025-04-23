@@ -15,7 +15,7 @@ const useGetEthicalRulesByEvaluationId = (evaluationId: string) => {
       setNorms(data);
     } catch (error) {
       console.error("Error al obtener las normas éticas:", error);
-      toast.error("Error al obtener las normas éticas");
+      toast.error("Error al obtener las normas éticas", { closeButton: true });
     } finally {
       setLoading(false);
     }

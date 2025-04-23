@@ -14,7 +14,7 @@ const useGetEvaluationsByUserHook = () => {
       setFiles(data);
     } catch (error) {
       console.error("Error al obtener los archivos del usuario:", error);
-      toast.error("Error al obtener los archivos del usuario");
+      toast.error("Error al obtener los archivos del usuario", { closeButton: true });
     }
     setLoading(false);
   }, []);

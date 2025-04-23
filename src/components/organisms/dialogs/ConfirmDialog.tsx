@@ -1,3 +1,4 @@
+// components/organisms/dialogs/ConfirmDialog.tsx
 import React from "react";
 import { z, ZodSchema } from "zod";
 import {
@@ -13,6 +14,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "@/hooks/useNotify";
 
+export interface ToastCfg {
+    title: string;
+    description?: string;
+    icon?: React.ReactNode;
+    closeButton?: boolean;
+}
+
 export interface ConfirmDialogProps {
     open: boolean;
     onOpenChange: (open: boolean) => void;
@@ -23,18 +31,9 @@ export interface ConfirmDialogProps {
     confirmText: string;
     destructive?: boolean;
     schema?: ZodSchema<any>;
-    successToast: {
-        title: string;
-        description: string;
-        icon: React.ReactNode;
-        closeButton: boolean;
-    };
-    errorToast: {
-        title: string;
-        description: string;
-        icon: React.ReactNode;
-        closeButton: boolean;
-    };
+    /* ↓ ahora opcionales ↓ */
+    successToast?: ToastCfg;
+    errorToast?: ToastCfg;
 }
 
 export function ConfirmDialog({
@@ -61,10 +60,10 @@ export function ConfirmDialog({
     const onSubmit = async () => {
         try {
             await handleConfirm();
-            notifySuccess(successToast);
+            if (successToast?.title) notifySuccess(successToast);
             onOpenChange(false);
         } catch {
-            notifyError(errorToast);
+            if (errorToast?.title) notifyError(errorToast);
         }
     };
 

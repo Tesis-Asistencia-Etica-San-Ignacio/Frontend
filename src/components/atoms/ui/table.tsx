@@ -89,8 +89,23 @@ export function TableHead({ className, ...props }: React.ComponentProps<"th">) {
 export function TableCell({
   className,
   children,
+  colSpan,
   ...props
-}: React.ComponentProps<"td">) {
+}: React.ComponentProps<"td"> & { colSpan?: number }) {
+  
+  if (colSpan) {
+    return (
+      <td
+        colSpan={colSpan}
+        className={cn("p-2 align-middle text-center", className)}
+        {...props}
+      >
+        {children}
+      </td>
+    )
+  }
+
+  // 2) Caso normal: medimos overflow en el <span> y aplicamos tooltip:
   const spanRef = React.useRef<HTMLSpanElement>(null)
   const [isOverflow, setIsOverflow] = React.useState(false)
 
@@ -100,7 +115,6 @@ export function TableCell({
   }, [])
 
   React.useLayoutEffect(checkOverflow, [children, checkOverflow])
-
   React.useEffect(() => {
     const el = spanRef.current
     if (!el || typeof ResizeObserver === "undefined") return
@@ -112,7 +126,7 @@ export function TableCell({
   const innerSpan = (
     <span
       ref={spanRef}
-      className="block truncate align-middle max-w-[350px]"
+      className="block truncate align-middle max-w-[450px]"
     >
       {children}
     </span>

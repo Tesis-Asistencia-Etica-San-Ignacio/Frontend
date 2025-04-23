@@ -15,7 +15,7 @@ const useUpdateEvaluationHook = () => {
         toast.success("Evaluación actualizada correctamente");
       } catch (error) {
         console.error("Error al actualizar la evaluación:", error);
-        toast.error("Error al actualizar la evaluación");
+        toast.error("Error al actualizar la evaluación", { closeButton: true });
       }
       setLoading(false);
     },

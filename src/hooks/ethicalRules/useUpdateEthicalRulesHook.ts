@@ -15,7 +15,7 @@ const useUpdateEthicalNormHook = () => {
         toast.success("Norma ética actualizada correctamente");
       } catch (error) {
         console.error("Error al actualizar la norma ética:", error);
-        toast.error("Error al actualizar la norma ética");
+        toast.error("Error al actualizar la norma ética", { closeButton: true });
       }
       setLoading(false);
     },

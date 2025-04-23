@@ -21,7 +21,7 @@ function useCreateEvaluation() {
         toast.success(`Archivo ${fileObj.name} subido correctamente`);
       } catch (error) {
         console.error("Error al subir el archivo:", error);
-        toast.error(`Error al subir ${fileObj.name}`);
+        toast.error(`Error al subir ${fileObj.name}`, { closeButton: true });
       }
     }
     setLoading(false);
