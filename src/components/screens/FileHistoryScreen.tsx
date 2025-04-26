@@ -4,6 +4,7 @@ import FileHistoryTemplate from "../templates/FileHistoryTemplate"
 import { CheckCircle, Circle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 import useGetEvaluationsByUserHook from "../../hooks/evaluation/useGetEvaluationByUser"
+import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook"
 
 function createColumnsConfig({
     onEdit,
@@ -96,6 +97,9 @@ function createColumnsConfig({
                     onClick: onVerMas,
                 },
                 {
+                    label : "Reevaluar"
+                },
+                {
                     label: "Delete",
                     onClick: onDelete,
                 },
@@ -132,6 +136,7 @@ const transformData = (data: any[]) => {
 
 export default function FileHistoryScreen() {
     const { files, getFilesByUser } = useGetEvaluationsByUserHook()
+    const { generate } = useGenerateEvaluationHook();
     const [tableData, setTableData] = useState<any[]>([])
     const navigate = useNavigate()
 
@@ -140,6 +145,7 @@ export default function FileHistoryScreen() {
     }
 
     const handleVerMas = (rowData: any) => {
+        generate(rowData.id);
         navigate(`/evaluacion/${rowData.id}`)
     }
 
@@ -149,7 +155,7 @@ export default function FileHistoryScreen() {
             alert("Eliminado: " + rowData.id)
         }
     }
-
+    
     const columnsConfig = createColumnsConfig({
         onEdit: handleEdit,
         onVerMas: handleVerMas,

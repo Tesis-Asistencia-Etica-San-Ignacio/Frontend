@@ -3,7 +3,7 @@ import { toast } from "sonner";
 import { uploadFile } from "@/services/evaluationService";
 import type { FileWithUrl } from "@/types/fileType";
 
-function useCreateEvaluation() {
+function useCreateEvaluationHook() {
   const [loading, setLoading] = useState(false);
 
   const uploadFiles = useCallback(async (files: FileWithUrl[]) => {
@@ -30,4 +30,4 @@ function useCreateEvaluation() {
   return { uploadFiles, loading };
 }
 
-export default useCreateEvaluation;
+export default useCreateEvaluationHook;
