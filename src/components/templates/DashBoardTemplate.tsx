@@ -7,12 +7,12 @@ import type { StatsCardProps } from "@/components/molecules/Stats-card"
 import type { LinePoint, PieSlice } from "@/types/statsTypes"
 
 export interface DashboardTemplateProps {
-    cardsData: StatsCardProps[]
-    lineSeries: LinePoint[]
-    pieSeries: PieSlice[]
-    range: { from: Date; to: Date }
-    onRangeChange: (range: { from: Date; to: Date }) => void
-    loading?: boolean
+    readonly cardsData: StatsCardProps[]
+    readonly lineSeries: LinePoint[]
+    readonly pieSeries: PieSlice[]
+    readonly range: { from: Date; to: Date }
+    readonly onRangeChange: (range: { from: Date; to: Date }) => void
+    readonly loading?: boolean
 }
 
 export default function DashboardTemplate({
