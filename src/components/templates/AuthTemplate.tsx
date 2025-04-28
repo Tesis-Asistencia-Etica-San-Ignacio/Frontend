@@ -1,5 +1,3 @@
-// components/templates/AuthTemplate.tsx
-import React from "react";
 import AuthForm from "@/components/organisms/Auth-form";
 import { FormField } from "@/types/formTypes";
 import { CarouselPlugin, Slide } from "../molecules/Carousel";
