@@ -1,25 +1,34 @@
-// src/hooks/useUpdateEthicalNormHook.ts
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { updateEthicalNorm } from "@/services/ethicalNormService";
 import type { UpdateEthicalRuleParams } from "@/types/ethicalNormTypes";
+import { useNotify } from "@/hooks/useNotify";
 
 const useUpdateEthicalNormHook = () => {
   const [loading, setLoading] = useState(false);
+  const { notifySuccess, notifyError } = useNotify();
 
   const updateEthicalNormHandler = useCallback(
     async (normId: string, updateData: UpdateEthicalRuleParams) => {
       setLoading(true);
       try {
         await updateEthicalNorm(normId, updateData);
-        toast.success("Norma ética actualizada correctamente");
-      } catch (error) {
+        notifySuccess({
+          title: "Norma ética actualizada",
+          description: "Se guardaron los cambios correctamente.",
+          closeButton: true,
+        });
+      } catch (error: any) {
         console.error("Error al actualizar la norma ética:", error);
-        toast.error("Error al actualizar la norma ética", { closeButton: true });
+        notifyError({
+          title: "Error al actualizar norma ética",
+          description: error?.message,
+          closeButton: true,
+        });
+      } finally {
+        setLoading(false);
       }
-      setLoading(false);
     },
-    []
+    [notifySuccess, notifyError]
   );
 
   return { updateEthicalNorm: updateEthicalNormHandler, loading };

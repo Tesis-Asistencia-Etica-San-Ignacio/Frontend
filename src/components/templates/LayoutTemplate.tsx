@@ -37,9 +37,12 @@ export default function LayoutTemplate({
     .filter((seg) => seg !== "")
 
   const makeLabel = (seg: string) =>
-    seg
-      .replace(/-/g, " ")
-      .replace(/\b\w/g, (l) => l.toUpperCase())
+    seg.replace(/-/g, " ").replace(/\b\w/g, (l) => l.toUpperCase())
+
+  // Override de rutas para ciertos segmentos:
+  const overridePaths: Record<string, string> = {
+    evaluacion: "/historial-archivos-evaluados",
+  }
 
   return (
     <SidebarProvider>
@@ -62,10 +65,13 @@ export default function LayoutTemplate({
               </BreadcrumbItem>
 
               {segments.map((seg, idx) => {
-                const path = "/" + segments.slice(0, idx + 1).join("/")
                 const isLast = idx === segments.length - 1
+                // Calcula la ruta real o usa el override
+                const rawPath = "/" + segments.slice(0, idx + 1).join("/")
+                const path = overridePaths[seg] ?? rawPath
+
                 return (
-                  <React.Fragment key={path}>
+                  <React.Fragment key={rawPath}>
                     <BreadcrumbSeparator />
                     <BreadcrumbItem>
                       {isLast ? (

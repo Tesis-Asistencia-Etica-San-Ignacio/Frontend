@@ -1,4 +1,3 @@
-// src/hooks/user/useUpdatePassword.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updatePassword } from '@/services/userService'
 import { useNotify } from '@/hooks/useNotify'
@@ -9,7 +8,7 @@ export function useUpdatePassword() {
   const { notifySuccess, notifyError } = useNotify()
 
   return useMutation<User, unknown, UpdatePasswordInput>({
-    mutationFn: updatePassword,           // ahora espera Promise<User>
+    mutationFn: updatePassword,
     onSuccess: () => {
       qc.invalidateQueries()
       notifySuccess({

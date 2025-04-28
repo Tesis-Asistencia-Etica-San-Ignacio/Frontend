@@ -3,7 +3,7 @@ import ContentSection from "@/components/molecules/ContentSection";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import { FormField } from "@/types/formTypes";
 import { Button } from "@/components/atoms/ui/button";
-import ConfirmDialog, { ConfirmDialogProps } from "@/components/organisms/dialogs/ConfirmDialog";
+import ConfirmDialog from "@/components/organisms/dialogs/ConfirmDialog";
 import { TriangleAlert } from "lucide-react";
 import { Label } from "@/components/atoms/ui/label";
 import { Input } from "@/components/atoms/ui/input";

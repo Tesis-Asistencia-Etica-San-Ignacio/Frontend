@@ -1,33 +1,56 @@
-import { useState, useCallback } from "react";
-import { toast } from "sonner";
-import { uploadFile } from "@/services/evaluationService";
-import type { FileWithUrl } from "@/types/fileType";
+import { useState, useCallback } from "react"
+import { uploadFile } from "@/services/evaluationService"
+import type { FileWithUrl } from "@/types/fileType"
+import { useNotify } from "@/hooks/useNotify"
 
-function useCreateEvaluationHook() {
-  const [loading, setLoading] = useState(false);
+export default function useCreateEvaluationHook() {
+  const [loading, setLoading] = useState(false)
+  const { notifySuccess, notifyError } = useNotify()
 
-  const uploadFiles = useCallback(async (files: FileWithUrl[]) => {
-    setLoading(true);
-    for (const fileObj of files) {
-      // Evita subir archivos con error de validación.
-      if (fileObj.error) continue;
-      console.log("Enviando archivo:", fileObj.file);
-
-      const formData = new FormData();
-      formData.append("file", fileObj.file);
-
+  /**
+   * @param files  lista de FileWithUrl
+   * @param onProgress índice y porcentaje
+   */
+  const uploadFiles = useCallback(
+    async (
+      files: FileWithUrl[],
+      onProgress: (index: number, percent: number) => void
+    ) => {
+      setLoading(true)
       try {
-        await uploadFile(formData);
-        toast.success(`Archivo ${fileObj.name} subido correctamente`);
-      } catch (error) {
-        console.error("Error al subir el archivo:", error);
-        toast.error(`Error al subir ${fileObj.name}`, { closeButton: true });
+        for (let i = 0; i < files.length; i++) {
+          const f = files[i]
+          if (f.error) continue
+
+          const form = new FormData()
+          form.append("file", f.file)
+
+          // Subida real con progreso
+          await uploadFile(form, (e) => {
+            if (!e.total) return
+            const pct = Math.round((e.loaded / e.total) * 100)
+            onProgress(i, pct)
+          })
+
+          notifySuccess({
+            title: `Archivo ${f.name} subido`,
+            description: "Se ha subido correctamente.",
+            closeButton: true,
+          })
+        }
+      } catch (err: any) {
+        console.error("Error al subir archivos:", err)
+        notifyError({
+          title: "Error subiendo archivos",
+          description: err?.message ?? "Revise la consola para más detalles.",
+          closeButton: true,
+        })
+      } finally {
+        setLoading(false)
       }
-    }
-    setLoading(false);
-  }, []);
+    },
+    [notifySuccess, notifyError]
+  )
 
-  return { uploadFiles, loading };
+  return { uploadFiles, loading }
 }
-
-export default useCreateEvaluationHook;

@@ -16,20 +16,7 @@ import {
   DropdownMenuShortcut,
 } from "@/components/atoms/ui/dropdown-menu"
 
-type RadioGroupConfig = {
-  name: string
-  valueKey: string            // p.e. "label"
-  options: { value: string; label: string }[]
-}
-
-type ActionItem = {
-  label: string
-  shortcut?: string
-  onClick?: (rowData: any) => void
-  subMenu?: {
-    radioGroup?: RadioGroupConfig
-  }[]
-}
+import { ActionItem } from "@/types/table"
 
 interface DataTableRowActionsProps<TData> {
   readonly row: Row<TData>
@@ -47,6 +34,13 @@ export function DataTableRowActions<TData>({
 
   const rowData = row.original
 
+  const visibleItems = actionItems.filter(action => {
+    if (action.visible) {
+      return action.visible(rowData)
+    }
+    return true
+  })
+
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
@@ -60,7 +54,7 @@ export function DataTableRowActions<TData>({
       </DropdownMenuTrigger>
 
       <DropdownMenuContent align="end" className="w-[160px]">
-        {actionItems.map((action, idx) => {
+        {visibleItems.map((action, idx) => {
           // Si tiene subMenu
           if (action.subMenu && action.subMenu.length > 0) {
             return (
@@ -75,13 +69,10 @@ export function DataTableRowActions<TData>({
                         // Ejemplo: sub.radioGroup => { name, valueKey, options[] }
                         const currentValue = (rowData as any)[sub.radioGroup.valueKey]
                         return (
-                          <DropdownMenuRadioGroup
-                            key={sIdx}
-                            value={currentValue}
-                          >
+                          <DropdownMenuRadioGroup key={sIdx} value={currentValue} >
                             {sub.radioGroup.options.map((opt) => (
-                              <DropdownMenuRadioItem 
-                                key={opt.value} 
+                              <DropdownMenuRadioItem
+                                key={opt.value}
                                 value={opt.value}
                                 onSelect={() => {
                                   // Lógica de click en cada radio

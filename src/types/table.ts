@@ -13,16 +13,20 @@ export interface ColumnItem {
 /**
  * Acciones que pueden aparecer en la columna "actions".
  */
+
+type RadioGroupConfig = {
+    name: string
+    valueKey: string            // p.e. "label"
+    options: { value: string; label: string }[]
+}
+
 export interface ActionItem {
     label: string
     shortcut?: string
+    visible?: (rowData: any) => boolean
     onClick?: (rowData: any) => void
     subMenu?: {
-        radioGroup?: {
-            name: string
-            valueKey: string
-            options: { value: string; label: string }[]
-        }
+        radioGroup?: RadioGroupConfig
     }[]
 }
 

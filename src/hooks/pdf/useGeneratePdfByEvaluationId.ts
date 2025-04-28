@@ -1,11 +1,11 @@
-// src/hooks/pdf/useGeneratePdfByEvaluationId.ts
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { generatePdfByEvaluationId } from "@/services/pdfService";
+import { useNotify } from "@/hooks/useNotify";
 
 const useGeneratePdfByEvaluationId = (evaluationId: string) => {
   const [pdfUrl, setPdfUrl] = useState<string>("");
   const [loading, setLoading] = useState<boolean>(false);
+  const { notifySuccess, notifyError } = useNotify();
 
   const fetchPdf = useCallback(async () => {
     if (!evaluationId) return;
@@ -14,14 +14,22 @@ const useGeneratePdfByEvaluationId = (evaluationId: string) => {
       const blob = await generatePdfByEvaluationId(evaluationId);
       const objectUrl = URL.createObjectURL(blob);
       setPdfUrl(objectUrl);
-      console.log("PDF generado:", objectUrl);
-    } catch (error) {
+      notifySuccess({
+        title: "PDF generado",
+        description: "Vista previa disponible.",
+        closeButton: true,
+      });
+    } catch (error: any) {
       console.error("Error al generar PDF:", error);
-      toast.error("Error al generar vista previa del PDF", { closeButton: true });
+      notifyError({
+        title: "Error PDF",
+        description: error?.message ?? "No se pudo generar la vista previa del PDF.",
+        closeButton: true,
+      });
     } finally {
       setLoading(false);
     }
-  }, [evaluationId]);
+  }, [evaluationId, notifySuccess, notifyError]);
 
   return { pdfUrl, fetchPdf, loading };
 };

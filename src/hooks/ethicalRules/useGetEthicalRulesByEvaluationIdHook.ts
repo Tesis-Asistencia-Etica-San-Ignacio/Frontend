@@ -1,11 +1,12 @@
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { getEthicalNormsByEvaluationId } from "@/services/ethicalNormService";
 import type { EthicalNormResponseDto } from "@/types/ethicalNormTypes";
+import { useNotify } from "@/hooks/useNotify";
 
 const useGetEthicalRulesByEvaluationId = (evaluationId: string) => {
   const [norms, setNorms] = useState<EthicalNormResponseDto[]>([]);
   const [loading, setLoading] = useState<boolean>(false);
+  const { notifyError } = useNotify();
 
   const fetchNorms = useCallback(async () => {
     if (!evaluationId) return;
@@ -13,14 +14,17 @@ const useGetEthicalRulesByEvaluationId = (evaluationId: string) => {
     try {
       const data = await getEthicalNormsByEvaluationId(evaluationId);
       setNorms(data);
-      console.log("Normas éticas:", data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al obtener las normas éticas:", error);
-      toast.error("Error al obtener las normas éticas", { closeButton: true });
+      notifyError({
+        title: "Error al obtener normas éticas",
+        description: error?.message,
+        closeButton: true,
+      });
     } finally {
       setLoading(false);
     }
-  }, [evaluationId]);
+  }, [evaluationId, notifyError]);
 
   return { norms, fetchNorms, loading };
 };

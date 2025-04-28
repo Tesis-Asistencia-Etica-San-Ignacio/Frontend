@@ -1,6 +1,7 @@
 import { requestsApi } from "@/lib/api/requestsApi";
 import type { FileItem } from "@/types/fileType";
 import type { UpdateEvaluationParams } from "@/types/evaluationType";
+import { AxiosProgressEvent } from "axios";
 
 
 export const getEvaluationsByUser = async (): Promise<FileItem[]> => {
@@ -14,10 +15,15 @@ export const deleteEvaluation = async (evaluationId: string): Promise<void> => {
 };
 
 
-export const uploadFile = async (formData: FormData): Promise<void> => {
-  console.log("Uploading file with formData:", formData);
-  await requestsApi.post("/files/upload", formData);
-};
+export const uploadFile = async (
+  formData: FormData,
+  onProgress?: (event: AxiosProgressEvent) => void
+): Promise<void> => {
+  await requestsApi.post("/files/upload", formData, {
+    headers: { "Content-Type": "multipart/form-data" },
+    onUploadProgress: onProgress,
+  })
+}
 
 export const updateEvaluation = async (
   evaluationId: string,

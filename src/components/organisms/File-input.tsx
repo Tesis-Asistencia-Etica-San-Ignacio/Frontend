@@ -1,167 +1,122 @@
-import React, { forwardRef, useReducer, useState, ChangeEvent, DragEvent } from "react"
-import { Plus } from "lucide-react"
+import React, {
+    forwardRef,
+    useReducer,
+    useState,
+    ChangeEvent,
+    DragEvent,
+    useCallback,
+} from "react"
+import { useNavigate } from "react-router-dom"
+import { Plus } from "lucide-react"        // ← aquí
 import { toast } from "sonner"
-import useCreateEvaluation from "@/hooks/evaluation/useCreateEvaluationHook"
+import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluationHook"
 import type { FileWithUrl } from "@/types/fileType"
 import FileRow from "@/components/molecules/FileRowDropFile"
 import { Button } from "@/components/atoms/ui/button"
 import { cn } from "@/lib/utils"
 
 const MAX_FILES = 10
-const SIMULATION_SPEED = 200000 // bytes por segundo, velocidad simulada para procesar el archivo
 
 type Action =
     | { type: "ADD_FILES"; payload: FileWithUrl[] }
     | { type: "REMOVE_FILE"; payload: number }
     | { type: "UPDATE_PROGRESS"; payload: { index: number; progress: number } }
+    | { type: "CLEAR_FILES" }
 
 type State = FileWithUrl[]
 
 function fileReducer(state: State, action: Action): State {
     switch (action.type) {
-        case "ADD_FILES": {
+        case "ADD_FILES":
             if (state.length + action.payload.length > MAX_FILES) {
-                toast("Límite alcanzado", {
-                    description: `Ya tienes ${state.length} archivos, y el máximo es ${MAX_FILES}.`,
-                    closeButton: true,
-                    icon: "🚫",
-                })
+                toast.error(`Máximo ${MAX_FILES} archivos.`, { closeButton: true })
                 return state
             }
             return [...state, ...action.payload]
-        }
-        case "REMOVE_FILE": {
-            const newState = [...state]
-            newState.splice(action.payload, 1)
-            return newState
-        }
-        case "UPDATE_PROGRESS": {
-            return state.map((file, idx) =>
-                idx === action.payload.index ? { ...file, progress: action.payload.progress } : file
+
+        case "REMOVE_FILE":
+            return state.filter((_, i) => i !== action.payload)
+
+        case "UPDATE_PROGRESS":
+            return state.map((f, i) =>
+                i === action.payload.index
+                    ? { ...f, progress: action.payload.progress }
+                    : f
             )
-        }
+
+        case "CLEAR_FILES":
+            return []
+
         default:
             return state
     }
 }
 
-
-const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">>(({ className, ...props }, ref) => {
+const FileInput = forwardRef<
+    HTMLInputElement,
+    Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">
+>(({ className, ...props }, ref) => {
     const [files, dispatch] = useReducer(fileReducer, [])
     const [dragActive, setDragActive] = useState(false)
-    const { uploadFiles, loading } = useCreateEvaluation()
-    const noFiles = files.length === 0
+    const { uploadFiles, loading } = useCreateEvaluationHook()
+    const navigate = useNavigate()
 
-    const validateFileType = (file: File) => {
-        const isImage = /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(file.name)
-        const isPdf = /\.pdf$/i.test(file.name)
-        return isImage || isPdf
-    }
+    const validateFileType = (file: File) =>
+        /\.(jpe?g|png|gif|webp|bmp|svg|pdf)$/i.test(file.name)
 
-    const simulateProgress = (index: number, fileSize: number) => {
-        const totalDuration = (fileSize / SIMULATION_SPEED) * 1000
-        const updateInterval = 100
-        const progressIncrement = (updateInterval / totalDuration) * 100
-        let progress = 0
-
-        const interval = setInterval(() => {
-            progress += progressIncrement
-            if (progress >= 100) {
-                progress = 100
-                clearInterval(interval)
+    const handleFiles = (incoming: File[]) => {
+        const newFiles = incoming.map(file => {
+            const ok = validateFileType(file)
+            if (!ok) {
+                toast.error(`${file.name} no es PDF ni imagen.`, { closeButton: true })
             }
-            dispatch({ type: "UPDATE_PROGRESS", payload: { index, progress: Math.round(progress) } })
-        }, updateInterval)
+            return {
+                file,
+                name: file.name,
+                size: file.size,
+                url: URL.createObjectURL(file),
+                error: !ok,
+                progress: 0,
+            }
+        })
+        dispatch({ type: "ADD_FILES", payload: newFiles })
     }
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setDragActive(true)
+        e.preventDefault(); e.stopPropagation(); setDragActive(true)
     }
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setDragActive(true)
+        e.preventDefault(); e.stopPropagation(); setDragActive(true)
     }
     const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setDragActive(false)
+        e.preventDefault(); e.stopPropagation(); setDragActive(false)
     }
     const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault()
-        e.stopPropagation()
-        setDragActive(false)
-
-        const droppedFiles = Array.from(e.dataTransfer.files)
-        if (!droppedFiles.length) return
-
-        const newFiles: FileWithUrl[] = droppedFiles.map((file) => {
-            const isValid = validateFileType(file)
-            if (!isValid) {
-                toast.error(`El archivo ${file.name} no es PDF ni imagen.`, {
-                    closeButton: true,
-                    icon: "🚫",
-                })
-            }
-            return {
-                file,
-                name: file.name,
-                size: file.size,
-                url: URL.createObjectURL(file),
-                error: !isValid,
-                progress: 0,
-            }
-        })
-        const startIndex = files.length
-        dispatch({ type: "ADD_FILES", payload: newFiles })
-        newFiles.forEach((file, i) => {
-            if (!file.error) {
-                simulateProgress(startIndex + i, file.size)
-            }
-        })
+        e.preventDefault(); e.stopPropagation(); setDragActive(false)
+        handleFiles(Array.from(e.dataTransfer.files))
     }
-
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        e.preventDefault()
-        const fileList = e.target.files
-        if (!fileList || fileList.length === 0) return
-
-        const newFiles: FileWithUrl[] = Array.from(fileList).map((file) => {
-            const isValid = validateFileType(file)
-            if (!isValid) {
-                toast.error(`El archivo ${file.name} no es PDF ni imagen.`, {
-                    closeButton: true,
-                    icon: "🚫",
-                })
-            }
-            return {
-                file,
-                name: file.name,
-                size: file.size,
-                url: URL.createObjectURL(file),
-                error: !isValid,
-                progress: 0,
-            }
-        })
-        const startIndex = files.length
-        dispatch({ type: "ADD_FILES", payload: newFiles })
-        newFiles.forEach((file, i) => {
-            if (!file.error) {
-                simulateProgress(startIndex + i, file.size)
-            }
-        })
+        handleFiles(Array.from(e.target.files || []))
     }
 
-    const handleRemoveFile = (index: number) => {
-        dispatch({ type: "REMOVE_FILE", payload: index })
-    }
+    const handleRemoveFile = (idx: number) =>
+        dispatch({ type: "REMOVE_FILE", payload: idx })
 
-    const handleClickContainer = () => {
-        const fileInput = document.getElementById("dropzone-file")
-        fileInput?.click()
-    }
+    const handleClickContainer = () =>
+        document.getElementById("dropzone-file")?.click()
+
+    const handleUploadClick = useCallback(async () => {
+        if (loading || files.length === 0) return
+
+        await uploadFiles(files, (i, pct) =>
+            dispatch({ type: "UPDATE_PROGRESS", payload: { index: i, progress: pct } })
+        )
+
+        dispatch({ type: "CLEAR_FILES" })
+        navigate("/historial-archivos-evaluados")
+    }, [files, loading, uploadFiles, navigate])
+
+    const noFiles = files.length === 0
 
     return (
         <div className="w-full h-full">
@@ -234,15 +189,15 @@ const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HT
                                             </tr>
                                         </thead>
                                         <tbody className="divide-y divide-gray-200">
-                                            {files.map((file, index) => (
+                                            {files.map((file, idx) => (
                                                 <FileRow
-                                                    key={index}
+                                                    key={idx}
                                                     fileUrl={file.url}
                                                     name={file.name}
                                                     size={file.size}
                                                     error={file.error}
                                                     progress={file.progress}
-                                                    onRemove={() => handleRemoveFile(index)}
+                                                    onRemove={() => handleRemoveFile(idx)}
                                                 />
                                             ))}
                                         </tbody>
@@ -251,7 +206,7 @@ const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HT
                                         htmlFor="more-files"
                                         className="flex items-center justify-center py-2 border-t border-gray-300 bg-muted/80 cursor-pointer hover:bg-gray-100 transition"
                                     >
-                                        <Plus className="w-6 h-6 text-gray-500" />
+                                        <Plus className="w-6 h-6 text-gray-500" />  {/* ← y aquí */}
                                         <input
                                             {...props}
                                             ref={ref}
@@ -270,7 +225,11 @@ const FileInput = forwardRef<HTMLInputElement, Omit<React.InputHTMLAttributes<HT
             </div>
             {files.length > 0 && (
                 <div className="mt-4 py-2 flex justify-end">
-                    <Button onClick={() => uploadFiles(files)} disabled={loading} className="cursor-progress">
+                    <Button
+                        onClick={handleUploadClick}
+                        disabled={loading}
+                        className="cursor-progress"
+                    >
                         {loading ? "Subiendo..." : "Subir Archivos"}
                     </Button>
                 </div>

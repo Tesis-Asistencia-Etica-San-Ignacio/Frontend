@@ -1,4 +1,3 @@
-// src/hooks/user/useUpdateUser.ts
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { updateUser } from '@/services/userService'
 import { useNotify } from '@/hooks/useNotify'
@@ -11,9 +10,7 @@ export function useUpdateUser() {
   return useMutation<User, unknown, UpdateUserInput>({
     mutationFn: updateUser,
     onSuccess: () => {
-      // 1) invalidas tus queries
       qc.invalidateQueries()
-      // 2) disparas el toast de éxito
       notifySuccess({
         title: 'Cuenta actualizada',
         description: 'Se guardaron los cambios de tu cuenta.',
@@ -22,7 +19,6 @@ export function useUpdateUser() {
       })
     },
     onError: (err: any) => {
-      // disparas el toast de error
       notifyError({
         title: 'Error al actualizar cuenta',
         description:

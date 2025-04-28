@@ -1,22 +1,22 @@
-// src/hooks/useDeleteEvaluationHook.ts
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { deleteEvaluation } from "@/services/evaluationService";
+import { useNotify } from "@/hooks/useNotify";
 
 const useDeleteEvaluationHook = () => {
   const [loading, setLoading] = useState(false);
+  const { notifySuccess, notifyError } = useNotify();
 
   const deleteEvaluationHandler = useCallback(async (evaluationId: string) => {
     setLoading(true);
     try {
       await deleteEvaluation(evaluationId);
-      toast.success("Evaluación eliminada correctamente");
-    } catch (error) {
+      notifySuccess({ title: "Evaluación eliminada", description: "Se eliminó correctamente.", closeButton: true });
+    } catch (error: any) {
       console.error("Error al eliminar la evaluación:", error);
-      toast.error("Error al eliminar la evaluación", { closeButton: true });
+      notifyError({ title: "Error eliminando evaluación", description: error?.message, closeButton: true });
     }
     setLoading(false);
-  }, []);
+  }, [notifySuccess, notifyError]);
 
   return { deleteEvaluation: deleteEvaluationHandler, loading };
 };

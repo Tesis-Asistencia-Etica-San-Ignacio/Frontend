@@ -1,25 +1,25 @@
 import { useState, useCallback } from "react";
-import { toast } from "sonner";
 import { getEvaluationsByUser } from "@/services/evaluationService";
+import { useNotify } from "@/hooks/useNotify";
 
 const useGetEvaluationsByUserHook = () => {
   const [files, setFiles] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
+  const { notifyError } = useNotify();
 
-  const getEvaluationsByUserCallback = useCallback(async () => {
+  const getFilesByUser = useCallback(async () => {
     setLoading(true);
     try {
       const data = await getEvaluationsByUser();
-      console.log("Evaluaciones del usuario:", data);
       setFiles(data);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error al obtener los archivos del usuario:", error);
-      toast.error("Error al obtener los archivos del usuario", { closeButton: true });
+      notifyError({ title: "Error cargando evaluaciones", description: error?.message, closeButton: true, });
     }
     setLoading(false);
-  }, []);
+  }, [notifyError]);
 
-  return { files, getFilesByUser: getEvaluationsByUserCallback, loading };
+  return { files, getFilesByUser, loading };
 };
 
 export default useGetEvaluationsByUserHook;
