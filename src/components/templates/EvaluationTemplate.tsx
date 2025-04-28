@@ -31,7 +31,7 @@ export default function EvaluationResultTemplate({
   onModalSubmit,
   modalSuccessToast,
   modalErrorToast,
-}: EvaluationResultTemplateProps) {
+}: Readonly<EvaluationResultTemplateProps>) {
   const [selectedTask, setSelectedTask] = React.useState<any | null>(null);
 
   const handleRowClick = (rowData: any) => {

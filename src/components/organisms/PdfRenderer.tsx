@@ -1,18 +1,19 @@
 import { Document, Page, pdfjs } from "react-pdf";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css";
 import "react-pdf/dist/esm/Page/TextLayer.css";
-import 'simplebar-react/dist/simplebar.min.css';
+import "simplebar-react/dist/simplebar.min.css";
 import {
   ChevronDown,
   ChevronUp,
   Loader2,
   RotateCw,
   Search,
+  Download,
 } from "lucide-react";
 import { useResizeDetector } from "react-resize-detector";
 import { Button } from "../atoms/ui/button";
 import { Input } from "../atoms/ui/input";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -37,10 +38,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
   const [currPage, setCurrPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
-
   // Para manejar re-renders al cambiar scale (zoom)
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
-  const isLoading = renderedScale !== scale; 
+  const isLoading = renderedScale !== scale;
   // True mientras la página con la nueva escala no haya terminado de renderizar.
 
   // Validación de página a saltar
@@ -73,6 +73,24 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
     setCurrPage(num);
     setValue("page", page);
   };
+
+  const handleDownload = useCallback(async () => {
+    try {
+      const response = await fetch(url);
+      if (!response.ok) throw new Error("Error descargando el PDF");
+      const blob = await response.blob();
+      const blobUrl = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = blobUrl;
+      link.download = "reporte-normas.pdf";
+      document.body.appendChild(link);
+      link.click();
+      link.remove();
+      URL.revokeObjectURL(blobUrl);
+    } catch (err) {
+      console.error("Error descargando PDF:", err);
+    }
+  }, [url]);
 
   /** Ajusta la página anterior */
   const prevPage = () => {
@@ -108,7 +126,10 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           <div className="flex items-center gap-1.5">
             <Input
               {...register("page")}
-              className={cn("w-12 h-8", errors.page && "focus-visible:ring-red-500")}
+              className={cn(
+                "w-12 h-8",
+                errors.page && "focus-visible:ring-red-500"
+              )}
               onKeyDown={(e) => {
                 if (e.key === "Enter") {
                   handleSubmit(handlePageSubmit)();
@@ -137,17 +158,33 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
         <div className="space-x-2">
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="gap-1.5" aria-label="zoom" variant="ghost" type="button">
+              <Button
+                className="gap-1.5"
+                aria-label="zoom"
+                variant="ghost"
+                type="button"
+              >
                 <Search className="h-4 w-4" />
-                {Math.round(scale * 100)}%<ChevronDown className="h-3 w-3 opacity-50" />
+                {Math.round(scale * 100)}%
+                <ChevronDown className="h-3 w-3 opacity-50" />
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent>
-              <DropdownMenuItem onSelect={() => setScale(0.5)}>50%</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(0.75)}>75%</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1)}>100%</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(1.5)}>150%</DropdownMenuItem>
-              <DropdownMenuItem onSelect={() => setScale(2)}>200%</DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setScale(0.5)}>
+                50%
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setScale(0.75)}>
+                75%
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setScale(1)}>
+                100%
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setScale(1.5)}>
+                150%
+              </DropdownMenuItem>
+              <DropdownMenuItem onSelect={() => setScale(2)}>
+                200%
+              </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
 
@@ -158,6 +195,9 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
             type="button"
           >
             <RotateCw className="h-4 w-4" />
+          </Button>
+          <Button onClick={handleDownload} variant="ghost" type="button">
+            <Download className="h-4 w-4" />
           </Button>
 
           {/* Fullscreen */}

@@ -46,7 +46,6 @@ export default function EthicalEvaluationBox({
         </div>
       </div>
       <div className="flex justify-end space-x-2">
-        <Button variant="outline">Descargar resultado</Button>
         <Button onClick={() => setModalOpen(true)}>Enviar resultado</Button>
       </div>
       {modalFormFields && onModalSubmit && (

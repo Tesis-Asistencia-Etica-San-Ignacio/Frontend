@@ -7,8 +7,8 @@ import FileRow from "@/components/molecules/FileRowDropFile"
 import { Button } from "@/components/atoms/ui/button"
 import { cn } from "@/lib/utils"
 
-const MAX_FILES = 30
-const SIMULATION_SPEED = 50000 // bytes por segundo, velocidad simulada para procesar el archivo
+const MAX_FILES = 10
+const SIMULATION_SPEED = 200000 // bytes por segundo, velocidad simulada para procesar el archivo
 
 type Action =
     | { type: "ADD_FILES"; payload: FileWithUrl[] }
