@@ -1,5 +1,5 @@
 import { useEffect } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import EvaluationResultTemplate from "../templates/EvaluationTemplate";
 import { CheckCircle, Circle } from "lucide-react";
 import type { ColumnConfig } from "@/types/table";
@@ -7,7 +7,6 @@ import type { FormField } from "@/types/formTypes";
 import PdfRenderer from "../organisms/PdfRenderer";
 import { useSendEmail } from "@/hooks/mails/useSendEmailHook";
 import useGetEthicalRulesByEvaluationIdHook from "@/hooks/ethicalRules/useGetEthicalRulesByEvaluationIdHook";
-import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId";
 
 export default function EvaluationScreen() {
   const { evaluationId = "" } = useParams<{ evaluationId: string }>();
@@ -15,22 +14,19 @@ export default function EvaluationScreen() {
     evaluationId ?? ""
   );
   const { mutateAsync: sendEmailMutation } = useSendEmail();
-  const { pdfUrl, fetchPdf } = useGeneratePdfByEvaluationId(evaluationId ?? "");
+  const location = useLocation();
+  const pdfUrl = location.state?.pdfUrl ?? "";
 
   useEffect(() => {
     fetchNorms();
-  }, [fetchNorms])
-
-  useEffect(() => {
-    fetchPdf();
-  }, [fetchPdf]);
+  }, [fetchNorms]);
 
   const handleModalFormSubmit = async (data: any) => {
     await sendEmailMutation({
       to: data.to,
       subject: data.subject,
       mensajeAdicional: data.mensajeAdicional,
-      evaluationId,   // ← se lo pasamos aquí
+      evaluationId, // ← se lo pasamos aquí
     });
   };
 

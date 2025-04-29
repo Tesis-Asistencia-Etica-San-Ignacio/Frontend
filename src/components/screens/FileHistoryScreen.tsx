@@ -1,188 +1,198 @@
-import { useState, useEffect } from "react"
-import { useNavigate } from "react-router-dom"
-import FileHistoryTemplate from "../templates/FileHistoryTemplate"
-import { CheckCircle, Circle } from "lucide-react"
-import { ColumnConfig } from "@/types/table"
-import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser"
-import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook"
-import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook"
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import FileHistoryTemplate from "../templates/FileHistoryTemplate";
+import { CheckCircle, Circle } from "lucide-react";
+import { ColumnConfig } from "@/types/table";
+import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
+import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook";
+import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook";
+import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId";
 
 function createColumnsConfig({
-    onEdit,
-    onVerMas,
-    onDelete,
+  onEdit,
+  onVerMas,
+  onDelete,
 }: {
-    onEdit: (rowData: any) => void
-    onVerMas: (rowData: any) => void
-    onDelete: (rowData: any) => void
+  onEdit: (rowData: any) => void;
+  onVerMas: (rowData: any) => void;
+  onDelete: (rowData: any) => void;
 }): ColumnConfig[] {
-    return [
+  return [
+    {
+      id: "id",
+      accessorKey: "id",
+      headerLabel: "ID",
+      searchable: true,
+    },
+    {
+      id: "correo_estudiante",
+      accessorKey: "correo_estudiante",
+      headerLabel: "Correo Estudiante",
+      searchable: true,
+    },
+    {
+      id: "file",
+      accessorKey: "file",
+      headerLabel: "Archivo",
+    },
+    {
+      id: "aprobado",
+      accessorKey: "aprobado",
+      headerLabel: "Aprobado",
+      renderType: "badgeWithText",
+      badgeKey: "label",
+      textKey: "text",
+      items: [
         {
-            id: "id",
-            accessorKey: "id",
-            headerLabel: "ID",
-            searchable: true,
+          value: "approved",
+          label: "Aprobado",
+          icon: CheckCircle,
+          badgeVariant: "approved",
         },
         {
-            id: "correo_estudiante",
-            accessorKey: "correo_estudiante",
-            headerLabel: "Correo Estudiante",
-            searchable: true,
+          value: "notapproved",
+          label: "No aprobado",
+          icon: Circle,
+          badgeVariant: "notapproved",
+        },
+      ],
+    },
+    {
+      id: "estado",
+      accessorKey: "estado",
+      headerLabel: "Estado",
+      items: [
+        {
+          value: "PENDIENTE",
+          label: "Pendiente",
         },
         {
-            id: "file",
-            accessorKey: "file",
-            headerLabel: "Archivo",
+          value: "EN CURSO",
+          label: "En curso",
         },
         {
-            id: "aprobado",
-            accessorKey: "aprobado",
-            headerLabel: "Aprobado",
-            renderType: "badgeWithText",
-            badgeKey: "label",
-            textKey: "text",
-            items: [
-                {
-                    value: "approved",
-                    label: "Aprobado",
-                    icon: CheckCircle,
-                    badgeVariant: "approved",
-                },
-                {
-                    value: "notapproved",
-                    label: "No aprobado",
-                    icon: Circle,
-                    badgeVariant: "notapproved",
-                },
-            ],
+          value: "EVALUADO",
+          label: "Evaluado",
+        },
+      ],
+    },
+    {
+      id: "createdAt",
+      accessorKey: "createdAt",
+      headerLabel: "Creado",
+    },
+    {
+      id: "updatedAt",
+      accessorKey: "updatedAt",
+      headerLabel: "Actualizado",
+    },
+    {
+      id: "actions",
+      type: "actions",
+      actionItems: [
+        {
+          label: "Editar",
+          onClick: onEdit,
         },
         {
-            id: "estado",
-            accessorKey: "estado",
-            headerLabel: "Estado",
-            items: [
-                {
-                    value: "PENDIENTE",
-                    label: "Pendiente",
-                },
-                {
-                    value: "EN CURSO",
-                    label: "En curso",
-                },
-                {
-                    value: "EVALUADO",
-                    label: "Evaluado",
-                },
-            ],
+          label: "Ver más",
+          onClick: onVerMas,
         },
         {
-            id: "createdAt",
-            accessorKey: "createdAt",
-            headerLabel: "Creado",
+          label: "Reevaluar",
+          visible: (rowData) => rowData.estado === "EVALUADO",
         },
         {
-            id: "updatedAt",
-            accessorKey: "updatedAt",
-            headerLabel: "Actualizado",
+          label: "Eliminar",
+          onClick: onDelete,
         },
-        {
-            id: "actions",
-            type: "actions",
-            actionItems: [
-                {
-                    label: "Editar",
-                    onClick: onEdit,
-                },
-                {
-                    label: "Ver más",
-                    onClick: onVerMas,
-                },
-                {
-                    label: "Reevaluar",
-                    visible: rowData => rowData.estado === "EVALUADO",
-                },
-                {
-                    label: "Eliminar",
-                    onClick: onDelete,
-                },
-            ],
-        },
-    ]
+      ],
+    },
+  ];
 }
 
 const formatDate = (dateStr: string): string =>
-    new Date(dateStr).toISOString().split("T")[0]
+  new Date(dateStr).toISOString().split("T")[0];
 
 const transformFile = (url: string): string => {
-    const key = "uploads/"
-    const idx = url.indexOf(key)
-    return idx >= 0 ? url.slice(idx + key.length) : url
-}
+  const key = "uploads/";
+  const idx = url.indexOf(key);
+  return idx >= 0 ? url.slice(idx + key.length) : url;
+};
 
 const transformData = (data: any[]) =>
-    data.map((row) => ({
-        id: row.id,
-        correo_estudiante: row.correo_estudiante,
-        file: transformFile(row.file),
-        aprobado: row.aprobado ? "approved" : "notapproved",
-        estado: row.estado?.toUpperCase() || "",
-        createdAt: formatDate(row.createdAt),
-        updatedAt: formatDate(row.updatedAt),
-    }))
+  data.map((row) => ({
+    id: row.id,
+    correo_estudiante: row.correo_estudiante,
+    file: transformFile(row.file),
+    aprobado: row.aprobado ? "approved" : "notapproved",
+    estado: row.estado?.toUpperCase() || "",
+    createdAt: formatDate(row.createdAt),
+    updatedAt: formatDate(row.updatedAt),
+  }));
 
 export default function FileHistoryScreen() {
-    const { files, getFilesByUser } = useGetEvaluationsByUserHook()
-    const { generate } = useGenerateEvaluationHook()
-    const { deleteEvaluation } = useDeleteEvaluationHook()
-    const [tableData, setTableData] = useState<any[]>([])
-    const [deleteDialogOpen, setDeleteDialogOpen] = useState(false)
-    const [confirmValue, setConfirmValue] = useState("")
-    const [toDeleteId, setToDeleteId] = useState<string>("")
-    const navigate = useNavigate()
+  const { files, getFilesByUser } = useGetEvaluationsByUserHook();
+  const { generate } = useGenerateEvaluationHook();
+  const { deleteEvaluation } = useDeleteEvaluationHook();
+  const [tableData, setTableData] = useState<any[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [confirmValue, setConfirmValue] = useState("");
+  const [toDeleteId, setToDeleteId] = useState<string>("");
+  const navigate = useNavigate();
+  const { fetchPdf, setPDFUrl } = useGeneratePdfByEvaluationId();
 
-    const handleEdit = (row: any) => {
-        alert("Editar: " + row.id)
+  const handleEdit = (row: any) => {
+    alert("Editar: " + row.id);
+  };
+  const handleVerMas = async (row: any) => {
+    try {
+      const success = await generate(row.id);
+      if (success) {
+        const pdfUrl = URL.createObjectURL(setPDFUrl(row.id)); // <- creas el URL Blob
+        navigate(`/evaluacion/${row.id}`, { state: { pdfUrl } }); // <- mandas la url
+      }
+    } catch (error) {
+      console.error("Error al generar evaluación o PDF:", error);
     }
-    const handleVerMas = (row: any) => {
-        generate(row.id)
-        navigate(`/evaluacion/${row.id}`)
+  };
+
+  const handleDelete = (row: any) => {
+    setToDeleteId(row.id);
+    setDeleteDialogOpen(true);
+  };
+  const handleConfirmDelete = async () => {
+    await deleteEvaluation(toDeleteId);
+    setDeleteDialogOpen(false);
+    setConfirmValue("");
+    getFilesByUser();
+  };
+
+  const columnsConfig = createColumnsConfig({
+    onEdit: handleEdit,
+    onVerMas: handleVerMas,
+    onDelete: handleDelete,
+  });
+
+  useEffect(() => {
+    getFilesByUser();
+  }, [getFilesByUser]);
+
+  useEffect(() => {
+    if (Array.isArray(files)) {
+      setTableData(transformData(files));
     }
-    const handleDelete = (row: any) => {
-        setToDeleteId(row.id)
-        setDeleteDialogOpen(true)
-    }
-    const handleConfirmDelete = async () => {
-        await deleteEvaluation(toDeleteId)
-        setDeleteDialogOpen(false)
-        setConfirmValue("")
-        getFilesByUser()
-    }
+  }, [files]);
 
-    const columnsConfig = createColumnsConfig({
-        onEdit: handleEdit,
-        onVerMas: handleVerMas,
-        onDelete: handleDelete,
-    })
-
-    useEffect(() => {
-        getFilesByUser()
-    }, [getFilesByUser])
-
-    useEffect(() => {
-        if (Array.isArray(files)) {
-            setTableData(transformData(files))
-        }
-    }, [files])
-
-    return (
-        <FileHistoryTemplate
-            data={tableData}
-            columnsConfig={columnsConfig}
-            deleteDialogOpen={deleteDialogOpen}
-            onDeleteDialogChange={setDeleteDialogOpen}
-            onConfirmDelete={handleConfirmDelete}
-            confirmValue={confirmValue}
-            onConfirmValueChange={setConfirmValue}
-        />
-    )
+  return (
+    <FileHistoryTemplate
+      data={tableData}
+      columnsConfig={columnsConfig}
+      deleteDialogOpen={deleteDialogOpen}
+      onDeleteDialogChange={setDeleteDialogOpen}
+      onConfirmDelete={handleConfirmDelete}
+      confirmValue={confirmValue}
+      onConfirmValueChange={setConfirmValue}
+    />
+  );
 }
