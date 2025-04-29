@@ -22,6 +22,8 @@ interface EvaluationResultTemplateProps {
     icon: React.ReactNode;
     closeButton?: boolean;
   };
+  readonly modalOpen: boolean;
+  readonly onModalOpenChange: (open: boolean) => void;
 }
 
 export default function EvaluationResultTemplate({
@@ -31,6 +33,8 @@ export default function EvaluationResultTemplate({
   onModalSubmit,
   modalSuccessToast,
   modalErrorToast,
+  modalOpen,
+  onModalOpenChange,
 }: Readonly<EvaluationResultTemplateProps>) {
   const [selectedTask, setSelectedTask] = React.useState<any | null>(null);
 
@@ -55,6 +59,8 @@ export default function EvaluationResultTemplate({
           />
         </div>
         <EthicalEvaluationBox
+          open={modalOpen}
+          onOpenChange={onModalOpenChange}
           selectedTask={selectedTask}
           modalFormFields={modalFormFields}
           onModalSubmit={onModalSubmit}

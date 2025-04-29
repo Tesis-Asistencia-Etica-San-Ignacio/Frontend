@@ -141,24 +141,16 @@ export default function FileHistoryScreen() {
   const [toDeleteId, setToDeleteId] = useState<string>("");
   const navigate = useNavigate();
 
-  const { fetchPdf } = useGeneratePdfByEvaluationId();
 
   const handleEdit = (row: any) => {
     alert("Editar: " + row.id);
   };
-  const handleVerMas = async (row: any) => {
-    try {
-      const success = await generate(row.id);
-      if (!success) return;
-
-      const objectUrl = await fetchPdf(row.id);
-      if (!objectUrl) return;
-
-      navigate(`/evaluacion/${row.id}`, { state: { pdfUrl: objectUrl } });
-    } catch (error) {
-      console.error("Error al generar evaluación o PDF:", error);
+  const handleVerMas = (rowData: any) => {
+    if (rowData.estado === "PENDIENTE") {
+      generate(rowData.id);
     }
-  };
+    navigate(`/evaluacion/${rowData.id}`)
+  }
 
   const handleDelete = (row: any) => {
     setToDeleteId(row.id);

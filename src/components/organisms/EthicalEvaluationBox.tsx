@@ -20,16 +20,20 @@ interface EthicalEvaluationBoxProps {
     icon: React.ReactNode;
     closeButton?: boolean;
   };
+  readonly open: boolean;
+  readonly onOpenChange: (open: boolean) => void;
 }
 
 export default function EthicalEvaluationBox({
+  open,
+  onOpenChange,
   selectedTask,
   modalFormFields,
   onModalSubmit,
   modalSuccessToast,
   modalErrorToast,
+
 }: EthicalEvaluationBoxProps) {
-  const [modalOpen, setModalOpen] = useState(false);
 
   return (
     <div className="space-y-3 flex flex-col flex-1 min-h-0">
@@ -46,12 +50,12 @@ export default function EthicalEvaluationBox({
         </div>
       </div>
       <div className="flex justify-end space-x-2">
-        <Button onClick={() => setModalOpen(true)}>Enviar resultado</Button>
+        <Button onClick={() => onOpenChange(true)}>Enviar resultado</Button>
       </div>
       {modalFormFields && onModalSubmit && (
         <ModalForm
-          open={modalOpen}
-          onOpenChange={setModalOpen}
+          open={open}
+          onOpenChange={onOpenChange}
           title={{ text: "Enviar resultado de la evaluación", align: "left" }}
           formDataConfig={modalFormFields}
           onSubmit={onModalSubmit}
