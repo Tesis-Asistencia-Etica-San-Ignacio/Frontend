@@ -140,7 +140,8 @@ export default function FileHistoryScreen() {
   const [confirmValue, setConfirmValue] = useState("");
   const [toDeleteId, setToDeleteId] = useState<string>("");
   const navigate = useNavigate();
-  const { fetchPdf, setPDFUrl } = useGeneratePdfByEvaluationId();
+
+  const { fetchPdf } = useGeneratePdfByEvaluationId();
 
   const handleEdit = (row: any) => {
     alert("Editar: " + row.id);
@@ -148,10 +149,12 @@ export default function FileHistoryScreen() {
   const handleVerMas = async (row: any) => {
     try {
       const success = await generate(row.id);
-      if (success) {
-        const pdfUrl = URL.createObjectURL(setPDFUrl(row.id)); // <- creas el URL Blob
-        navigate(`/evaluacion/${row.id}`, { state: { pdfUrl } }); // <- mandas la url
-      }
+      if (!success) return;
+
+      const objectUrl = await fetchPdf(row.id);
+      if (!objectUrl) return;
+
+      navigate(`/evaluacion/${row.id}`, { state: { pdfUrl: objectUrl } });
     } catch (error) {
       console.error("Error al generar evaluación o PDF:", error);
     }

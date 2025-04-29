@@ -228,7 +228,7 @@ const FileInput = forwardRef<
                     <Button
                         onClick={handleUploadClick}
                         disabled={loading}
-                        className="cursor-progress"
+                        className="cursor-pointer"
                     >
                         {loading ? "Subiendo..." : "Subir Archivos"}
                     </Button>
