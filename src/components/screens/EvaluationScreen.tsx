@@ -109,7 +109,7 @@ export default function EvaluationScreen() {
       id: "description",
       accessorKey: "description",
       headerLabel: "Descripción",
-    },
+    }
   ];
 
   const transformData = (norms: any[]): any[] =>
@@ -139,6 +139,7 @@ export default function EvaluationScreen() {
       <EvaluationResultTemplate
         data={transformData(norms)}
         columnsConfig={columnsConfig}
+        
         modalFormFields={modalFormFields}
         onModalSubmit={handleModalFormSubmit}
         modalSuccessToast={modalSuccessToast}

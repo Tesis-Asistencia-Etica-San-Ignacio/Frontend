@@ -6,19 +6,35 @@ import { TriangleAlert } from "lucide-react"
 import { Label } from "@/components/atoms/ui/label";
 import { Input } from "@/components/atoms/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert"
+import { FormField } from "@/types/formTypes"
+import ModalForm from "../organisms/dialogs/ModalForm"
 
 interface FileHistoryTemplateProps {
-  data: any[]
-  columnsConfig: ColumnConfig[]
-  deleteDialogOpen: boolean
-  onDeleteDialogChange: (open: boolean) => void
-  onConfirmDelete: () => Promise<void>
-  confirmValue: string
-  onConfirmValueChange: (value: string) => void
+  data: any[];
+  columnsConfig: ColumnConfig[];
+  deleteDialogOpen: boolean;
+  onDeleteDialogChange: (open: boolean) => void;
+  onConfirmDelete: () => Promise<void>;
+  confirmValue: string;
+  onConfirmValueChange: (val: string) => void;
+
+  // para la modal de edición:
+  open: boolean;
+  onOpenChange: (open: boolean) => void;
+  modalFormFields?: FormField[][];
+  onModalSubmit?: (data: any) => Promise<void> | void;
+  modalSuccessToast: { title: string; description: string; icon: React.ReactNode; closeButton?: boolean };
+  modalErrorToast: { title: string; description: string; icon: React.ReactNode; closeButton?: boolean };
 }
 
-
 export default function FileHistoryTemplate({
+  open,
+  onOpenChange,
+  onModalSubmit,
+  modalSuccessToast,
+  modalErrorToast,
+  modalFormFields,
+
   data,
   columnsConfig,
   deleteDialogOpen,
@@ -74,6 +90,21 @@ export default function FileHistoryTemplate({
         }
         confirmText="ELIMINAR"
       />
+
+      {modalFormFields && onModalSubmit && (
+        <ModalForm
+          open={open}
+          onOpenChange={onOpenChange}
+          title={{ text: "Enviar resultado de la evaluación", align: "left" }}
+          formDataConfig={modalFormFields}
+          onSubmit={onModalSubmit}
+          submitButtonText="Enviar resultado"
+          width="70%"
+          height="80%"
+          successToast={modalSuccessToast}
+          errorToast={modalErrorToast}
+        />
+      )}
     </section>
   )
 }

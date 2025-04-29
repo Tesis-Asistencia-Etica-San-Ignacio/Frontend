@@ -6,7 +6,7 @@ import { ColumnConfig } from "@/types/table";
 import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
 import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook";
 import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook";
-import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId";
+import { FormField } from "@/types/formTypes";
 
 function createColumnsConfig({
   onEdit,
@@ -34,6 +34,11 @@ function createColumnsConfig({
       id: "file",
       accessorKey: "file",
       headerLabel: "Archivo",
+    },
+    {
+      id: "tipo_error",
+      accessorKey: "tipo_error",
+      headerLabel: "Tipo de error",
     },
     {
       id: "aprobado",
@@ -111,6 +116,40 @@ function createColumnsConfig({
   ];
 }
 
+const modalFormFields: FormField[][] = [
+  [
+    {
+      type: "email",
+      key: "to",
+      placeholder: "Correo de destino",
+      required: true,
+    },
+    {
+      type: "select",
+      key: "subject",
+      placeholder: "Motivo del correo",
+      required: true,
+      selectPlaceholder: "Selecciona un motivo",
+      options: [
+        { value: "Incompletitud", label: "Incompletitud" },
+        { value: "Ortografía", label: "Ortografía" },
+        { value: "Coherencia", label: "Coherencia" },
+        { value: "Aprobación", label: "Aprobación" },
+      ],
+    },
+  ],
+  [
+
+    {
+      type: "textarea",
+      key: "mensajeAdicional",
+      placeholder: "Mensaje adicional",
+      required: false,
+      autoAdjust: true,
+    },
+  ],
+];
+
 const formatDate = (dateStr: string): string =>
   new Date(dateStr).toISOString().split("T")[0];
 
@@ -125,6 +164,7 @@ const transformData = (data: any[]) =>
     id: row.id,
     correo_estudiante: row.correo_estudiante,
     file: transformFile(row.file),
+    tipo_error: row.tipo_error,
     aprobado: row.aprobado ? "approved" : "notapproved",
     estado: row.estado?.toUpperCase() || "",
     createdAt: formatDate(row.createdAt),
@@ -142,8 +182,9 @@ export default function FileHistoryScreen() {
   const navigate = useNavigate();
 
 
+
   const handleEdit = (row: any) => {
-    alert("Editar: " + row.id);
+    setModalOpen(true);
   };
   const handleVerMas = (rowData: any) => {
     if (rowData.estado === "PENDIENTE") {
@@ -169,8 +210,32 @@ export default function FileHistoryScreen() {
     onDelete: handleDelete,
   });
 
+  const modalSuccessToast = {
+    title: "Correo enviado correctamente",
+    description: "El formulario se envió y el correo fue procesado con éxito.",
+    icon: "✅",
+    closeButton: true,
+  };
+
+  const modalErrorToast = {
+    title: "Error al enviar el correo",
+    description: "Ocurrió un problema al procesar el envío.",
+    icon: "🚫",
+    closeButton: true,
+  };
+
+  const handleModalFormSubmit = async (data: any) => {
+    try {
+      setModalOpen(false);
+      getFilesByUser();
+    } catch {
+    }
+  };
+  const [modalOpen, setModalOpen] = useState(false);
+
   useEffect(() => {
     getFilesByUser();
+    modalOpen
   }, [getFilesByUser]);
 
   useEffect(() => {
@@ -178,6 +243,7 @@ export default function FileHistoryScreen() {
       setTableData(transformData(files));
     }
   }, [files]);
+
 
   return (
     <FileHistoryTemplate
@@ -188,6 +254,15 @@ export default function FileHistoryScreen() {
       onConfirmDelete={handleConfirmDelete}
       confirmValue={confirmValue}
       onConfirmValueChange={setConfirmValue}
+
+      open={modalOpen}
+      onOpenChange={(open) => {
+        setModalOpen(open);
+      }}
+      modalFormFields={modalFormFields}
+      onModalSubmit={handleModalFormSubmit}
+      modalSuccessToast={modalSuccessToast}
+      modalErrorToast={modalErrorToast}
     />
   );
 }
