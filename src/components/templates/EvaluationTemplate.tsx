@@ -4,10 +4,13 @@ import { DynamicDataTable } from "../organisms/DynamicDataTable";
 import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
 import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
+import ModalForm from "../organisms/dialogs/ModalForm";
 
 interface EvaluationResultTemplateProps {
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
+
+  //CORREO
   modalFormFields: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
   modalSuccessToast: {
@@ -24,17 +27,43 @@ interface EvaluationResultTemplateProps {
   };
   readonly modalOpen: boolean;
   readonly onModalOpenChange: (open: boolean) => void;
+
+  //EDITAR
+  editModalFormFields: FormField[][];
+  onEditModalSubmit?: (data: any) => Promise<void> | void;
+  editModalSuccessToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  editModalErrorToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  editModalOpen: boolean;
+  onEditModalOpenChange: (open: boolean) => void;
 }
 
 export default function EvaluationResultTemplate({
   data,
   columnsConfig,
+  // CORREO
   modalFormFields,
   onModalSubmit,
   modalSuccessToast,
   modalErrorToast,
   modalOpen,
   onModalOpenChange,
+  // EDITAR
+  editModalFormFields,
+  onEditModalSubmit,
+  editModalSuccessToast,
+  editModalErrorToast,
+  editModalOpen,
+  onEditModalOpenChange,
 }: Readonly<EvaluationResultTemplateProps>) {
   const [selectedTask, setSelectedTask] = React.useState<any | null>(null);
 
@@ -67,6 +96,19 @@ export default function EvaluationResultTemplate({
           modalSuccessToast={modalSuccessToast}
           modalErrorToast={modalErrorToast}
         />
+        {modalFormFields && onEditModalSubmit && (
+        <ModalForm
+          open={editModalOpen}
+          onOpenChange={onEditModalOpenChange}
+          title={{ text: "Editar la evaluación de una norma ética", align: "left" }}
+          formDataConfig={editModalFormFields}
+          onSubmit={onEditModalSubmit}
+          submitButtonText="Guardar cambios"
+          width="40%"
+          successToast={editModalSuccessToast}
+          errorToast={editModalErrorToast}
+        />
+      )}
       </div>
     </section>
   );

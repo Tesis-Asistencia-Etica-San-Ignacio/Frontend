@@ -6,7 +6,6 @@ import { ColumnConfig } from "@/types/table";
 import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
 import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook";
 import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook";
-import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId";
 
 function createColumnsConfig({
   onEdit,

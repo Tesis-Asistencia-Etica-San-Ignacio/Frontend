@@ -11,11 +11,10 @@ export interface EthicalNormResponseDto {
 
 
   export interface UpdateEthicalRuleParams {
-    description?: string;
-    status?: string;    
-    codeNumber?: number;
+    cita: string;
+    status: "APROBADO" | "NO_APROBADO";
+    justification: string;
   }
-
   export interface UpdateEthicalRuleResponseDto {
     _id: string;
     evaluationId: string;

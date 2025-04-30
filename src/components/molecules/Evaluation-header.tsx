@@ -15,10 +15,10 @@ export function EvaluationHeader({
       {/* Título a la izquierda */}
       <h1 className="text-2xl font-bold tracking-tight">{title}</h1>
 
-      {/* Botón con ícono a la derecha */}
+      {/* Botón con ícono a la derecha
       <Button variant="outline" size="icon" onClick={onEdit}>
         <Edit />
-      </Button>
+      </Button> */}
     </div>
   )
 }
