@@ -10,18 +10,11 @@ import {
   Search as SearchIcon,
   Eye as EyeIcon,
   EyeOff as EyeOffIcon,
+  BookLock
 } from "lucide-react"
+import { type InputType } from "@/types/formTypes"
 
-export type InputType =
-  | "email"
-  | "document"
-  | "password"
-  | "phone"
-  | "user"
-  | "address"
-  | "extension-phone"
-  | "search"
-  | undefined
+
 
 
 export function getConfigForType(type: InputType) {
@@ -49,7 +42,7 @@ export function getConfigForType(type: InputType) {
     case "document":
       return {
         maxLength: 10,
-        icon: <User className="w-5 h-5 text-gray-400" />,
+        icon: <BookLock className="w-5 h-5 text-gray-400" />,
       }
     case "user":
       return {
@@ -77,13 +70,13 @@ export function getConfigForType(type: InputType) {
 const containerClass = `
   relative flex items-center h-9
   rounded-md bg-primary-grey-50
-  px-4 py-2 text-base border border-primary-grey-300
-  focus-visible:outline-none
+  px-4 py-2 text-sm border border-primary-grey-300
+  focus-visible:outline-none 
 `
 
 const inputStyle = `
   flex-1 bg-transparent outline-none
-  placeholder:text-gray-400
+  placeholder:text-gray-400 
 `
 
 export interface InputProps

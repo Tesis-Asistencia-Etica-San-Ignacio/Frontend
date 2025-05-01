@@ -4,17 +4,22 @@ import { JSX } from "react"
  * Tipos de campo que maneja tu formulario dinámico.
  * "textarea" se diferencia de los que se usan en el Input personalizado.
  */
-export type FieldType =
+export type InputType =
     | "email"
+    | "document"
+    | "password"
+    | "phone"
+    | "user"
+    | "address"
+    | "extension-phone"
+    | "search"
+    | undefined;
+
+export type FieldType =
+    InputType
     | "select"
     | "custom"
-    | "password"
-    | "extension-phone"
-    | "phone"
-    | "document"
-    | "address"
-    | "user"
-    | "textarea"
+    | "textarea";
 
 /**
  * Estructura base para cualquier campo.

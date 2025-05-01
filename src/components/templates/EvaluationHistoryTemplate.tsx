@@ -1,51 +1,75 @@
-import React from "react"
-import { ColumnConfig } from "@/types/table"
-import { DynamicDataTable } from "../organisms/DynamicDataTable"
-import ConfirmDialog from "@/components/organisms/dialogs/ConfirmDialog"
-import { TriangleAlert } from "lucide-react"
+import React from "react";
+import { ColumnConfig } from "@/types/table";
+import { DynamicDataTable } from "../organisms/DynamicDataTable";
+import ConfirmDialog from "@/components/organisms/dialogs/ConfirmDialog";
+import { TriangleAlert } from "lucide-react";
 import { Label } from "@/components/atoms/ui/label";
 import { Input } from "@/components/atoms/ui/input";
-import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert"
-import { FormField } from "@/types/formTypes"
-import ModalForm from "../organisms/dialogs/ModalForm"
+import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert";
+import type { FormField } from "@/types/formTypes";
+import ModalForm from "../organisms/dialogs/ModalForm";
 
 interface EvaluationHistoryTemplateProps {
+  /* ---------- Tabla ---------- */
   data: any[];
   columnsConfig: ColumnConfig[];
+  selectedRowId?: string;
+  onRowClick?: (row: any) => void;
+
+  /* -------- Eliminación ------ */
   deleteDialogOpen: boolean;
   onDeleteDialogChange: (open: boolean) => void;
   onConfirmDelete: () => Promise<void>;
   confirmValue: string;
   onConfirmValueChange: (val: string) => void;
 
-  // para la modal de edición:
+  /* --------- Edición --------- */
   open: boolean;
   onOpenChange: (open: boolean) => void;
   modalFormFields?: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
-  modalSuccessToast: { title: string; description: string; icon: React.ReactNode; closeButton?: boolean };
-  modalErrorToast: { title: string; description: string; icon: React.ReactNode; closeButton?: boolean };
+  modalSuccessToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  modalErrorToast: {
+    title: string;
+    description: string;
+    icon: React.ReactNode;
+    closeButton?: boolean;
+  };
+  editInitialData?: { [key: string]: any };
 }
 
 export default function EvaluationHistoryTemplate({
-  open,
-  onOpenChange,
-  onModalSubmit,
-  modalSuccessToast,
-  modalErrorToast,
-  modalFormFields,
-
+  /* ---------- Tabla ---------- */
   data,
   columnsConfig,
+  selectedRowId,
+  onRowClick,
+
+  /* -------- Eliminación ------ */
   deleteDialogOpen,
   onDeleteDialogChange,
   onConfirmDelete,
   confirmValue,
   onConfirmValueChange,
-}: EvaluationHistoryTemplateProps) {
 
+  /* --------- Edición --------- */
+  open,
+  onOpenChange,
+  modalFormFields,
+  onModalSubmit,
+  modalSuccessToast,
+  modalErrorToast,
+  editInitialData,
+}: Readonly<EvaluationHistoryTemplateProps>) {
   return (
+
     <section className="pb-8 space-y-4">
+      {/* Tabla */}
       <div className="mb-4 flex flex-col">
         <h2 className="text-2xl font-bold tracking-tight">Historial de Archivos</h2>
         <p className="text-muted-foreground">
@@ -54,15 +78,22 @@ export default function EvaluationHistoryTemplate({
       </div>
       <div className="grid grid-cols-3 gap-4">
         <div className="col-span-3">
-          <DynamicDataTable data={data} columnsConfig={columnsConfig} />
-        </div></div>
+          <DynamicDataTable
+            data={data}
+            columnsConfig={columnsConfig}
+            selectedRowId={selectedRowId}
+            onRowClick={onRowClick}
+          />
+        </div>
+      </div>
 
+      {/* -------- Eliminación ------ */}
       <ConfirmDialog
         open={deleteDialogOpen}
         onOpenChange={onDeleteDialogChange}
         handleConfirm={async () => {
-          await onConfirmDelete()
-          onDeleteDialogChange(false)
+          await onConfirmDelete();
+          onDeleteDialogChange(false);
         }}
         disabled={confirmValue.trim() !== "ELIMINAR"}
         destructive
@@ -80,8 +111,8 @@ export default function EvaluationHistoryTemplate({
             <Label>
               <Input
                 value={confirmValue}
-                onChange={(e) => onConfirmValueChange(e.target.value)}
-                placeholder=" ELIMINAR"
+                onChange={e => onConfirmValueChange(e.target.value)}
+                placeholder="ELIMINAR"
               />
             </Label>
             <Alert variant="destructive">
@@ -93,20 +124,22 @@ export default function EvaluationHistoryTemplate({
         confirmText="ELIMINAR"
       />
 
+      {/* --------- Edición --------- */}
       {modalFormFields && onModalSubmit && (
         <ModalForm
           open={open}
           onOpenChange={onOpenChange}
-          title={{ text: "Enviar resultado de la evaluación", align: "left" }}
+          title={{ text: "Editar evaluación", align: "left" }}
           formDataConfig={modalFormFields}
           onSubmit={onModalSubmit}
-          submitButtonText="Enviar resultado"
+          submitButtonText="Guardar cambios"
           width="40%"
           height="64%"
           successToast={modalSuccessToast}
           errorToast={modalErrorToast}
+          initialData={editInitialData}
         />
       )}
     </section>
-  )
+  );
 }

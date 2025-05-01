@@ -17,7 +17,6 @@ createRoot(document.getElementById("root")!).render(
       <ThemeProvider defaultTheme='light' storageKey='vite-ui-theme'>
         <AuthProvider>
           <Toaster />
-
           <App />
         </AuthProvider>
       </ThemeProvider>
