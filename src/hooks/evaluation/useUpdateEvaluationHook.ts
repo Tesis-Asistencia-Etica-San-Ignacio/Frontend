@@ -12,7 +12,7 @@ const useUpdateEvaluationHook = () => {
       setLoading(true);
       try {
         await updateEvaluation(evaluationId, updateData);
-        notifySuccess({ title: "Evaluación actualizada", description: "Cambios guardados correctamente.", closeButton: true, });
+        notifySuccess({ title: "Evaluación actualizada", description: "Cambios guardados correctamente.", closeButton: true, icon: "✅" });
       } catch (error: any) {
         console.error("Error al actualizar la evaluación:", error);
         notifyError({ title: "Error actualizando evaluación", description: error?.message, closeButton: true, });

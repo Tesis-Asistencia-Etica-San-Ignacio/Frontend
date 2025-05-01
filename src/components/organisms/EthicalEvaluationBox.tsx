@@ -10,18 +10,6 @@ interface EthicalEvaluationBoxProps {
   } | null;
   modalFormFields?: FormField[] | FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
-  modalSuccessToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
-  modalErrorToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
   readonly open: boolean;
   readonly onOpenChange: (open: boolean) => void;
 }
@@ -32,8 +20,6 @@ export default function EthicalEvaluationBox({
   selectedTask,
   modalFormFields,
   onModalSubmit,
-  modalSuccessToast,
-  modalErrorToast,
 }: EthicalEvaluationBoxProps) {
   return (
     <div className="flex flex-col h-full">
@@ -80,8 +66,6 @@ export default function EthicalEvaluationBox({
           submitButtonText="Enviar resultado"
           width="70%"
           height="80%"
-          successToast={modalSuccessToast}
-          errorToast={modalErrorToast}
         />
       )}
     </div>

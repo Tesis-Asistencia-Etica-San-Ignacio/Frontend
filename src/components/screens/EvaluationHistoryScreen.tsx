@@ -190,20 +190,6 @@ export default function EvaluationHistoryScreen() {
     },
   ];
 
-  // — Toasts —
-  const editSuccessToast = {
-    title: "Evaluación actualizada",
-    description: "Cambios guardados correctamente.",
-    icon: "✅",
-    closeButton: true,
-  };
-  const editErrorToast = {
-    title: "Error al actualizar",
-    description: "No se pudieron guardar los cambios.",
-    icon: "🚫",
-    closeButton: true,
-  };
-
   // ─────────────────────────── render ─────────────────────────────────────
   return (
     <EvaluationHistoryTemplate
@@ -228,8 +214,7 @@ export default function EvaluationHistoryScreen() {
       }}
       modalFormFields={editModalFields}
       onModalSubmit={handleEditSubmit}
-      modalSuccessToast={editSuccessToast}
-      modalErrorToast={editErrorToast}
+
       DataSelectedRow={editInitialData}
     />
   );

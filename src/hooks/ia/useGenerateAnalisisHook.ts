@@ -13,7 +13,7 @@ function useGenerateEvaluation() {
 
     try {
       await generateEvaluation(evaluationId);
-      notifySuccess({ title: "Evaluación generada correctamente", closeButton: true, });
+      notifySuccess({ title: "Evaluación generada correctamente", closeButton: true, icon: "✅" });
       return true;
     } catch (err: any) {
       console.error("Error al generar la evaluación:", err);

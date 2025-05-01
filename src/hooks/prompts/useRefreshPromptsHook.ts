@@ -14,6 +14,7 @@ const useRefreshPrompts = () => {
         title: "Prompts reiniciados",
         description: "Se restauraron al estado base.",
         closeButton: true,
+        icon: "✅"
       });
     } catch (error: any) {
       console.error("Error al reiniciar prompts:", error);

@@ -14,7 +14,7 @@ const useGeneratePdfByEvaluationId = () => {
       const blob = await generatePdfByEvaluationId(evaluationId);
       const objectUrl = URL.createObjectURL(blob);
       setPdfUrl(objectUrl);
-      notifySuccess({ title: "PDF generado", description: "Vista previa disponible.", closeButton: true });
+      notifySuccess({ title: "PDF generado", description: "Vista previa disponible.", closeButton: true, icon: "✅" });
       return objectUrl;
     } catch (error: any) {
       console.error("Error al generar PDF:", error);

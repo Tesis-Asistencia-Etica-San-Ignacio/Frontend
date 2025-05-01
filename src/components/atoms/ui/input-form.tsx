@@ -41,7 +41,7 @@ export function getConfigForType(type: InputType) {
       }
     case "document":
       return {
-        maxLength: 10,
+        maxLength: 50,
         icon: <BookLock className="w-5 h-5 text-gray-400" />,
       }
     case "user":

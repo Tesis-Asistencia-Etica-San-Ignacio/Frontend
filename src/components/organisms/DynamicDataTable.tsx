@@ -1,83 +1,77 @@
 import React from "react"
-import { ColumnDef, FilterFn } from "@tanstack/react-table"
+import { ColumnDef, FilterFn, VisibilityState } from "@tanstack/react-table"
 import { DataTable } from "./Data-table"
 import { Checkbox } from "@/components/atoms/ui/checkbox"
 import { Badge } from "@/components/atoms/ui/badge"
 import { DataTableRowActions } from "@/components/molecules/table/Data-table-row-actions"
 import { DataTableColumnHeader } from "@/components/molecules/table/Data-table-column-header"
 import { ColumnConfig } from "@/types/table"
-import { VisibilityState } from "@tanstack/react-table"
+
 const STORAGE_KEY = "table_column_visibility"
 
 /** Props del DynamicDataTable */
 interface DynamicDataTableProps<TData extends object> {
     data: TData[]
     columnsConfig: ColumnConfig[]
-    // Callback y estado para selección de fila por clic
     onRowClick?: (rowData: TData) => void
     selectedRowId?: string
 }
-
 /** 
  * Filtro local: filtra el valor de la celda según el filtro
  */
+// components/organisms/DynamicDataTable.tsx  (o donde tengas tu localCellFilterFn)
 function localCellFilterFn(row: any, columnId: string, filterValue: any) {
     if (!filterValue || (Array.isArray(filterValue) && filterValue.length === 0)) {
         return true
     }
+
     const rowValue = row.getValue(columnId)
 
-    // Si filterValue es array (faceted filters)
+    // normalizamos los valores del filtro a lowercase
+    const filterValuesLower: string[] = Array.isArray(filterValue)
+        ? filterValue.map((fv: any) => String(fv).toLowerCase())
+        : []
+
+    // si vienen múltiples opciones seleccionadas
     if (Array.isArray(filterValue)) {
-        if (Array.isArray(rowValue)) {
-            return rowValue.some((item) => {
-                const label = String(item?.label ?? "").toLowerCase()
-                return filterValue.includes(label)
-            })
-        } else {
-            const value = String(rowValue ?? "").toLowerCase()
-            return filterValue.includes(value)
-        }
+        const rowValLower = String(rowValue ?? "").toLowerCase()
+        return filterValuesLower.includes(rowValLower)
     }
 
-    // Si filterValue es string (substring search)
+    // caso de filtro único (substring search)
     const filterStr = String(filterValue).toLowerCase()
-    if (Array.isArray(rowValue)) {
-        return rowValue.some((item) => {
-            const text = String(item?.text ?? "").toLowerCase()
-            return text.includes(filterStr)
-        })
+    const cell = rowValue
+    if (Array.isArray(cell)) {
+        return cell.some((item: any) =>
+            String(item?.text ?? item ?? "")
+                .toLowerCase()
+                .includes(filterStr)
+        )
     }
-    const value = String(rowValue ?? "").toLowerCase()
-    return value.includes(filterStr)
+    return String(cell ?? "").toLowerCase().includes(filterStr)
 }
 
 /** 
  * Filtro global: recorre solo columnas marcadas "searchable" en la config.
  */
 function createGlobalFilterFn(columnsConfigMap: Record<string, ColumnConfig>): FilterFn<any> {
-    return (row, _columnId, filterValue) => {
+    return (row, _colId, filterValue) => {
         if (!filterValue) return true
-        const filterText = String(filterValue).toLowerCase()
+        const ft = String(filterValue).toLowerCase()
         for (const col of Object.values(columnsConfigMap)) {
             if (!col.searchable) continue
-            let cellValue = row.getValue(col.id)
-            if (Array.isArray(cellValue)) {
-                const match = cellValue.some((item) => {
-                    const t = item?.text ?? ""
-                    const l = item?.label ?? ""
-                    return `${t} ${l}`.toLowerCase().includes(filterText)
-                })
-                if (match) return true
-            } else {
-                const cellText = String(cellValue ?? "").toLowerCase()
-                if (cellText.includes(filterText)) return true
+            const cell = row.getValue(col.id)
+            if (Array.isArray(cell)) {
+                if (cell.some(item => `${item?.text ?? ""} ${item?.label ?? ""}`.toLowerCase().includes(ft))) {
+                    return true
+                }
+            } else if (String(cell ?? "").toLowerCase().includes(ft)) {
+                return true
             }
         }
         return false
     }
 }
-
 /** Componente principal de la tabla dinámica */
 export function DynamicDataTable<TData extends object>({
     data,
@@ -85,10 +79,10 @@ export function DynamicDataTable<TData extends object>({
     onRowClick,
     selectedRowId,
 }: DynamicDataTableProps<TData>) {
+    // 0) Cargar/guardar visibilidad
     const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
         try {
-            const raw = localStorage.getItem(STORAGE_KEY)
-            return raw ? JSON.parse(raw) : {}
+            return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")
         } catch {
             return {}
         }
@@ -98,18 +92,17 @@ export function DynamicDataTable<TData extends object>({
     }, [columnVisibility])
 
     // 1. Separa la columna "actions" (para que siempre quede al final)
-    const actionsColumn = columnsConfig.find((col) => col.type === "actions")
-    const nonActionsCols = columnsConfig.filter((col) => col.type !== "actions")
+    const actionsColumn = columnsConfig.find(c => c.type === "actions")
+    const nonActionsCols = columnsConfig.filter(c => c.type !== "actions")
 
     // 2. "Adivina" columnas no definidas en la config
-    const dataKeys = Object.keys(data?.[0] || {})
-    const alreadyDefined = nonActionsCols.map((c) => c.accessorKey).filter(Boolean)
-    const missingKeys = dataKeys.filter((key) => !alreadyDefined.includes(key))
+    const dataKeys = Object.keys(data[0] || {})
+    const defined = nonActionsCols.map(c => c.accessorKey).filter(Boolean)
+    const missing = dataKeys.filter(k => !defined.includes(k))
 
     // 3. Construye ColumnDefs para las columnas definidas
-    const mainColumnDefs: ColumnDef<TData>[] = nonActionsCols.map((col) => {
+    const mainDefs: ColumnDef<TData>[] = nonActionsCols.map(col => {
         if (col.type === "selection") {
-            // Checkbox de selección
             return {
                 id: col.id,
                 header: ({ table }) => (
@@ -118,15 +111,13 @@ export function DynamicDataTable<TData extends object>({
                             table.getIsAllPageRowsSelected() ||
                             (table.getIsSomePageRowsSelected() && "indeterminate")
                         }
-                        onCheckedChange={(value) => table.toggleAllPageRowsSelected(!!value)}
-                        aria-label="Select all"
+                        onCheckedChange={v => table.toggleAllPageRowsSelected(!!v)}
                     />
                 ),
                 cell: ({ row }) => (
                     <Checkbox
                         checked={row.getIsSelected()}
-                        onCheckedChange={(value) => row.toggleSelected(!!value)}
-                        aria-label="Select row"
+                        onCheckedChange={v => row.toggleSelected(!!v)}
                     />
                 ),
                 enableSorting: false,
@@ -134,11 +125,11 @@ export function DynamicDataTable<TData extends object>({
             }
         }
         // Columna normal: define accessor, header, filtro y cell
-        const accessorKey = col.accessorKey ?? col.id
+        const accessorKey = col.accessorKey || col.id
         return {
             id: col.id,
             accessorKey,
-            items: col.items, // Se pasa para faceted filters y badge rendering
+            items: col.items,
             header: ({ column }) => (
                 <DataTableColumnHeader column={column} title={col.headerLabel || col.id} />
             ),
@@ -147,19 +138,17 @@ export function DynamicDataTable<TData extends object>({
                 const value = row.getValue(accessorKey)
                 // Render para badgeWithText
                 if (col.renderType === "badgeWithText") {
-                    if (col.items && Array.isArray(col.items)) {
-                        const foundItem = col.items.find(
-                            (it) => it.value.toLowerCase() === String(value).toLowerCase()
+                    if (Array.isArray(col.items)) {
+                        const found = col.items.find(
+                            it => it.value.toLowerCase() === String(value).toLowerCase()
                         )
-                        if (foundItem) {
-                            const Icon = foundItem.icon
-                            const variant = foundItem.badgeVariant || col.badgeVariant || "outline"
+                        if (found) {
+                            const Icon = found.icon
+                            const variant = found.badgeVariant || col.badgeVariant || "outline"
                             return (
                                 <div className="flex items-center space-x-2">
                                     {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
-                                    <Badge variant={variant as "outline" | "default" | "secondary" | "destructive" | "approved" | "notapproved"}>
-                                        {foundItem.label}
-                                    </Badge>
+                                    <Badge variant={variant as any}>{found.label}</Badge>
                                 </div>
                             )
                         }
@@ -169,70 +158,58 @@ export function DynamicDataTable<TData extends object>({
                             <div className="flex space-x-2">
                                 {value.map((item: any, i: number) => (
                                     <React.Fragment key={i}>
-                                        {item[col.badgeKey ?? "label"] && (
-                                            <Badge variant={col.badgeVariant as "outline" | "default" | "secondary" | "destructive" | "approved" | "notapproved" || "outline"}>
-                                                {item[col.badgeKey ?? "label"]}
+                                        {item[col.badgeKey || "label"] && (
+                                            <Badge variant={col.badgeVariant as any}>
+                                                {item[col.badgeKey || "label"]}
                                             </Badge>
                                         )}
-                                        <span className="max-w-[500px] truncate font-medium">
-                                            {item[col.textKey ?? "text"]}
-                                        </span>
+                                        <span className="truncate">{item[col.textKey || "text"]}</span>
                                     </React.Fragment>
                                 ))}
                             </div>
                         )
                     }
-                    return <span>{String(value ?? "")}</span>
+                    return <span>{String(value)}</span>
                 }
-                // Render si solo se usan items (sin renderType badgeWithText)
-                if (col.items && Array.isArray(col.items)) {
+                if (Array.isArray(col.items)) {
                     const found = col.items.find(
-                        (it) => it.value.toLowerCase() === String(value).toLowerCase()
+                        it => it.value.toLowerCase() === String(value).toLowerCase()
                     )
-                    if (!found) return <span>{String(value ?? "")}</span>
-                    const Icon = found.icon
-                    const variant = found.badgeVariant || col.badgeVariant || "outline"
-                    return (
-                        <div className="flex items-center space-x-2">
-                            {Icon && <Icon className="mr-2 h-4 w-4 text-muted-foreground" />}
-                            <Badge variant={variant as "outline" | "default" | "secondary" | "destructive" | "approved" | "notapproved"}>
-                                {found.label}
-                            </Badge>
-                        </div>
-                    )
+                    if (found) {
+                        const Icon = found.icon
+                        const variant = found.badgeVariant || col.badgeVariant || "outline"
+                        return (
+                            <div className="flex items-center space-x-2">
+                                {Icon && <Icon className="h-4 w-4 text-muted-foreground" />}
+                                <Badge variant={variant as any}>{found.label}</Badge>
+                            </div>
+                        )
+                    }
                 }
-                // Valor por defecto
-                return <span>{String(value ?? "")}</span>
+                return <span>{String(value)}</span>
             },
         }
     })
 
     // 4. Columnas adivinadas (para props no definidas)
-    const guessedColumnDefs: ColumnDef<TData>[] = missingKeys.map((key) => ({
-        id: key,
-        accessorKey: key,
-        header: ({ column }) => (
-            <DataTableColumnHeader column={column} title={key} />
-        ),
+    const guessDefs: ColumnDef<TData>[] = missing.map(k => ({
+        id: k,
+        accessorKey: k,
+        header: ({ column }) => <DataTableColumnHeader column={column} title={k} />,
         filterFn: localCellFilterFn,
-        cell: ({ row }) => {
-            const val = row.getValue(key)
-            return <span>{String(val ?? "")}</span>
-        },
+        cell: ({ row }) => <span>{String(row.getValue(k))}</span>,
     }))
 
     // 5. Columna de acciones, se pone al final
-    let actionsColumnDef: ColumnDef<TData> | undefined
+    let actionsDef: ColumnDef<TData> | undefined
     if (actionsColumn) {
-        actionsColumnDef = {
+        actionsDef = {
             id: actionsColumn.id,
-            header: ({ column }) => (
-                <DataTableColumnHeader column={column} title="" />
-            ),
+            header: ({ column }) => <DataTableColumnHeader column={column} title="" />,
             cell: ({ row }) => (
                 <DataTableRowActions
                     row={row}
-                    actionItems={actionsColumn.actionItems ?? []}
+                    actionItems={actionsColumn.actionItems || []}
                 />
             ),
             enableSorting: false,
@@ -241,34 +218,23 @@ export function DynamicDataTable<TData extends object>({
     }
 
     // 6. Unir todas las columnas definidas y adivinadas
-    const allColumnDefs = [...mainColumnDefs, ...guessedColumnDefs]
-    if (actionsColumnDef) {
-        allColumnDefs.push(actionsColumnDef)
-    }
+    const allDefs = [...mainDefs, ...guessDefs]
+    if (actionsDef) allDefs.push(actionsDef)
 
     // 7. Crear diccionario de columnas para globalFilterFn
-    const columnsConfigMap: Record<string, ColumnConfig> = {}
-    columnsConfig.forEach((cc) => {
-        columnsConfigMap[cc.id] = cc
-    })
-
+    const configMap: Record<string, ColumnConfig> = {}
+    columnsConfig.forEach(cc => (configMap[cc.id] = cc))
     // 8. Crear globalFilterFn memorizado
-    const theGlobalFilterFn = React.useMemo(
-        () => createGlobalFilterFn(columnsConfigMap),
-        [columnsConfigMap]
-    )
+    const globalFn = React.useMemo(() => createGlobalFilterFn(configMap), [configMap])
 
-    // 9. Renderiza DataTable pasando callbacks para row click
     return (
         <DataTable
-            columns={allColumnDefs}
+            columns={allDefs}
             data={data}
             onRowClick={onRowClick}
             selectedRowId={selectedRowId}
-            tableMeta={{
-                columnsConfigMap,
-            }}
-            globalFilterFn={theGlobalFilterFn}
+            tableMeta={{ columnsConfigMap: configMap }}
+            globalFilterFn={globalFn}
         />
     )
 }

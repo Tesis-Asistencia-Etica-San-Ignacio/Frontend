@@ -9,8 +9,9 @@ export function useSendEmail() {
     mutationFn: sendEmail,
     onSuccess: () => {
       notifySuccess({
-        title: "Correo enviado",
-        description: "El email se envió con éxito.",
+        title: "Correo enviado correctamente",
+        description: "El formulario se envió y el correo fue procesado con éxito.",
+        icon: "✅",
         closeButton: true,
       });
     },

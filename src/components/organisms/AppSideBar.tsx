@@ -19,7 +19,6 @@ export function AppSidebar({
     getInitials,
     ...props
 }: AppSidebarProps) {
-    console.log("Sidebar data:", sidebarData)
     return (
         <Sidebar collapsible="icon" {...props}>
             <SidebarHeader>

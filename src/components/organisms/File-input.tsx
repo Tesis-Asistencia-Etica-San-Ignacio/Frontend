@@ -7,7 +7,7 @@ import React, {
     useCallback,
 } from "react"
 import { useNavigate } from "react-router-dom"
-import { Plus } from "lucide-react"        // ← aquí
+import { Plus } from "lucide-react"
 import { toast } from "sonner"
 import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluationHook"
 import type { FileWithUrl } from "@/types/fileType"
@@ -58,17 +58,21 @@ const FileInput = forwardRef<
 >(({ className, ...props }, ref) => {
     const [files, dispatch] = useReducer(fileReducer, [])
     const [dragActive, setDragActive] = useState(false)
+    const [showProgress, setShowProgress] = useState(false)
     const { uploadFiles, loading } = useCreateEvaluationHook()
     const navigate = useNavigate()
 
+    // Sólo PDF y Word (DOC/DOCX)
     const validateFileType = (file: File) =>
-        /\.(jpe?g|png|gif|webp|bmp|svg|pdf)$/i.test(file.name)
+        /\.(pdf|docx|doc)$/i.test(file.name)
+    // Si quieres reactivar imágenes coméntalas abajo:
+    // /\.(jpe?g|png|gif|webp|bmp|svg|pdf)$/i
 
     const handleFiles = (incoming: File[]) => {
         const newFiles = incoming.map(file => {
             const ok = validateFileType(file)
             if (!ok) {
-                toast.error(`${file.name} no es PDF ni imagen.`, { closeButton: true })
+                toast.error(`${file.name} no es PDF ni Word.`, { closeButton: true })
             }
             return {
                 file,
@@ -78,7 +82,7 @@ const FileInput = forwardRef<
                 error: !ok,
                 progress: 0,
             }
-        })
+        }).filter(f => !f.error) // descartamos los no válidos
         dispatch({ type: "ADD_FILES", payload: newFiles })
     }
 
@@ -107,12 +111,12 @@ const FileInput = forwardRef<
 
     const handleUploadClick = useCallback(async () => {
         if (loading || files.length === 0) return
-
+        setShowProgress(true)
         await uploadFiles(files, (i, pct) =>
             dispatch({ type: "UPDATE_PROGRESS", payload: { index: i, progress: pct } })
         )
-
         dispatch({ type: "CLEAR_FILES" })
+        setShowProgress(false)
         navigate("/historial-archivos-evaluados")
     }, [files, loading, uploadFiles, navigate])
 
@@ -152,7 +156,7 @@ const FileInput = forwardRef<
                         <p className="mb-2 text-sm text-gray-500">
                             <span className="font-semibold">Click para subir archivos</span> o arrastra y suelta
                         </p>
-                        <p className="text-xs text-gray-500">hasta {MAX_FILES} archivos PDF</p>
+                        <p className="text-xs text-gray-500">hasta {MAX_FILES} archivos PDF/Word</p>
                         <input
                             {...props}
                             ref={ref}
@@ -172,7 +176,7 @@ const FileInput = forwardRef<
                                         <thead className="bg-muted">
                                             <tr>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
-                                                    Previsualización
+                                                    Previsualización
                                                 </th>
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                                                     Nombre
@@ -180,9 +184,11 @@ const FileInput = forwardRef<
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hidden sm:table-cell">
                                                     Tamaño
                                                 </th>
-                                                <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">
-                                                    Progreso
-                                                </th>
+                                                {showProgress && (
+                                                    <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider hidden lg:table-cell">
+                                                        Progreso
+                                                    </th>
+                                                )}
                                                 <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider">
                                                     Acciones
                                                 </th>
@@ -197,6 +203,7 @@ const FileInput = forwardRef<
                                                     size={file.size}
                                                     error={file.error}
                                                     progress={file.progress}
+                                                    showProgress={showProgress}
                                                     onRemove={() => handleRemoveFile(idx)}
                                                 />
                                             ))}
@@ -206,7 +213,7 @@ const FileInput = forwardRef<
                                         htmlFor="more-files"
                                         className="flex items-center justify-center py-2 border-t border-gray-300 bg-muted/80 cursor-pointer hover:bg-gray-100 transition"
                                     >
-                                        <Plus className="w-6 h-6 text-gray-500" />  {/* ← y aquí */}
+                                        <Plus className="w-6 h-6 text-gray-500" />
                                         <input
                                             {...props}
                                             ref={ref}

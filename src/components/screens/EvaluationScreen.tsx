@@ -37,6 +37,7 @@ export default function EvaluationScreen() {
   }, [mailModalOpen, evaluationId, fetchPdf]);
 
   useEffect(() => {
+    console.log("norm", norms);
     setTableData(
       norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest)
     );
@@ -92,34 +93,6 @@ export default function EvaluationScreen() {
       justificacion: selectedRow.justification,
     }
     : {};
-
-
-
-  const modalSuccessToast = {
-    title: "Correo enviado correctamente",
-    description: "El formulario se envió y el correo fue procesado con éxito.",
-    icon: "✅",
-    closeButton: true,
-  };
-  const modalErrorToast = {
-    title: "Error al enviar el correo",
-    description: "Ocurrió un problema al procesar el envío.",
-    icon: "🚫",
-    closeButton: true,
-  };
-
-  const editSuccess = {
-    title: "Norma actualizada",
-    description: "Cambios guardados.",
-    icon: "✅",
-    closeButton: true,
-  };
-  const editError = {
-    title: "Error al actualizar",
-    description: "No se pudo guardar.",
-    icon: "🚫",
-    closeButton: true,
-  };
 
   const modalFormFields: FormField[][] = [
     [
@@ -249,8 +222,6 @@ export default function EvaluationScreen() {
         // Modal correo
         modalFormFields={modalFormFields}
         onModalSubmit={handleMailModalFormSubmit}
-        modalSuccessToast={modalSuccessToast}
-        modalErrorToast={modalErrorToast}
         modalOpen={mailModalOpen}
         onMailModalOpenChange={setMailModalOpen}
         // Modal edición
@@ -258,8 +229,7 @@ export default function EvaluationScreen() {
         onEditModalSubmit={handleEditSubmit}
         editModalOpen={editModalOpen}
         onEditModalOpenChange={setEditModalOpen}
-        editModalSuccessToast={editSuccess}
-        editModalErrorToast={editError}
+
         editInitialData={editInitialData}
       />
     </div>

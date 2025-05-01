@@ -28,18 +28,6 @@ interface EvaluationHistoryTemplateProps {
   onOpenChange: (open: boolean) => void;
   modalFormFields?: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
-  modalSuccessToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
-  modalErrorToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
   DataSelectedRow?: { [key: string]: any };
 }
 
@@ -62,8 +50,7 @@ export default function EvaluationHistoryTemplate({
   onOpenChange,
   modalFormFields,
   onModalSubmit,
-  modalSuccessToast,
-  modalErrorToast,
+
   DataSelectedRow,
 }: Readonly<EvaluationHistoryTemplateProps>) {
   return (
@@ -135,8 +122,7 @@ export default function EvaluationHistoryTemplate({
           submitButtonText="Guardar cambios"
           width="40%"
           height="64%"
-          successToast={modalSuccessToast}
-          errorToast={modalErrorToast}
+
           initialData={DataSelectedRow}
         />
       )}

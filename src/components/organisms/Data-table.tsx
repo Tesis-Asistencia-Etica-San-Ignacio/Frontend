@@ -28,6 +28,8 @@ import {
 import { DataTablePagination } from "../molecules/table/Data-table-pagination"
 import { DataTableToolbar } from "../molecules/table/Data-table-toolbar"
 
+const STORAGE_KEY = "table_column_visibility"
+
 /**
  * Props de la tabla.
  * columns: definición de columnas.
@@ -45,9 +47,6 @@ interface DataTableProps<TData, TValue> {
   selectedRowId?: string
 }
 
-/**
- * DataTable: crea la instancia de la tabla y la renderiza.
- */
 export function DataTable<TData, TValue>({
   columns,
   data,
@@ -58,12 +57,24 @@ export function DataTable<TData, TValue>({
 }: DataTableProps<TData, TValue>) {
   // 1) Estados internos para la tabla.
   const [rowSelection, setRowSelection] = React.useState({})
-  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>({})
   const [columnFilters, setColumnFilters] = React.useState<ColumnFiltersState>([])
   const [sorting, setSorting] = React.useState<SortingState>([])
   const [globalFilter, setGlobalFilter] = React.useState("")
 
-  // 2) Crear la instancia de la tabla con useReactTable.
+  // 2) Persistencia de visibilidad
+  const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
+    try {
+      const stored = localStorage.getItem(STORAGE_KEY)
+      return stored ? JSON.parse(stored) : {}
+    } catch {
+      return {}
+    }
+  })
+  React.useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(columnVisibility))
+  }, [columnVisibility])
+
+  // 3) Crear la instancia de la tabla con useReactTable.
   const table = useReactTable({
     data,
     columns,
@@ -90,21 +101,20 @@ export function DataTable<TData, TValue>({
     meta: tableMeta,
   })
 
-  // 3) Verificar si existe la columna "select" (checkbox de selección).
-  const hasSelectionColumn = columns.some((col) => col.id === "select")
+  // 4) Verificar si existe la columna "select".
+  const hasSelectionColumn = columns.some(col => col.id === "select")
 
-  // 4) Render: Toolbar, tabla y paginación.
+  // 5) Render: Toolbar, tabla y paginación.
   return (
     <div className="space-y-4">
-      {/* Toolbar: búsqueda global, filtros, etc. */}
       <DataTableToolbar table={table} />
+
       <div className="rounded-md border">
         <Table>
-          {/* Header */}
           <TableHeader>
-            {table.getHeaderGroups().map((headerGroup) => (
+            {table.getHeaderGroups().map(headerGroup => (
               <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => (
+                {headerGroup.headers.map(header => (
                   <TableHead key={header.id} colSpan={header.colSpan}>
                     {header.isPlaceholder
                       ? null
@@ -114,32 +124,27 @@ export function DataTable<TData, TValue>({
               </TableRow>
             ))}
           </TableHeader>
-          {/* Body */}
+
           <TableBody>
-            {table.getRowModel().rows?.length ? (
-              table.getRowModel().rows.map((row) => {
+            {table.getRowModel().rows.length ? (
+              table.getRowModel().rows.map(row => {
                 const isSelected = row.getIsSelected()
                 return (
                   <TableRow
                     key={row.id}
-                    // Al hacer clic:
-                    // - Si existe columna "select": alterna selección múltiple.
-                    // - Sino: fuerza selección única.
                     onClick={() => {
                       if (hasSelectionColumn) {
                         row.toggleSelected(!isSelected)
                       } else {
                         table.setRowSelection({ [row.id]: true })
                       }
-                      if (onRowClick) {
-                        onRowClick(row.original)
-                      }
+                      onRowClick?.(row.original)
                     }}
-                    // Resalta la fila si está seleccionada.
-                    className={`cursor-pointer transition-colors duration-200 hover:bg-muted ${isSelected ? "bg-blue-50" : ""}`}
+                    className={`cursor-pointer transition-colors duration-200 hover:bg-muted ${isSelected ? "bg-blue-50" : ""
+                      }`}
                     data-state={isSelected && "selected"}
                   >
-                    {row.getVisibleCells().map((cell) => (
+                    {row.getVisibleCells().map(cell => (
                       <TableCell key={cell.id}>
                         {flexRender(cell.column.columnDef.cell, cell.getContext())}
                       </TableCell>
@@ -148,7 +153,6 @@ export function DataTable<TData, TValue>({
                 )
               })
             ) : (
-              // Si no hay filas.
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
                   No se encontraron resultados.
@@ -158,7 +162,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      {/* Paginación */}
+
       <DataTablePagination table={table} />
     </div>
   )

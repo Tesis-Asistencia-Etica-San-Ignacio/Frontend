@@ -10,7 +10,7 @@ const useDeleteEvaluationHook = () => {
     setLoading(true);
     try {
       await deleteEvaluation(evaluationId);
-      notifySuccess({ title: "Evaluación eliminada", description: "Se eliminó correctamente.", closeButton: true });
+      notifySuccess({ title: "Evaluación eliminada", description: "Se eliminó correctamente.", closeButton: true, icon: "✅" });
     } catch (error: any) {
       console.error("Error al eliminar la evaluación:", error);
       notifyError({ title: "Error eliminando evaluación", description: error?.message, closeButton: true });

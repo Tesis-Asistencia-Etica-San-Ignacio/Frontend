@@ -5,7 +5,7 @@ import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
 import ModalForm from "../organisms/dialogs/ModalForm";
 
-interface EvaluationResultTemplateProps { 
+interface EvaluationResultTemplateProps {
   // Tabla
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
@@ -15,36 +15,12 @@ interface EvaluationResultTemplateProps {
   //Modal CORREO
   modalFormFields: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
-  modalSuccessToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
-  modalErrorToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
   readonly modalOpen: boolean;
   readonly onMailModalOpenChange: (open: boolean) => void;
 
   //EDITAR
   editModalFormFields: FormField[][];
   onEditModalSubmit?: (data: any) => Promise<void> | void;
-  editModalSuccessToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
-  editModalErrorToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
   editModalOpen: boolean;
   onEditModalOpenChange: (open: boolean) => void;
   editInitialData?: { [key: string]: any };
@@ -60,15 +36,11 @@ export default function EvaluationResultTemplate({
   // CORREO
   modalFormFields,
   onModalSubmit,
-  modalSuccessToast,
-  modalErrorToast,
   modalOpen,
   onMailModalOpenChange,
   // EDITAR
   editModalFormFields,
   onEditModalSubmit,
-  editModalSuccessToast,
-  editModalErrorToast,
   editModalOpen,
   onEditModalOpenChange,
   editInitialData
@@ -99,8 +71,6 @@ export default function EvaluationResultTemplate({
           selectedTask={DataSelectedRow || null}
           modalFormFields={modalFormFields}
           onModalSubmit={onModalSubmit}
-          modalSuccessToast={modalSuccessToast}
-          modalErrorToast={modalErrorToast}
         />
       </div>
       {modalFormFields && onEditModalSubmit && (
@@ -113,8 +83,6 @@ export default function EvaluationResultTemplate({
           submitButtonText="Guardar cambios"
           width="40%"
           height="60%"
-          successToast={editModalSuccessToast}
-          errorToast={editModalErrorToast}
           initialData={editInitialData}
         />
       )}

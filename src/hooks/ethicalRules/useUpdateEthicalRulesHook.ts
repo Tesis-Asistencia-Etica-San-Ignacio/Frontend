@@ -17,6 +17,7 @@ const useUpdateEthicalNormHook = () => {
           title: "Norma ética actualizada",
           description: "Se guardaron los cambios correctamente.",
           closeButton: true,
+          icon: "✅"
         });
       } catch (error: any) {
         console.error("Error al actualizar la norma ética:", error);

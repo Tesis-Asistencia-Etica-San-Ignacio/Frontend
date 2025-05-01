@@ -11,10 +11,11 @@ export interface FileRowProps extends React.HTMLAttributes<HTMLTableRowElement> 
     error?: boolean
     progress?: number
     onRemove?: () => void
+    showProgress?: boolean   // <— nueva prop
 }
 
 const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
-    ({ fileUrl, name, size, error, progress, onRemove, className, ...props }, ref) => {
+    ({ fileUrl, name, size, error, progress, onRemove, showProgress = false, className, ...props }, ref) => {
         // Determina si es imagen o PDF
         const isImage = /\.(jpe?g|png|gif|webp|bmp|svg)$/i.test(name)
         const isPdf = /\.pdf$/i.test(name)
@@ -36,19 +37,21 @@ const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(
                     </div>
                 </td>
                 {/* Nombre */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium ">
+                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium">
                     <span className="block truncate max-w-[150px] sm:max-w-full">{name}</span>
                 </td>
-                {/* Tamaño (KB) - se oculta en pantallas pequeñas */}
+                {/* Tamaño (KB) */}
                 <td className="px-6 py-4 whitespace-nowrap text-sm hidden sm:table-cell">
                     {(size / 1024).toFixed(1)} KB
                 </td>
-                {/* Status (Progress) - se oculta en pantallas aún más pequeñas */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm  hidden lg:table-cell">
-                    <Progress value={progress ?? 0} isError={error} />
-                </td>
+                {/* Progreso: sólo si showProgress es true */}
+                {showProgress && (
+                    <td className="px-6 py-4 whitespace-nowrap text-sm hidden lg:table-cell">
+                        <Progress value={progress ?? 0} isError={error} />
+                    </td>
+                )}
                 {/* Acciones */}
-                <td className="px-6 py-4 whitespace-nowrap text-sm ">
+                <td className="px-6 py-4 whitespace-nowrap text-sm">
                     {onRemove && (
                         <Button variant="destructive" size="sm" onClick={onRemove}>
                             <Trash2 className="w-4 h-4" />
