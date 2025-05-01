@@ -136,7 +136,7 @@
       - DashBoardTemplate.tsx
       - DropFilesTemplate.tsx
       - EvaluationResultTemplate.tsx
-      - FileHistoryTemplate.tsx
+      - EvaluationHistoryTemplate.tsx
       - LandingTemplate.tsx
       - LayoutTemplate.tsx
       - settings

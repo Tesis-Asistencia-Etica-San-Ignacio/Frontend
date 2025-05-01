@@ -19,17 +19,18 @@ export interface ModalFormProps {
     onOpenChange: (open: boolean) => void;
     title: TitleConfig;
     formDataConfig: FormField[] | FormField[][];
+    initialData?: { [key: string]: any };
     onSubmit: (data: { [key: string]: any }) => Promise<void> | void;
     submitButtonText?: string;
     width?: string;
     height?: string;
-    successToast: {
+    successToast?: {
         title: string;
         description: string;
         icon: React.ReactNode;
         closeButton?: boolean;
     };
-    errorToast: {
+    errorToast?: {
         title: string;
         description: string;
         icon: React.ReactNode;
@@ -48,6 +49,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
     height = "50%",
     successToast,
     errorToast,
+    initialData
 }) => {
     const [loading, setLoading] = useState(false);
     const formRef = useRef<DynamicFormHandles>(null);
@@ -61,10 +63,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
             setLoading(true);
             try {
                 await onSubmit(data);
-                notifySuccess(successToast);
+                if (successToast) notifySuccess(successToast);
                 setTimeout(() => onOpenChange(false), 500);
             } catch {
-                notifyError(errorToast);
+                if (errorToast) notifyError(errorToast);
             } finally {
                 setLoading(false);
             }
@@ -82,7 +84,10 @@ const ModalForm: React.FC<ModalFormProps> = ({
                         <ShadcnDialogTitle>{title.text}</ShadcnDialogTitle>
                     </div>
                     <form onSubmit={handleFormSubmit} className="flex flex-col flex-1 min-h-0">
-                        <DynamicForm ref={formRef} formDataConfig={formDataConfig} />
+                        <DynamicForm ref={formRef}
+                            formDataConfig={formDataConfig}
+                            initialData={initialData}
+                        />
                         <div className="mt-4 flex">
                             <Button type="submit" disabled={loading} className="ml-auto">
                                 {loading ? "Enviando..." : submitButtonText}

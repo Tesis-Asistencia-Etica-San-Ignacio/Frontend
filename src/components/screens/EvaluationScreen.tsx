@@ -24,10 +24,15 @@ export default function EvaluationScreen() {
 
   const [modalOpen, setModalOpen] = useState(false);
   const [isEditModalOpen, setIsEditModalOpen] = useState(false);
-  const [selectedNorm, setSelectedNorm] = useState<any>(null);
+
+  const [selectedRow, setSelectedRow] = useState<any>(null);
+
+  const tableData = norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest);
+
 
   useEffect(() => {
     fetchNorms();
+    console.log("norms", norms);
   }, [fetchNorms]);
 
   useEffect(() => {
@@ -36,11 +41,7 @@ export default function EvaluationScreen() {
     }
   }, [modalOpen, evaluationId, fetchPdf]);
 
-  // 1) Datos para la tabla sin el campo _id
-  const tableData = norms.map(({  evaluationId, createdAt, updatedAt, ...rest }) => rest);
-
-  // 2) Envío de correo
-  const handleModalFormSubmit = async (data: any) => {
+  const handleMailModalFormSubmit = async (data: any) => {
     await sendEmailMutation({
       to: data.to,
       subject: data.subject,
@@ -49,6 +50,40 @@ export default function EvaluationScreen() {
     });
     setModalOpen(false);
   };
+
+  const handleEditSubmit = async (data: any) => {
+    if (!selectedRow) return;
+    await updateEthicalNorm(selectedRow.id, {
+      status: data.status,
+      cita: data.cita,
+      justification: data.justification,
+    });
+    setIsEditModalOpen(false);
+    fetchNorms();
+  };
+
+  const onEdit = (row: any) => {
+    setSelectedRow(row);
+    setIsEditModalOpen(true);
+  };
+
+  const handleRowClick = (row: any) => {
+    if (selectedRow?.id === row.id) {
+      setSelectedRow(null);
+    } else {
+      setSelectedRow(row);
+    }
+  };
+
+  const editInitialData = selectedRow
+    ? {
+      estado: selectedRow.status,
+      cita: selectedRow.cita,
+      justificacion: selectedRow.justification,
+    }
+    : {};
+
+
 
   const modalSuccessToast = {
     title: "Correo enviado correctamente",
@@ -59,6 +94,19 @@ export default function EvaluationScreen() {
   const modalErrorToast = {
     title: "Error al enviar el correo",
     description: "Ocurrió un problema al procesar el envío.",
+    icon: "🚫",
+    closeButton: true,
+  };
+
+  const editSuccess = {
+    title: "Norma actualizada",
+    description: "Cambios guardados.",
+    icon: "✅",
+    closeButton: true,
+  };
+  const editError = {
+    title: "Error al actualizar",
+    description: "No se pudo guardar.",
     icon: "🚫",
     closeButton: true,
   };
@@ -103,14 +151,6 @@ export default function EvaluationScreen() {
     ],
   ];
 
-  // 3) Abrir modal de edición y recuperar objeto completo
-  const onEdit = (rowData: any) => {
-    const fullNorm = norms.find((n) => n.codeNumber === rowData.codeNumber);
-    if (!fullNorm) return;
-    setSelectedNorm(fullNorm);
-    setIsEditModalOpen(true);
-  };
-
   const editModalFields: FormField[][] = [
     [
       {
@@ -131,7 +171,7 @@ export default function EvaluationScreen() {
         key: "cita",
         placeholder: "Cita",
         required: true,
-      } 
+      }
     ],
     [
       {
@@ -144,29 +184,6 @@ export default function EvaluationScreen() {
     ],
   ];
 
-  const handleEditSubmit = async (data: any) => {
-    await updateEthicalNorm(selectedNorm.id, {
-      cita: data.cita,
-      status: data.estado,
-      justification: data.justificacion,
-    });
-    setIsEditModalOpen(false);
-  };
-
-  const editSuccess = {
-    title: "Norma actualizada",
-    description: "Cambios guardados.",
-    icon: "✅",
-    closeButton: true,
-  };
-  const editError = {
-    title: "Error al actualizar",
-    description: "No se pudo guardar.",
-    icon: "🚫",
-    closeButton: true,
-  };
-
-  // 4) Columnas sin la columna ID
   const columnsConfig: ColumnConfig[] = [
     {
       id: "id",
@@ -216,13 +233,17 @@ export default function EvaluationScreen() {
       <EvaluationResultTemplate
         data={tableData}
         columnsConfig={columnsConfig}
+        // Tabla
+        selectedRowId={selectedRow?.id}
+        onRowClick={handleRowClick}
+        DataSelectedRow={selectedRow}
         // Modal correo
         modalFormFields={modalFormFields}
-        onModalSubmit={handleModalFormSubmit}
+        onModalSubmit={handleMailModalFormSubmit}
         modalSuccessToast={modalSuccessToast}
         modalErrorToast={modalErrorToast}
         modalOpen={modalOpen}
-        onModalOpenChange={setModalOpen}
+        onMailModalOpenChange={setModalOpen}
         // Modal edición
         editModalFormFields={editModalFields}
         onEditModalSubmit={handleEditSubmit}
@@ -230,6 +251,7 @@ export default function EvaluationScreen() {
         onEditModalOpenChange={setIsEditModalOpen}
         editModalSuccessToast={editSuccess}
         editModalErrorToast={editError}
+        editInitialData={editInitialData}
       />
     </div>
   );

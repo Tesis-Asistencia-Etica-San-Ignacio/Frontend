@@ -7,7 +7,7 @@ const Auth = lazy(() => import("../components/screens/AuthScreen"));
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"));
-const FileHistory = lazy(() => import("../components/screens/FileHistoryScreen"));
+const FileHistory = lazy(() => import("../components/screens/EvaluationHistoryScreen"));
 const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));

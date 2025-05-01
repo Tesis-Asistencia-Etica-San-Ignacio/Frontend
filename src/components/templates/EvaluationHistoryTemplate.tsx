@@ -9,7 +9,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert
 import { FormField } from "@/types/formTypes"
 import ModalForm from "../organisms/dialogs/ModalForm"
 
-interface FileHistoryTemplateProps {
+interface EvaluationHistoryTemplateProps {
   data: any[];
   columnsConfig: ColumnConfig[];
   deleteDialogOpen: boolean;
@@ -27,7 +27,7 @@ interface FileHistoryTemplateProps {
   modalErrorToast: { title: string; description: string; icon: React.ReactNode; closeButton?: boolean };
 }
 
-export default function FileHistoryTemplate({
+export default function EvaluationHistoryTemplate({
   open,
   onOpenChange,
   onModalSubmit,
@@ -42,18 +42,20 @@ export default function FileHistoryTemplate({
   onConfirmDelete,
   confirmValue,
   onConfirmValueChange,
-}: FileHistoryTemplateProps) {
+}: EvaluationHistoryTemplateProps) {
 
   return (
-    <section>
+    <section className="pb-8 space-y-4">
       <div className="mb-4 flex flex-col">
         <h2 className="text-2xl font-bold tracking-tight">Historial de Archivos</h2>
         <p className="text-muted-foreground">
           Aquí está una lista de todos los archivos evaluados previamente
         </p>
       </div>
-
-      <DynamicDataTable data={data} columnsConfig={columnsConfig} />
+      <div className="grid grid-cols-3 gap-4">
+        <div className="col-span-3">
+          <DynamicDataTable data={data} columnsConfig={columnsConfig} />
+        </div></div>
 
       <ConfirmDialog
         open={deleteDialogOpen}
@@ -99,8 +101,8 @@ export default function FileHistoryTemplate({
           formDataConfig={modalFormFields}
           onSubmit={onModalSubmit}
           submitButtonText="Enviar resultado"
-          width="70%"
-          height="80%"
+          width="40%"
+          height="64%"
           successToast={modalSuccessToast}
           errorToast={modalErrorToast}
         />

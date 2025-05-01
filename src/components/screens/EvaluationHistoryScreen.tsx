@@ -1,11 +1,12 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import FileHistoryTemplate from "../templates/FileHistoryTemplate";
+import EvaluationHistoryTemplate from "../templates/EvaluationHistoryTemplate";
 import { CheckCircle, Circle } from "lucide-react";
 import { ColumnConfig } from "@/types/table";
 import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
 import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook";
 import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook";
+import useUpdateEvaluationHook from "@/hooks/evaluation/useUpdateEvaluationHook";
 import { FormField } from "@/types/formTypes";
 
 function createColumnsConfig({
@@ -24,6 +25,13 @@ function createColumnsConfig({
       headerLabel: "ID",
       searchable: true,
     },
+    {
+      id: "id_fundanet",
+      accessorKey: "id_fundanet",
+      headerLabel: "ID FundaNet",
+      searchable: true,
+    },
+    
     {
       id: "correo_estudiante",
       accessorKey: "correo_estudiante",
@@ -44,9 +52,6 @@ function createColumnsConfig({
       id: "aprobado",
       accessorKey: "aprobado",
       headerLabel: "Aprobado",
-      renderType: "badgeWithText",
-      badgeKey: "label",
-      textKey: "text",
       items: [
         {
           value: "approved",
@@ -116,83 +121,85 @@ function createColumnsConfig({
   ];
 }
 
-const modalFormFields: FormField[][] = [
+// Base config de campos de edición
+const baseEditFields: FormField[][] = [
+  [
+    { type: "email", key: "correo_estudiante", placeholder: "Correo del estudiante" },
+  ],
+  [
+    { type: "textarea", key: "tipo_error", placeholder: "Tipo de error", autoAdjust: true },
+  ],
   [
     {
-      type: "email",
-      key: "to",
-      placeholder: "Correo de destino",
-      required: true,
-    },
-    {
       type: "select",
-      key: "subject",
-      placeholder: "Motivo del correo",
-      required: true,
-      selectPlaceholder: "Selecciona un motivo",
+      key: "aprobado",
+      placeholder: "Resultado de la evaluación",
+      selectPlaceholder: "Seleccione un resultado",
       options: [
-        { value: "Incompletitud", label: "Incompletitud" },
-        { value: "Ortografía", label: "Ortografía" },
-        { value: "Coherencia", label: "Coherencia" },
-        { value: "Aprobación", label: "Aprobación" },
+        { value: "true", label: "Aprobado" },
+        { value: "false", label: "Rechazado" },
       ],
     },
   ],
   [
-
     {
-      type: "textarea",
-      key: "mensajeAdicional",
-      placeholder: "Mensaje adicional",
-      required: false,
-      autoAdjust: true,
+      type: "select",
+      key: "estado",
+      placeholder: "Estado del archivo",
+      selectPlaceholder: "Seleccione un estado",
+      options: [
+        { value: "PENDIENTE", label: "Pendiente" },
+        { value: "EN CURSO", label: "En curso" },
+        { value: "EVALUADO", label: "Evaluado" },
+      ],
     },
   ],
 ];
 
-const formatDate = (dateStr: string): string =>
-  new Date(dateStr).toISOString().split("T")[0];
-
-const transformFile = (url: string): string => {
-  const key = "uploads/";
-  const idx = url.indexOf(key);
-  return idx >= 0 ? url.slice(idx + key.length) : url;
-};
-
-const transformData = (data: any[]) =>
-  data.map((row) => ({
-    id: row.id,
-    correo_estudiante: row.correo_estudiante,
-    file: transformFile(row.file),
-    tipo_error: row.tipo_error,
-    aprobado: row.aprobado ? "approved" : "notapproved",
-    estado: row.estado?.toUpperCase() || "",
-    createdAt: formatDate(row.createdAt),
-    updatedAt: formatDate(row.updatedAt),
-  }));
-
-export default function FileHistoryScreen() {
+export default function EvaluationHistoryScreen() {
   const { files, getFilesByUser } = useGetEvaluationsByUserHook();
   const { generate } = useGenerateEvaluationHook();
   const { deleteEvaluation } = useDeleteEvaluationHook();
+  const { updateEvaluation, loading: updating } = useUpdateEvaluationHook();
+  const navigate = useNavigate();
+
   const [tableData, setTableData] = useState<any[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [confirmValue, setConfirmValue] = useState("");
   const [toDeleteId, setToDeleteId] = useState<string>("");
-  const navigate = useNavigate();
 
+  const [editingRow, setEditingRow] = useState<any | null>(null);
+  const [modalOpen, setModalOpen] = useState(false);
 
+  useEffect(() => {
+    getFilesByUser();
+    console.log("Files:", files);
+  }, [getFilesByUser]);
+
+  useEffect(() => {
+    setTableData(
+      files.map(r => ({
+        id: r.id,
+        id_fundanet: r.id_fundanet,
+        correo_estudiante: r.correo_estudiante,
+        file: r.file.split("uploads/")[1],
+        tipo_error: r.tipo_error,
+        aprobado: r.aprobado ? "approved" : "notapproved",
+        estado: r.estado,
+        createdAt: new Date(r.createdAt).toISOString().split("T")[0],
+        updatedAt: new Date(r.updatedAt).toISOString().split("T")[0],
+      }))
+    );
+  }, [files]);
 
   const handleEdit = (row: any) => {
+    setEditingRow(row);
     setModalOpen(true);
   };
-  const handleVerMas = (rowData: any) => {
-    if (rowData.estado === "PENDIENTE") {
-      generate(rowData.id);
-    }
-    navigate(`/evaluacion/${rowData.id}`)
-  }
-
+  const handleVerMas = (row: any) => {
+    if (row.estado === "PENDIENTE") generate(row.id);
+    navigate(`/evaluacion/${row.id}`);
+  };
   const handleDelete = (row: any) => {
     setToDeleteId(row.id);
     setDeleteDialogOpen(true);
@@ -204,51 +211,54 @@ export default function FileHistoryScreen() {
     getFilesByUser();
   };
 
+  // 4️⃣ Inyectar defaultValue en campos de edición
+  const editModalFields: FormField[][] = editingRow
+    ? baseEditFields.map(group =>
+      group.map(field => ({
+        ...field,
+        defaultValue: String((editingRow as any)[field.key] ?? ""),
+      }))
+    )
+    : baseEditFields;
+
+  // 5️⃣ Al enviar edición
+  const handleEditSubmit = async (data: any) => {
+    if (!editingRow) return;
+    const params = {
+      correo_estudiante: data.correo_estudiante,
+      tipo_error: data.tipo_error,
+      aprobado: data.aprobado === "true",
+      estado: data.estado,
+    };
+    await updateEvaluation(editingRow.id, params);
+    // actualizar localmente la fila
+    setTableData(prev =>
+      prev.map(item =>
+        item.id === editingRow.id
+          ? {
+            ...item,
+            ...params,
+            aprobado: params.aprobado ? "approved" : "notapproved",
+            updatedAt: new Date().toISOString().split("T")[0],
+          }
+          : item
+      )
+    );
+    setModalOpen(false);
+    setEditingRow(null);
+  };
+
   const columnsConfig = createColumnsConfig({
     onEdit: handleEdit,
     onVerMas: handleVerMas,
     onDelete: handleDelete,
   });
 
-  const modalSuccessToast = {
-    title: "Correo enviado correctamente",
-    description: "El formulario se envió y el correo fue procesado con éxito.",
-    icon: "✅",
-    closeButton: true,
-  };
-
-  const modalErrorToast = {
-    title: "Error al enviar el correo",
-    description: "Ocurrió un problema al procesar el envío.",
-    icon: "🚫",
-    closeButton: true,
-  };
-
-  const handleModalFormSubmit = async (data: any) => {
-    try {
-      setModalOpen(false);
-      getFilesByUser();
-    } catch {
-    }
-  };
-  const [modalOpen, setModalOpen] = useState(false);
-
-  useEffect(() => {
-    getFilesByUser();
-    modalOpen
-  }, [getFilesByUser]);
-
-  useEffect(() => {
-    if (Array.isArray(files)) {
-      setTableData(transformData(files));
-    }
-  }, [files]);
-
-
   return (
-    <FileHistoryTemplate
+    <EvaluationHistoryTemplate
       data={tableData}
       columnsConfig={columnsConfig}
+
       deleteDialogOpen={deleteDialogOpen}
       onDeleteDialogChange={setDeleteDialogOpen}
       onConfirmDelete={handleConfirmDelete}
@@ -256,13 +266,24 @@ export default function FileHistoryScreen() {
       onConfirmValueChange={setConfirmValue}
 
       open={modalOpen}
-      onOpenChange={(open) => {
+      onOpenChange={open => {
         setModalOpen(open);
+        if (!open) setEditingRow(null);
       }}
-      modalFormFields={modalFormFields}
-      onModalSubmit={handleModalFormSubmit}
-      modalSuccessToast={modalSuccessToast}
-      modalErrorToast={modalErrorToast}
+      modalFormFields={editModalFields}
+      onModalSubmit={handleEditSubmit}
+      modalSuccessToast={{
+        title: "Evaluación actualizada",
+        description: "Cambios guardados correctamente.",
+        icon: "✅",
+        closeButton: true,
+      }}
+      modalErrorToast={{
+        title: "Error al actualizar",
+        description: "No se pudieron guardar los cambios.",
+        icon: "🚫",
+        closeButton: true,
+      }}
     />
   );
 }

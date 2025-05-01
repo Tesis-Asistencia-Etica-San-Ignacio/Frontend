@@ -36,13 +36,12 @@ export default function EthicalEvaluationBox({
   modalErrorToast,
 }: EthicalEvaluationBoxProps) {
   return (
-    <div className="flex flex-col h-full bg-[#5DA9E9]">
-      
-      {/* 2) Contenedor de las dos cajas: flex-col, ocupa resto, con gap */}
+    <div className="flex flex-col h-full">
+
       <div className="flex flex-col flex-1 min-h-0 gap-y-4">
-        
-        {/* 3) CITA: flex-basis 30%, puede hacer scroll */}
-        <div className="basis-[30%]  overflow-y-auto border p-4 rounded-md">
+
+        <div className="basis-[30%] max-h-[30%] overflow-y-auto border p-4 rounded-md">
+
           <h2 className="font-semibold mb-2">Cita</h2>
           {selectedTask?.cita ? (
             <p>{selectedTask.cita}</p>
@@ -52,9 +51,9 @@ export default function EthicalEvaluationBox({
             </p>
           )}
         </div>
-        
-        {/* 4) JUSTIFICACIÓN: flex-basis 70%, puede hacer scroll */}
-        <div className="basis-[30%]  overflow-y-auto border p-4 rounded-md">
+
+        <div className="basis-[70%] max-h-[70%] overflow-y-auto border p-4 rounded-md">
+
           <h2 className="font-semibold mb-2">Justificación</h2>
           {selectedTask?.justification ? (
             <p>{selectedTask.justification}</p>
@@ -67,12 +66,10 @@ export default function EthicalEvaluationBox({
       </div>
 
 
-      {/* Botón para abrir el modal de envío de correo */}
       <div className="flex justify-end mt-4">
         <Button onClick={() => onOpenChange(true)}>Enviar resultado</Button>
       </div>
 
-      {/* ModalForm */}
       {modalFormFields && onModalSubmit && (
         <ModalForm
           open={open}

@@ -1,4 +1,3 @@
-// src/types/evaluationType.ts
 export interface UpdateEvaluationParams {
     fundanet?: string;
     fecha_final?: string;
