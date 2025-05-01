@@ -40,7 +40,7 @@ interface EvaluationHistoryTemplateProps {
     icon: React.ReactNode;
     closeButton?: boolean;
   };
-  editInitialData?: { [key: string]: any };
+  DataSelectedRow?: { [key: string]: any };
 }
 
 export default function EvaluationHistoryTemplate({
@@ -64,7 +64,7 @@ export default function EvaluationHistoryTemplate({
   onModalSubmit,
   modalSuccessToast,
   modalErrorToast,
-  editInitialData,
+  DataSelectedRow,
 }: Readonly<EvaluationHistoryTemplateProps>) {
   return (
 
@@ -129,7 +129,7 @@ export default function EvaluationHistoryTemplate({
         <ModalForm
           open={open}
           onOpenChange={onOpenChange}
-          title={{ text: "Editar evaluación", align: "left" }}
+          title={{ text: "Editar evaluación" + " - " + DataSelectedRow?.id_fundanet, align: "left" }}
           formDataConfig={modalFormFields}
           onSubmit={onModalSubmit}
           submitButtonText="Guardar cambios"
@@ -137,7 +137,7 @@ export default function EvaluationHistoryTemplate({
           height="64%"
           successToast={modalSuccessToast}
           errorToast={modalErrorToast}
-          initialData={editInitialData}
+          initialData={DataSelectedRow}
         />
       )}
     </section>

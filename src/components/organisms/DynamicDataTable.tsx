@@ -6,6 +6,17 @@ import { Badge } from "@/components/atoms/ui/badge"
 import { DataTableRowActions } from "@/components/molecules/table/Data-table-row-actions"
 import { DataTableColumnHeader } from "@/components/molecules/table/Data-table-column-header"
 import { ColumnConfig } from "@/types/table"
+import { VisibilityState } from "@tanstack/react-table"
+const STORAGE_KEY = "table_column_visibility"
+
+/** Props del DynamicDataTable */
+interface DynamicDataTableProps<TData extends object> {
+    data: TData[]
+    columnsConfig: ColumnConfig[]
+    // Callback y estado para selección de fila por clic
+    onRowClick?: (rowData: TData) => void
+    selectedRowId?: string
+}
 
 /** 
  * Filtro local: filtra el valor de la celda según el filtro
@@ -67,15 +78,6 @@ function createGlobalFilterFn(columnsConfigMap: Record<string, ColumnConfig>): F
     }
 }
 
-/** Props del DynamicDataTable */
-interface DynamicDataTableProps<TData extends object> {
-    data: TData[]
-    columnsConfig: ColumnConfig[]
-    // Callback y estado para selección de fila por clic
-    onRowClick?: (rowData: TData) => void
-    selectedRowId?: string
-}
-
 /** Componente principal de la tabla dinámica */
 export function DynamicDataTable<TData extends object>({
     data,
@@ -83,6 +85,18 @@ export function DynamicDataTable<TData extends object>({
     onRowClick,
     selectedRowId,
 }: DynamicDataTableProps<TData>) {
+    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
+        try {
+            const raw = localStorage.getItem(STORAGE_KEY)
+            return raw ? JSON.parse(raw) : {}
+        } catch {
+            return {}
+        }
+    })
+    React.useEffect(() => {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(columnVisibility))
+    }, [columnVisibility])
+
     // 1. Separa la columna "actions" (para que siempre quede al final)
     const actionsColumn = columnsConfig.find((col) => col.type === "actions")
     const nonActionsCols = columnsConfig.filter((col) => col.type !== "actions")

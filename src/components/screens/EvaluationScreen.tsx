@@ -16,30 +16,31 @@ export default function EvaluationScreen() {
     useGetEthicalRulesByEvaluationIdHook(evaluationId);
   const { mutateAsync: sendEmailMutation } = useSendEmail();
   const { updateEthicalNorm, loading: updating } = useUpdateEthicalNormHook();
-  const {
-    pdfUrl,
-    fetchPdf,
-    loading: loadingPdf,
-  } = useGeneratePdfByEvaluationId();
+  const { pdfUrl, fetchPdf, loading: loadingPdf, } = useGeneratePdfByEvaluationId();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [tableData, setTableData] = useState<any[]>([]);
 
   const [selectedRow, setSelectedRow] = useState<any>(null);
-
-  const tableData = norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest);
+  /* modales */
+  const [mailModalOpen, setMailModalOpen] = useState(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
 
   useEffect(() => {
     fetchNorms();
-    console.log("norms", norms);
   }, [fetchNorms]);
 
   useEffect(() => {
-    if (modalOpen) {
+    if (mailModalOpen) {
       fetchPdf(evaluationId);
     }
-  }, [modalOpen, evaluationId, fetchPdf]);
+  }, [mailModalOpen, evaluationId, fetchPdf]);
+
+  useEffect(() => {
+    setTableData(
+      norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest)
+    );
+  }, [norms]);
 
   const handleMailModalFormSubmit = async (data: any) => {
     await sendEmailMutation({
@@ -48,34 +49,41 @@ export default function EvaluationScreen() {
       mensajeAdicional: data.mensajeAdicional,
       evaluationId,
     });
-    setModalOpen(false);
+    setMailModalOpen(false);
   };
 
   const handleEditSubmit = async (data: any) => {
-    console.log("data", data);
     if (!selectedRow) return;
-    console.log("Actualizando", selectedRow);
-    await updateEthicalNorm(selectedRow.id, {
+    const params = {
       status: data.estado,
       cita: data.cita,
       justification: data.justificacion,
-    });
-    setIsEditModalOpen(false);
-    fetchNorms();
-  };
-
-  const onEdit = (row: any) => {
-    setSelectedRow(row);
-    setIsEditModalOpen(true);
+    };
+    await updateEthicalNorm(selectedRow.id, params);
+    setTableData((prev) =>
+      prev.map((r) =>
+        r.id === selectedRow.id
+          ? {
+            ...r,
+            ...params,
+            status: params.status,
+            // si quieres reflejar un updatedAt local:
+            updatedAt: new Date().toISOString(),
+          }
+          : r
+      )
+    );
+    setEditModalOpen(false);
   };
 
   const handleRowClick = (row: any) => {
-    if (selectedRow?.id === row.id) {
-      setSelectedRow(null);
-    } else {
-      setSelectedRow(row);
-    }
+    setSelectedRow(row);
   };
+  const handleEdit = (row: any) => {
+    setSelectedRow(row);
+    setEditModalOpen(true);
+  };
+
 
   const editInitialData = selectedRow
     ? {
@@ -159,7 +167,7 @@ export default function EvaluationScreen() {
         type: "select",
         key: "estado",
         placeholder: "Estado",
-        required: true,
+        required: false,
         selectPlaceholder: "Selecciona estado",
         options: [
           { value: "APROBADO", label: "Aprobado" },
@@ -172,7 +180,7 @@ export default function EvaluationScreen() {
         type: "textarea",
         key: "cita",
         placeholder: "Cita",
-        required: true,
+        required: false,
       }
     ],
     [
@@ -180,7 +188,7 @@ export default function EvaluationScreen() {
         type: "textarea",
         key: "justificacion",
         placeholder: "Justificación",
-        required: true,
+        required: false,
         autoAdjust: true,
       },
     ],
@@ -225,7 +233,7 @@ export default function EvaluationScreen() {
     {
       id: "actions",
       type: "actions",
-      actionItems: [{ label: "Editar", onClick: onEdit }],
+      actionItems: [{ label: "Editar", onClick: handleEdit }],
     },
   ];
 
@@ -236,7 +244,6 @@ export default function EvaluationScreen() {
         data={tableData}
         columnsConfig={columnsConfig}
         // Tabla
-        selectedRowId={selectedRow?.id}
         onRowClick={handleRowClick}
         DataSelectedRow={selectedRow}
         // Modal correo
@@ -244,13 +251,13 @@ export default function EvaluationScreen() {
         onModalSubmit={handleMailModalFormSubmit}
         modalSuccessToast={modalSuccessToast}
         modalErrorToast={modalErrorToast}
-        modalOpen={modalOpen}
-        onMailModalOpenChange={setModalOpen}
+        modalOpen={mailModalOpen}
+        onMailModalOpenChange={setMailModalOpen}
         // Modal edición
         editModalFormFields={editModalFields}
         onEditModalSubmit={handleEditSubmit}
-        editModalOpen={isEditModalOpen}
-        onEditModalOpenChange={setIsEditModalOpen}
+        editModalOpen={editModalOpen}
+        onEditModalOpenChange={setEditModalOpen}
         editModalSuccessToast={editSuccess}
         editModalErrorToast={editError}
         editInitialData={editInitialData}

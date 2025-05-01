@@ -5,12 +5,10 @@ import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
 import ModalForm from "../organisms/dialogs/ModalForm";
 
-interface EvaluationResultTemplateProps {
+interface EvaluationResultTemplateProps { 
+  // Tabla
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
-
-  // Tabla
-  selectedRowId?: string;
   onRowClick?: (row: any) => void;
   DataSelectedRow?: { [key: string]: any };
 
@@ -57,7 +55,6 @@ export default function EvaluationResultTemplate({
   columnsConfig,
 
   // Tabla
-  selectedRowId,
   onRowClick,
   DataSelectedRow,
   // CORREO
@@ -92,7 +89,7 @@ export default function EvaluationResultTemplate({
           <DynamicDataTable
             data={data}
             columnsConfig={columnsConfig}
-            selectedRowId={selectedRowId}
+            selectedRowId={DataSelectedRow?.id}
             onRowClick={onRowClick}
           />
         </div>
@@ -110,7 +107,7 @@ export default function EvaluationResultTemplate({
         <ModalForm
           open={editModalOpen}
           onOpenChange={onEditModalOpenChange}
-          title={{ text: "Editar norma ética", align: "left" }}
+          title={{ text: "Editar norma ética" + " - " + DataSelectedRow?.codeNumber, align: "left" }}
           formDataConfig={editModalFormFields}
           onSubmit={onEditModalSubmit}
           submitButtonText="Guardar cambios"

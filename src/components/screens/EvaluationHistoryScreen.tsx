@@ -49,8 +49,7 @@ export default function EvaluationHistoryScreen() {
 
   // ───────────────────── handlers de la tabla ──────────────────────────────
   const handleRowClick = (row: any) => {
-    if (selectedRow?.id === row.id) setSelectedRow(null);
-    else setSelectedRow(row);
+    setSelectedRow(row);
   };
 
   const handleEdit = (row: any) => {
@@ -99,7 +98,6 @@ export default function EvaluationHistoryScreen() {
       )
     );
     setEditModalOpen(false);
-    setSelectedRow(null);
   };
 
   // ─────────────────── datos iniciales del modal ──────────────────────────
@@ -232,7 +230,7 @@ export default function EvaluationHistoryScreen() {
       onModalSubmit={handleEditSubmit}
       modalSuccessToast={editSuccessToast}
       modalErrorToast={editErrorToast}
-      editInitialData={editInitialData}
+      DataSelectedRow={editInitialData}
     />
   );
 }
