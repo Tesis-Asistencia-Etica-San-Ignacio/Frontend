@@ -11,6 +11,7 @@ const useUpdateEthicalNormHook = () => {
     async (normId: string, updateData: UpdateEthicalRuleParams) => {
       setLoading(true);
       try {
+        console.log("updateData", updateData);
         await updateEthicalNorm(normId, updateData);
         notifySuccess({
           title: "Norma ética actualizada",

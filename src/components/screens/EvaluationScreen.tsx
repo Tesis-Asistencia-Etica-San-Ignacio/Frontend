@@ -52,11 +52,13 @@ export default function EvaluationScreen() {
   };
 
   const handleEditSubmit = async (data: any) => {
+    console.log("data", data);
     if (!selectedRow) return;
+    console.log("Actualizando", selectedRow);
     await updateEthicalNorm(selectedRow.id, {
-      status: data.status,
+      status: data.estado,
       cita: data.cita,
-      justification: data.justification,
+      justification: data.justificacion,
     });
     setIsEditModalOpen(false);
     fetchNorms();
