@@ -15,6 +15,7 @@ interface DynamicDataTableProps<TData extends object> {
     columnsConfig: ColumnConfig[]
     onRowClick?: (rowData: TData) => void
     selectedRowId?: string
+    loading?: boolean
 }
 /** 
  * Filtro local: filtra el valor de la celda según el filtro
@@ -78,9 +79,10 @@ export function DynamicDataTable<TData extends object>({
     columnsConfig,
     onRowClick,
     selectedRowId,
+    loading = false,
 }: DynamicDataTableProps<TData>) {
     // 0) Cargar/guardar visibilidad
-    const [columnVisibility, setColumnVisibility] = React.useState<VisibilityState>(() => {
+    const [columnVisibility] = React.useState<VisibilityState>(() => {
         try {
             return JSON.parse(localStorage.getItem(STORAGE_KEY) || "{}")
         } catch {
@@ -235,6 +237,7 @@ export function DynamicDataTable<TData extends object>({
             selectedRowId={selectedRowId}
             tableMeta={{ columnsConfigMap: configMap }}
             globalFilterFn={globalFn}
+            loading={loading}
         />
     )
 }

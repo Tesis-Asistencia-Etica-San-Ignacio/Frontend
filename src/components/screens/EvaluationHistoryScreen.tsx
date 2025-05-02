@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import EvaluationHistoryTemplate from "../templates/EvaluationHistoryTemplate";
 import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
-import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook";
 import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluationHook";
 import useUpdateEvaluationHook from "@/hooks/evaluation/useUpdateEvaluationHook";
 import type { ColumnConfig } from "@/types/table";
@@ -12,7 +11,7 @@ import { CheckCircle, Circle } from "lucide-react";
 export default function EvaluationHistoryScreen() {
   // ──────────────────────── hooks y estados ────────────────────────────────
   const { files, getFilesByUser } = useGetEvaluationsByUserHook();
-  const { generate } = useGenerateEvaluationHook();
+
   const { deleteEvaluation } = useDeleteEvaluationHook();
   const { updateEvaluation } = useUpdateEvaluationHook();
   const navigate = useNavigate();
@@ -58,8 +57,15 @@ export default function EvaluationHistoryScreen() {
   };
 
   const handleVerMas = (row: any) => {
-    if (row.estado === "PENDIENTE") generate(row.id);
-    navigate(`/evaluacion/${row.id}`);
+    navigate(`/evaluacion/${row.id}`, {
+      state: { runGenerate: row.estado === "PENDIENTE" }
+    });
+  };
+
+  const handleReEvaluate = (row: any) => {
+    navigate(`/evaluacion/${row.id}`, {
+      state: { runReEvaluate: true }
+    });
   };
 
   const handleDelete = (row: any) => {
@@ -184,7 +190,7 @@ export default function EvaluationHistoryScreen() {
       actionItems: [
         { label: "Editar", onClick: handleEdit },
         { label: "Ver más", onClick: handleVerMas },
-        { label: "Reevaluar", visible: r => r.estado === "EVALUADO" || r.estado === "EN CURSO" },
+        { label: "Reevaluar", onClick: handleReEvaluate, visible: r => r.estado === "EVALUADO" || r.estado === "EN CURSO" },
         { label: "Eliminar", onClick: handleDelete },
       ],
     },

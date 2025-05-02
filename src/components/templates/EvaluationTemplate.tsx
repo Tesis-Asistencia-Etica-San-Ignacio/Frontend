@@ -1,4 +1,3 @@
-import React from "react";
 import { DynamicDataTable } from "../organisms/DynamicDataTable";
 import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
 import type { ColumnConfig } from "@/types/table";
@@ -11,6 +10,8 @@ interface EvaluationResultTemplateProps {
   readonly columnsConfig: ColumnConfig[];
   onRowClick?: (row: any) => void;
   DataSelectedRow?: { [key: string]: any };
+  tableLoading?: boolean;
+
 
   //Modal CORREO
   modalFormFields: FormField[][];
@@ -27,12 +28,13 @@ interface EvaluationResultTemplateProps {
 }
 
 export default function EvaluationResultTemplate({
-  data,
-  columnsConfig,
 
   // Tabla
+  data,
+  columnsConfig,
   onRowClick,
   DataSelectedRow,
+  tableLoading = false,
   // CORREO
   modalFormFields,
   onModalSubmit,
@@ -56,13 +58,13 @@ export default function EvaluationResultTemplate({
         </p>
       </div>
       <div className="grid grid-cols-3 gap-4 h-full">
-        <div className="col-span-2">
-
+        <div className="col-span-2 relative">
           <DynamicDataTable
             data={data}
             columnsConfig={columnsConfig}
             selectedRowId={DataSelectedRow?.id}
             onRowClick={onRowClick}
+            loading={tableLoading}
           />
         </div>
         <EthicalEvaluationBox

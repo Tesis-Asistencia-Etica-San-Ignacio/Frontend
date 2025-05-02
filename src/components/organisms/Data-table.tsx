@@ -27,6 +27,7 @@ import {
 
 import { DataTablePagination } from "../molecules/table/Data-table-pagination"
 import { DataTableToolbar } from "../molecules/table/Data-table-toolbar"
+import { Spinner } from "../atoms/Spinner"
 
 const STORAGE_KEY = "table_column_visibility"
 
@@ -45,6 +46,10 @@ interface DataTableProps<TData, TValue> {
   globalFilterFn?: FilterFn<TData>
   onRowClick?: (rowData: TData) => void
   selectedRowId?: string
+
+  loading?: boolean
+  /** Si quieres algo distinto al spinner por defecto. */
+  loadingContent?: React.ReactNode
 }
 
 export function DataTable<TData, TValue>({
@@ -53,7 +58,8 @@ export function DataTable<TData, TValue>({
   tableMeta,
   globalFilterFn,
   onRowClick,
-  selectedRowId,
+  loading = false,
+  loadingContent,
 }: DataTableProps<TData, TValue>) {
   // 1) Estados internos para la tabla.
   const [rowSelection, setRowSelection] = React.useState({})
@@ -126,7 +132,16 @@ export function DataTable<TData, TValue>({
           </TableHeader>
 
           <TableBody>
-            {table.getRowModel().rows.length ? (
+            {loading ? (
+              /* fila de carga */
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-60 text-center">
+                  {loadingContent ?? <Spinner size="md" variant="primary" />}
+                  Estamos evaluando los documentos. Esto puede tardar unos segundos...
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows.length ? (
+              /* filas normales */
               table.getRowModel().rows.map(row => {
                 const isSelected = row.getIsSelected()
                 return (
@@ -154,7 +169,7 @@ export function DataTable<TData, TValue>({
               })
             ) : (
               <TableRow>
-                <TableCell colSpan={columns.length} className="h-24 text-center">
+                <TableCell colSpan={columns.length} className="h-60 text-center">
                   No se encontraron resultados.
                 </TableCell>
               </TableRow>
@@ -162,7 +177,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-
+      {/* paginación */}
       <DataTablePagination table={table} />
     </div>
   )

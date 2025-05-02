@@ -1,107 +1,105 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import EvaluationResultTemplate from "../templates/EvaluationTemplate";
-import { CheckCircle, Circle } from "lucide-react";
-import type { ColumnConfig } from "@/types/table";
-import type { FormField } from "@/types/formTypes";
-import PdfRenderer from "../organisms/PdfRenderer";
-import { useSendEmail } from "@/hooks/mails/useSendEmailHook";
-import useGetEthicalRulesByEvaluationIdHook from "@/hooks/ethicalRules/useGetEthicalRulesByEvaluationIdHook";
-import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId";
-import useUpdateEthicalNormHook from "@/hooks/ethicalRules/useUpdateEthicalRulesHook";
+import { useEffect, useRef, useState } from "react"
+import { useLocation, useParams } from "react-router-dom"
+import EvaluationResultTemplate from "../templates/EvaluationTemplate"
+import { CheckCircle, Circle } from "lucide-react"
+import type { ColumnConfig } from "@/types/table"
+import type { FormField } from "@/types/formTypes"
+import PdfRenderer from "../organisms/PdfRenderer"
+import { useSendEmail } from "@/hooks/mails/useSendEmailHook"
+import useGetEthicalRulesByEvaluationIdHook from "@/hooks/ethicalRules/useGetEthicalRulesByEvaluationIdHook"
+import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluationId"
+import useUpdateEthicalNormHook from "@/hooks/ethicalRules/useUpdateEthicalRulesHook"
+import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook"
+import useReEvaluateEvaluationHook from "@/hooks/ia/useReEvaluateEvaluation"
 
 export default function EvaluationScreen() {
-  const { evaluationId = "" } = useParams<{ evaluationId: string }>();
-  const { norms, fetchNorms, loading } =
-    useGetEthicalRulesByEvaluationIdHook(evaluationId);
-  const { mutateAsync: sendEmailMutation } = useSendEmail();
-  const { updateEthicalNorm, loading: updating } = useUpdateEthicalNormHook();
-  const { pdfUrl, fetchPdf, loading: loadingPdf, } = useGeneratePdfByEvaluationId();
+  const { evaluationId = "" } = useParams<{ evaluationId: string }>()
+  const location = useLocation()
+  const { runGenerate, runReEvaluate } =
+    (location.state as { runGenerate?: boolean; runReEvaluate?: boolean } | undefined) ?? {}
 
-  const [tableData, setTableData] = useState<any[]>([]);
+  const { generate, loading: generating } = useGenerateEvaluationHook()
+  const { reEvaluate, loading: generatingRe } = useReEvaluateEvaluationHook()
 
-  const [selectedRow, setSelectedRow] = useState<any>(null);
-  /* modales */
-  const [mailModalOpen, setMailModalOpen] = useState(false);
-  const [editModalOpen, setEditModalOpen] = useState(false);
+  const { norms, fetchNorms } = useGetEthicalRulesByEvaluationIdHook(evaluationId)
+  const { mutateAsync: sendEmailMutation } = useSendEmail()
+  const { updateEthicalNorm } = useUpdateEthicalNormHook()
+  const { pdfUrl, fetchPdf, loading: loadingPdf } = useGeneratePdfByEvaluationId()
 
+  const [tableData, setTableData] = useState<any[]>([])
+  const [selectedRow, setSelectedRow] = useState<any>(null)
+  const [mailModalOpen, setMailModalOpen] = useState(false)
+  const [editModalOpen, setEditModalOpen] = useState(false)
+
+  const alreadyTriggered = useRef(false)
 
   useEffect(() => {
-    fetchNorms();
-  }, [fetchNorms]);
+    if (alreadyTriggered.current) {
+      fetchNorms()
+      return
+    }
+
+    if (runGenerate) {
+      alreadyTriggered.current = true
+      generate(evaluationId).then(fetchNorms)
+      return
+    }
+
+    if (runReEvaluate) {
+      alreadyTriggered.current = true
+      reEvaluate(evaluationId).then(fetchNorms)
+      return
+    }
+
+    fetchNorms()
+  }, [runGenerate, runReEvaluate, generate, reEvaluate, evaluationId, fetchNorms])
 
   useEffect(() => {
     if (mailModalOpen) {
-      fetchPdf(evaluationId);
+      fetchPdf(evaluationId)
     }
-  }, [mailModalOpen, evaluationId, fetchPdf]);
+  }, [mailModalOpen, evaluationId, fetchPdf])
 
   useEffect(() => {
-    console.log("norm", norms);
-    setTableData(
-      norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest)
-    );
-  }, [norms]);
+    setTableData(norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest))
+  }, [norms])
 
   const handleMailModalFormSubmit = async (data: any) => {
-    await sendEmailMutation({
-      to: data.to,
-      subject: data.subject,
-      mensajeAdicional: data.mensajeAdicional,
-      evaluationId,
-    });
-    setMailModalOpen(false);
-  };
+    await sendEmailMutation({ ...data, evaluationId })
+    setMailModalOpen(false)
+  }
 
   const handleEditSubmit = async (data: any) => {
-    if (!selectedRow) return;
+    if (!selectedRow) return
     const params = {
       status: data.estado,
       cita: data.cita,
       justification: data.justificacion,
-    };
-    await updateEthicalNorm(selectedRow.id, params);
-    setTableData((prev) =>
-      prev.map((r) =>
-        r.id === selectedRow.id
-          ? {
-            ...r,
-            ...params,
-            status: params.status,
-            // si quieres reflejar un updatedAt local:
-            updatedAt: new Date().toISOString(),
-          }
-          : r
-      )
-    );
-    setEditModalOpen(false);
-  };
+    }
+    await updateEthicalNorm(selectedRow.id, params)
+    setTableData(prev =>
+      prev.map(r => (r.id === selectedRow.id ? { ...r, ...params } : r)),
+    )
+    setEditModalOpen(false)
+  }
 
-  const handleRowClick = (row: any) => {
-    setSelectedRow(row);
-  };
+  const handleRowClick = (row: any) => setSelectedRow(row)
   const handleEdit = (row: any) => {
-    setSelectedRow(row);
-    setEditModalOpen(true);
-  };
-
+    setSelectedRow(row)
+    setEditModalOpen(true)
+  }
 
   const editInitialData = selectedRow
     ? {
       estado: selectedRow.status,
       cita: selectedRow.cita,
-      justificacion: selectedRow.justification,
+      justificacion: selectedRow.justificacion,
     }
-    : {};
+    : {}
 
   const modalFormFields: FormField[][] = [
     [
-      {
-        type: "email",
-        key: "to",
-        placeholder: "Correo de destino",
-        required: true,
-      },
+      { type: "email", key: "to", placeholder: "Correo de destino", required: true },
       {
         type: "select",
         key: "subject",
@@ -132,7 +130,7 @@ export default function EvaluationScreen() {
         autoAdjust: true,
       },
     ],
-  ];
+  ]
 
   const editModalFields: FormField[][] = [
     [
@@ -148,14 +146,7 @@ export default function EvaluationScreen() {
         ],
       },
     ],
-    [
-      {
-        type: "textarea",
-        key: "cita",
-        placeholder: "Cita",
-        required: false,
-      }
-    ],
+    [{ type: "textarea", key: "cita", placeholder: "Cita", required: false }],
     [
       {
         type: "textarea",
@@ -165,73 +156,47 @@ export default function EvaluationScreen() {
         autoAdjust: true,
       },
     ],
-  ];
+  ]
 
   const columnsConfig: ColumnConfig[] = [
-    {
-      id: "id",
-      accessorKey: "id",
-      headerLabel: "ID",
-    },
-    {
-      id: "codeNumber",
-      accessorKey: "codeNumber",
-      headerLabel: "Número de norma",
-    },
+    { id: "id", accessorKey: "id", headerLabel: "ID" },
+    { id: "codeNumber", accessorKey: "codeNumber", headerLabel: "Número de norma" },
     {
       id: "status",
       accessorKey: "status",
       headerLabel: "Estado",
       renderType: "badgeWithText",
       items: [
-        {
-          value: "APROBADO",
-          label: "Aprobado",
-          icon: CheckCircle,
-          badgeVariant: "approved",
-        },
-        {
-          value: "NO_APROBADO",
-          label: "No aprobado",
-          icon: Circle,
-          badgeVariant: "notapproved",
-        },
+        { value: "APROBADO", label: "Aprobado", icon: CheckCircle, badgeVariant: "approved" },
+        { value: "NO_APROBADO", label: "No aprobado", icon: Circle, badgeVariant: "notapproved" },
       ],
     },
-    {
-      id: "description",
-      accessorKey: "description",
-      headerLabel: "Descripción",
-    },
+    { id: "description", accessorKey: "description", headerLabel: "Descripción" },
+    { id: "justification", accessorKey: "justification", headerLabel: "Justificación" },
+    { id: "cita", accessorKey: "cita", headerLabel: "Cita" },
     {
       id: "actions",
       type: "actions",
       actionItems: [{ label: "Editar", onClick: handleEdit }],
     },
-  ];
+  ]
 
   return (
-    <div>
-      {loading && <p>Cargando normas…</p>}
-      <EvaluationResultTemplate
-        data={tableData}
-        columnsConfig={columnsConfig}
-        // Tabla
-        onRowClick={handleRowClick}
-        DataSelectedRow={selectedRow}
-        // Modal correo
-        modalFormFields={modalFormFields}
-        onModalSubmit={handleMailModalFormSubmit}
-        modalOpen={mailModalOpen}
-        onMailModalOpenChange={setMailModalOpen}
-        // Modal edición
-        editModalFormFields={editModalFields}
-        onEditModalSubmit={handleEditSubmit}
-        editModalOpen={editModalOpen}
-        onEditModalOpenChange={setEditModalOpen}
-
-        editInitialData={editInitialData}
-      />
-    </div>
-  );
+    <EvaluationResultTemplate
+      data={tableData}
+      columnsConfig={columnsConfig}
+      onRowClick={handleRowClick}
+      DataSelectedRow={selectedRow}
+      tableLoading={generating || generatingRe}
+      modalFormFields={modalFormFields}
+      onModalSubmit={handleMailModalFormSubmit}
+      modalOpen={mailModalOpen}
+      onMailModalOpenChange={setMailModalOpen}
+      editModalFormFields={editModalFields}
+      onEditModalSubmit={handleEditSubmit}
+      editModalOpen={editModalOpen}
+      onEditModalOpenChange={setEditModalOpen}
+      editInitialData={editInitialData}
+    />
+  )
 }
