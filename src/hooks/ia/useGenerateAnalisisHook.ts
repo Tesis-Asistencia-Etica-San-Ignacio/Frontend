@@ -16,7 +16,6 @@ function useGenerateEvaluation() {
       notifySuccess({ title: "Evaluación generada correctamente", closeButton: true, icon: "✅" });
       return true;
     } catch (err: any) {
-      console.error("Error al generar la evaluación:", err);
       const e = err instanceof Error ? err : new Error("Error desconocido");
       setError(e);
       notifyError({ title: "Error al generar la evaluación", description: e.message, closeButton: true, });

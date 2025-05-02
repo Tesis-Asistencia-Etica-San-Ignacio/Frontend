@@ -13,8 +13,8 @@ export default function useReEvaluateEvaluation() {
         try {
             await reEvaluateEvaluation(evaluationId);
             notifySuccess({
-                title: "Re-evaluación iniciada",
-                description: "La evaluación está corriendo de nuevo",
+                title: "Re-evaluado",
+                description: "La evaluación se ha re-evaluado correctamente",
                 closeButton: true,
                 icon: "🔄",
             });

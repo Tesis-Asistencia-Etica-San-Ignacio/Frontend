@@ -15,8 +15,7 @@ import useReEvaluateEvaluationHook from "@/hooks/ia/useReEvaluateEvaluation"
 export default function EvaluationScreen() {
   const { evaluationId = "" } = useParams<{ evaluationId: string }>()
   const location = useLocation()
-  const { runGenerate, runReEvaluate } =
-    (location.state as { runGenerate?: boolean; runReEvaluate?: boolean } | undefined) ?? {}
+  const { runGenerate = false, runReEvaluate = false } = (location.state as { runGenerate?: boolean; runReEvaluate?: boolean } | undefined) ?? {}
 
   const { generate, loading: generating } = useGenerateEvaluationHook()
   const { reEvaluate, loading: generatingRe } = useReEvaluateEvaluationHook()
@@ -41,13 +40,22 @@ export default function EvaluationScreen() {
 
     if (runGenerate) {
       alreadyTriggered.current = true
-      generate(evaluationId).then(fetchNorms)
+      generate(evaluationId)
+        .then(fetchNorms)
+        .then(() => {
+          // limpiamos el state para que no se vuelva a disparar
+          window.history.replaceState({}, "", window.location.pathname)
+        })
       return
     }
 
     if (runReEvaluate) {
       alreadyTriggered.current = true
-      reEvaluate(evaluationId).then(fetchNorms)
+      reEvaluate(evaluationId)
+        .then(fetchNorms)
+        .then(() => {
+          window.history.replaceState({}, "", window.location.pathname)
+        })
       return
     }
 

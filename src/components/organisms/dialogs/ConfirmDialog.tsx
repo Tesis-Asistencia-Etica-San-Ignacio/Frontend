@@ -75,9 +75,11 @@ export function ConfirmDialog({
                             <DialogTitle>{title}</DialogTitle>
                         </DialogHeader>
 
-                        {/* Usamos DialogDescription con asChild para que respete tu <div> */}
+                        {/* force the description into a <div> instead of Radix’s default <p> */}
                         <DialogDescription asChild>
-                            {description}
+                            <div className="text-muted-foreground text-sm">
+                                {description}
+                            </div>
                         </DialogDescription>
 
                         <DialogFooter>
