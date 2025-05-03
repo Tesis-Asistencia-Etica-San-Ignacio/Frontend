@@ -1,15 +1,13 @@
-// components/templates/settings/PromptsTemplate.tsx
 import React, { useState } from "react";
 import ContentSection from "@/components/molecules/ContentSection";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import { Button } from "@/components/atoms/ui/button";
-import ConfirmDialog, { ConfirmDialogProps } from "@/components/organisms/dialogs/ConfirmDialog";
+import ConfirmDialog from "@/components/organisms/dialogs/ConfirmDialog";
 import { TriangleAlert } from "lucide-react";
 import { Label } from "@/components/atoms/ui/label";
 import { Input } from "@/components/atoms/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert";
 import type { FormField } from "@/types/formTypes";
-
 interface PromptsTemplateProps {
     title: string;
     desc: string;
@@ -18,15 +16,8 @@ interface PromptsTemplateProps {
     initialValues: Record<string, string>;
     onConfirmUpdate: (data: Record<string, string>) => Promise<void>;
     onConfirmReset: () => Promise<void>;
-    /* update es opcional; reset requerido */
-    confirmUpdateToast?: {
-        success?: ConfirmDialogProps["successToast"];
-        error?: ConfirmDialogProps["errorToast"];
-    };
-    confirmResetToast: {
-        success: ConfirmDialogProps["successToast"];
-        error: ConfirmDialogProps["errorToast"];
-    };
+
+
 }
 
 export default function PromptsTemplate({
@@ -37,8 +28,6 @@ export default function PromptsTemplate({
     initialValues,
     onConfirmUpdate,
     onConfirmReset,
-    confirmUpdateToast,
-    confirmResetToast,
 }: PromptsTemplateProps) {
     const [openUpdate, setOpenUpdate] = useState(false);
     const [openReset, setOpenReset] = useState(false);
@@ -74,8 +63,6 @@ export default function PromptsTemplate({
                             setOpenUpdate(false);
                         })()
                     }
-                    successToast={confirmUpdateToast?.success}
-                    errorToast={confirmUpdateToast?.error}
                     title="¿Actualizar prompts?"
                     description="Sólo se guardarán los prompts modificados."
                     confirmText="Sí, actualizar"
@@ -92,8 +79,6 @@ export default function PromptsTemplate({
                     }}
                     disabled={confirmValue.trim() !== "REINICIAR"}
                     destructive
-                    successToast={confirmResetToast.success}
-                    errorToast={confirmResetToast.error}
                     title={
                         <span className="text-destructive">
                             <TriangleAlert size={18} className="inline-block mr-1" />

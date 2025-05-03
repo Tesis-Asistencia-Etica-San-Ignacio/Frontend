@@ -7,7 +7,7 @@ export const updateEthicalNorm = async (
     updateData: UpdateEthicalRuleParams
   ): Promise<void> => {
     console.log("Updating ethical norm with data:", updateData);
-    await requestsApi.patch(`/norma-etica/${normId}`, updateData, {
+    await requestsApi.patch(`/ethicalRules/${normId}`, updateData, {
       headers: { "Content-Type": "application/json" },
     });
   };

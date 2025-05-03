@@ -16,7 +16,7 @@ export interface ColumnItem {
 
 type RadioGroupConfig = {
     name: string
-    valueKey: string            // p.e. "label"
+    valueKey: string
     options: { value: string; label: string }[]
 }
 

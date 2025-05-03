@@ -1,4 +1,4 @@
-import FileHistoryTemplate from "../../templates/FileHistoryTemplate"
+import EvaluationHistoryTemplate from "../../templates/EvaluationHistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 
@@ -156,7 +156,7 @@ export default function Ejemplo() {
     return (
         <div>
             {/* Tabla dinámica (arriba) */}
-            <FileHistoryTemplate data={tableData} columnsConfig={columnsConfig} />
+            <EvaluationHistoryTemplate data={tableData} columnsConfig={columnsConfig} />
         </div>
     )
 }

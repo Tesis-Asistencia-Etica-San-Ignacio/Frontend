@@ -1,4 +1,3 @@
-// components/organisms/dialogs/ConfirmDialog.tsx
 import React from "react";
 import { z, ZodSchema } from "zod";
 import {
@@ -7,9 +6,10 @@ import {
     DialogHeader,
     DialogFooter,
     DialogTitle,
+    DialogDescription,
 } from "@/components/atoms/ui/dialog";
 import { Button } from "@/components/atoms/ui/button";
-import { Form, FormDescription } from "@/components/atoms/ui/form";
+import { Form } from "@/components/atoms/ui/form";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotify } from "@/hooks/useNotify";
@@ -31,7 +31,6 @@ export interface ConfirmDialogProps {
     confirmText: string;
     destructive?: boolean;
     schema?: ZodSchema<any>;
-    /* ↓ ahora opcionales ↓ */
     successToast?: ToastCfg;
     errorToast?: ToastCfg;
 }
@@ -75,7 +74,14 @@ export function ConfirmDialog({
                         <DialogHeader>
                             <DialogTitle>{title}</DialogTitle>
                         </DialogHeader>
-                        <FormDescription>{description}</FormDescription>
+
+                        {/* force the description into a <div> instead of Radix’s default <p> */}
+                        <DialogDescription asChild>
+                            <div className="text-muted-foreground text-sm">
+                                {description}
+                            </div>
+                        </DialogDescription>
+
                         <DialogFooter>
                             <Button
                                 type="submit"

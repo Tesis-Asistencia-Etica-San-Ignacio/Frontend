@@ -11,11 +11,13 @@ const useUpdateEthicalNormHook = () => {
     async (normId: string, updateData: UpdateEthicalRuleParams) => {
       setLoading(true);
       try {
+        console.log("updateData", updateData);
         await updateEthicalNorm(normId, updateData);
         notifySuccess({
           title: "Norma ética actualizada",
           description: "Se guardaron los cambios correctamente.",
           closeButton: true,
+          icon: "✅"
         });
       } catch (error: any) {
         console.error("Error al actualizar la norma ética:", error);

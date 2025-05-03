@@ -8,19 +8,20 @@ const useUpdatePromptText = () => {
   const { notifySuccess, notifyError } = useNotify();
 
   const updatePromptTextHandler = useCallback(
-    async (id: string, data: UpdatePromptTextParams) => {
+    async (id: string, data: UpdatePromptTextParams, name?: string) => {
       setLoading(true);
       try {
         await updatePromptText(id, data);
         notifySuccess({
           title: "Prompt actualizado",
-          description: `Prompt ${id} guardado correctamente.`,
+          description: `Prompt ${name ?? id} guardado correctamente.`,
           closeButton: true,
+          icon: "✅"
         });
       } catch (error: any) {
         console.error("Error al actualizar prompt:", error);
         notifyError({
-          title: `Error en prompt ${id}`,
+          title: `Error en prompt ${name ?? id}`,
           description: error.message ?? "No se pudo actualizar el prompt.",
           closeButton: true,
         });

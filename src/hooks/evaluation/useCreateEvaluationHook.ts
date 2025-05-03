@@ -36,6 +36,7 @@ export default function useCreateEvaluationHook() {
             title: `Archivo ${f.name} subido`,
             description: "Se ha subido correctamente.",
             closeButton: true,
+            icon: "✅"
           })
         }
       } catch (err: any) {

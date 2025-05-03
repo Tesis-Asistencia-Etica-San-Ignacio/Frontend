@@ -43,7 +43,7 @@ function baseValidationForType(type: FieldType): z.ZodString {
             schema = schema.regex(/^\d+$/, "Solo dígitos").max(2, "Máximo 2 dígitos")
             break
         case "document":
-            schema = schema.regex(/^\d+$/, "Solo dígitos").max(10, "Máximo 10 dígitos")
+            schema = schema.max(50, "Máximo 50 caracteres")
             break
         case "user":
             schema = schema.max(40, "Máximo 40 caracteres")

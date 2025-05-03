@@ -7,7 +7,7 @@ const Auth = lazy(() => import("../components/screens/AuthScreen"));
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"));
-const FileHistory = lazy(() => import("../components/screens/FileHistoryScreen"));
+const FileHistory = lazy(() => import("../components/screens/EvaluationHistoryScreen"));
 const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));
@@ -23,22 +23,30 @@ const Settings = lazy(() => import("../components/screens/settings/SettingsScree
 const Appearance = lazy(() => import("../components/screens/settings/AppearanceScreen"));
 const Account = lazy(() => import("../components/screens/settings/AccountScreen"));
 const Prompts = lazy(() => import("../components/screens/settings/PromptsScreen"));
-export const AppRoutes = () => {
 
+export const AppRoutes = () => {
   return (
-    <BrowserRouter>
+    <BrowserRouter
+      future={{
+        v7_relativeSplatPath: true,
+      }}
+    >
       <Suspense fallback={<LoadingFallback />}>
         <Routes>
-          <Route path="/" element={<Navigate to="/auth" />} />
+          {/* rutas públicas */}
+          <Route path="/" element={<Navigate to="/auth" replace />} />
           <Route path="/no-autorizado" element={<UnauthorizedErrorScreen />} />
           <Route path="/auth" element={<Auth />} />
 
+          {/* rutas protegidas bajo Layout */}
           <Route path="/" element={<Layout />}>
-            <Route path="/ajustes" element={<Settings />} >
+            {/* Ajustes */}
+            <Route path="ajustes" element={<Settings />}>
               <Route path="apariencia" element={<Appearance />} />
               <Route path="cuenta" element={<Account />} />
               <Route path="prompts" element={<Prompts />} />
             </Route>
+
             {/* Rutas para evaluadores */}
             <Route element={<EvaluatorRoutes />}>
               <Route path="inicio" element={<Landing />} />
@@ -47,12 +55,15 @@ export const AppRoutes = () => {
               <Route path="historial-archivos-evaluados" element={<FileHistory />} />
               <Route path="evaluacion/:evaluationId" element={<Evaluation />} />
             </Route>
+
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
               <Route path="historial-archivos" element={<FileHistory />} />
               <Route path="crear-nuevo-caso" element={<CreateCaseScreen />} />
             </Route>
           </Route>
+
+          {/* catch-all */}
           <Route path="*" element={<NotFoundErrorScreen />} />
         </Routes>
       </Suspense>

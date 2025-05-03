@@ -31,16 +31,19 @@ pdfjs.GlobalWorkerOptions.workerSrc = `//cdnjs.cloudflare.com/ajax/libs/pdf.js/$
 
 interface PdfRendererProps {
   url: string;
+  externalLoading?: boolean;
 }
 
-const PdfRenderer = ({ url }: PdfRendererProps) => {
+const PdfRenderer = ({ url, externalLoading = false, }: PdfRendererProps) => {
   const [numPages, setNumPages] = useState<number>();
   const [currPage, setCurrPage] = useState<number>(1);
   const [scale, setScale] = useState<number>(1);
   const [rotation, setRotation] = useState<number>(0);
   // Para manejar re-renders al cambiar scale (zoom)
   const [renderedScale, setRenderedScale] = useState<number | null>(null);
-  const isLoading = renderedScale !== scale;
+
+  const isInternalLoading = renderedScale !== scale;
+  const isLoading = externalLoading || isInternalLoading;
   // True mientras la página con la nueva escala no haya terminado de renderizar.
 
   // Validación de página a saltar
@@ -212,12 +215,18 @@ const PdfRenderer = ({ url }: PdfRendererProps) => {
           {/* Contenedor medido por useResizeDetector */}
           <div ref={ref} className="">
             <Document
+              file={url}
               loading={
                 <div className="flex justify-center">
                   <Loader2 className="my-24 h-6 w-6 animate-spin" />
                 </div>
               }
-              file={url}
+              noData={(
+                <div className="flex justify-center h-64">
+                  <Loader2 className="my-24 h-6 w-6 animate-spin" />
+                </div>
+              )}
+
               onLoadError={(err) => console.error("Error loading PDF:", err)}
               onLoadSuccess={({ numPages }) => {
                 setNumPages(numPages);

@@ -1,3 +1,5 @@
+// components/organisms/Data-table-toolbar.tsx
+import React from "react"
 import { Table } from "@tanstack/react-table"
 import { X } from "lucide-react"
 
@@ -5,6 +7,7 @@ import { Button } from "../../atoms/ui/button"
 import { Input } from "../../atoms/ui/input-form"
 import { DataTableViewOptions } from "./Data-table-view-options"
 import { DataTableFacetedFilter } from "./Data-table-faceted-filter"
+import type { ColumnConfig } from "@/types/table"
 
 interface DataTableToolbarProps<TData> {
   table: Table<TData>
@@ -15,17 +18,13 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
     table.getState().columnFilters.length > 0 ||
     !!table.getState().globalFilter
 
-  // Valor actual del globalFilter
   const globalFilterValue = table.getState().globalFilter
 
-  // Columns que tienen "items" => generamos facetedFilter
+  const configMap = (table.options.meta as any)?.columnsConfigMap as Record<string, ColumnConfig>
+
   const facetedColumns = table
     .getAllLeafColumns()
-    .filter((col) => {
-      const def = col.columnDef
-      // Si la col tiene def.items => lo usamos
-      return Array.isArray((def as any).items)
-    })
+    .filter((col) => Array.isArray((col.columnDef as any).items))
 
   return (
     <div className="flex items-center justify-between">
@@ -38,15 +37,16 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
           className="h-8 w-[150px] lg:w-[250px]"
         />
 
-        {/* Facet filters dinámicos */}
-        <div className='flex gap-x-2'>
+        <div className="flex gap-x-2">
           {facetedColumns.map((col) => {
-            const items = (col.columnDef as any).items
+            const items = (col.columnDef as any).items as { value: string; label: string }[]
+            // Tomamos el headerLabel de la config (o col.id si no existe)
+            const title = configMap?.[col.id]?.headerLabel ?? col.id
             return (
               <DataTableFacetedFilter
                 key={col.id}
                 column={col}
-                title={String(col.id).charAt(0).toUpperCase() + String(col.id).slice(1).toLowerCase()}
+                title={title}
                 options={items}
               />
             )
@@ -64,10 +64,11 @@ export function DataTableToolbar<TData>({ table }: DataTableToolbarProps<TData>)
             className="h-8 px-2 lg:px-3"
           >
             Borrar filtros
-            <X />
+            <X className="ml-1" />
           </Button>
         )}
       </div>
+
       {/* Opcional: view options */}
       <DataTableViewOptions table={table} />
     </div>

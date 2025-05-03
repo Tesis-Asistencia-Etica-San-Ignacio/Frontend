@@ -1,67 +1,93 @@
-import React from "react";
-import { EvaluationHeader } from "../molecules/Evaluation-header";
 import { DynamicDataTable } from "../organisms/DynamicDataTable";
 import EthicalEvaluationBox from "../organisms/EthicalEvaluationBox";
 import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
+import ModalForm from "../organisms/dialogs/ModalForm";
 
 interface EvaluationResultTemplateProps {
+  // Tabla
   readonly data: any[];
   readonly columnsConfig: ColumnConfig[];
+  onRowClick?: (row: any) => void;
+  DataSelectedRow?: { [key: string]: any };
+  tableLoading?: boolean;
+
+
+  //Modal CORREO
   modalFormFields: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
-  modalSuccessToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
-  modalErrorToast: {
-    title: string;
-    description: string;
-    icon: React.ReactNode;
-    closeButton?: boolean;
-  };
+  readonly modalOpen: boolean;
+  readonly onMailModalOpenChange: (open: boolean) => void;
+
+  //EDITAR
+  editModalFormFields: FormField[][];
+  onEditModalSubmit?: (data: any) => Promise<void> | void;
+  editModalOpen: boolean;
+  onEditModalOpenChange: (open: boolean) => void;
+  editInitialData?: { [key: string]: any };
 }
 
 export default function EvaluationResultTemplate({
+
+  // Tabla
   data,
   columnsConfig,
+  onRowClick,
+  DataSelectedRow,
+  tableLoading = false,
+  // CORREO
   modalFormFields,
   onModalSubmit,
-  modalSuccessToast,
-  modalErrorToast,
-}: Readonly<EvaluationResultTemplateProps>) {
-  const [selectedTask, setSelectedTask] = React.useState<any | null>(null);
+  modalOpen,
+  onMailModalOpenChange,
+  // EDITAR
+  editModalFormFields,
+  onEditModalSubmit,
+  editModalOpen,
+  onEditModalOpenChange,
+  editInitialData
 
-  const handleRowClick = (rowData: any) => {
-    if (selectedTask && selectedTask.id === rowData.id) {
-      setSelectedTask(null);
-    } else {
-      setSelectedTask(rowData);
-    }
-  };
+}: Readonly<EvaluationResultTemplateProps>) {
 
   return (
     <section className="pb-8 space-y-4">
-      <EvaluationHeader title="Resultado de la evaluación:" />
-      <div className="grid grid-cols-3 gap-4">
-        <div className="col-span-2">
+      <div className="mb-4 flex flex-col">
+        <h2 className="text-2xl font-bold tracking-tight">Resultado de la evaluación</h2>
+        <p className="text-muted-foreground">
+          Aquí está una lista de todas las normas éticas evaluadas previamente
+        </p>
+      </div>
+      <div className="grid grid-cols-3 gap-4 h-full">
+        <div className="col-span-2 relative">
           <DynamicDataTable
             data={data}
             columnsConfig={columnsConfig}
-            onRowClick={handleRowClick}
-            selectedRowId={selectedTask?.id}
+            selectedRowId={DataSelectedRow?.id}
+            onRowClick={onRowClick}
+            loading={tableLoading}
           />
         </div>
         <EthicalEvaluationBox
-          selectedTask={selectedTask}
+          open={modalOpen}
+          onOpenChange={onMailModalOpenChange}
+          selectedTask={DataSelectedRow || null}
           modalFormFields={modalFormFields}
           onModalSubmit={onModalSubmit}
-          modalSuccessToast={modalSuccessToast}
-          modalErrorToast={modalErrorToast}
         />
       </div>
+      {modalFormFields && onEditModalSubmit && (
+        <ModalForm
+          open={editModalOpen}
+          onOpenChange={onEditModalOpenChange}
+          title={{ text: "Editar norma ética" + " - " + DataSelectedRow?.codeNumber, align: "left" }}
+          formDataConfig={editModalFormFields}
+          onSubmit={onEditModalSubmit}
+          submitButtonText="Guardar cambios"
+          width="40%"
+          height="60%"
+          initialData={editInitialData}
+        />
+      )}
     </section>
   );
 }
