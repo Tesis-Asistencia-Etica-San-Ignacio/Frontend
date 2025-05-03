@@ -4,17 +4,23 @@ import { JSX } from "react"
  * Tipos de campo que maneja tu formulario dinámico.
  * "textarea" se diferencia de los que se usan en el Input personalizado.
  */
-export type FieldType =
+export type InputType =
+    |"text"
     | "email"
+    | "document"
+    | "password"
+    | "phone"
+    | "user"
+    | "address"
+    | "extension-phone"
+    | "search"
+    | undefined;
+
+export type FieldType =
+    InputType
     | "select"
     | "custom"
-    | "password"
-    | "extension-phone"
-    | "phone"
-    | "document"
-    | "address"
-    | "user"
-    | "textarea"
+    | "textarea";
 
 /**
  * Estructura base para cualquier campo.
@@ -24,6 +30,8 @@ export interface BaseFormField {
     type: FieldType
     /** Identificador único del campo (para React Hook Form y Zod). */
     key: string
+
+    label?: string
     /** Placeholder o etiqueta del campo */
     placeholder?: string
     /** Si es requerido. */
@@ -64,7 +72,7 @@ export interface CustomFormField extends BaseFormField {
 
 /**
  * Campo tipo "textarea".
- * `autoAdjust` => autoajustar altura del textarea según contenido.
+ * autoAdjust => autoajustar altura del textarea según contenido.
  */
 export interface TextAreaFormField extends BaseFormField {
     type: "textarea"

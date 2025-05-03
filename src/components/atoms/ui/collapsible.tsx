@@ -7,15 +7,18 @@ function Collapsible({
 }
 
 function CollapsibleTrigger({
+  asChild,
   ...props
-}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger>) {
+}: React.ComponentProps<typeof CollapsiblePrimitive.CollapsibleTrigger> & { asChild?: boolean }) {
   return (
     <CollapsiblePrimitive.CollapsibleTrigger
       data-slot="collapsible-trigger"
+      asChild={asChild}
       {...props}
     />
-  )
+  );
 }
+
 
 function CollapsibleContent({
   ...props

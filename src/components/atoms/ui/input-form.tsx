@@ -13,6 +13,7 @@ import {
 } from "lucide-react"
 
 export type InputType =
+  | "text"
   | "email"
   | "document"
   | "password"

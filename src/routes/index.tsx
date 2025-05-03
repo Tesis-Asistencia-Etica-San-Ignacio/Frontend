@@ -12,6 +12,8 @@ const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));
 const NotFoundErrorScreen = lazy(() => import("../components/screens/errors/404"));
+const CreateCaseScreen = lazy(() => import("../components/screens/CreateCaseScreen"));
+
 
 // rutas de rol
 const EvaluatorRoutes = lazy(() => import("./EvaluatorRoutes"));
@@ -48,6 +50,7 @@ export const AppRoutes = () => {
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
               <Route path="historial-archivos" element={<FileHistory />} />
+              <Route path="crear-nuevo-caso" element={<CreateCaseScreen />} />
             </Route>
           </Route>
           <Route path="*" element={<NotFoundErrorScreen />} />
