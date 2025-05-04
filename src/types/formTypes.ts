@@ -5,7 +5,7 @@ import { JSX } from "react"
  * "textarea" se diferencia de los que se usan en el Input personalizado.
  */
 export type InputType =
-    |"text"
+    | "text"
     | "email"
     | "document"
     | "password"
@@ -14,6 +14,7 @@ export type InputType =
     | "address"
     | "extension-phone"
     | "search"
+    | "number" 
     | undefined;
 
 export type FieldType =
@@ -49,6 +50,7 @@ export interface BaseFormField {
      * width en porcentaje. Ej: 33 => 33% del contenedor
      */
     width?: number
+    hidden?: boolean 
 }
 
 /**

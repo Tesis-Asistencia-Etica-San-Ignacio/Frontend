@@ -1,4 +1,4 @@
-import { LayoutGrid, Upload, FileStack, ChartLine, Settings, User, Palette, BrainCircuit } from "lucide-react";
+import { LayoutGrid, Upload, FileStack, ChartLine, Settings, User, Palette, BrainCircuit, FilePlus2 } from "lucide-react";
 import type { SidebarData } from "../types/sideBar";
 
 export const sidebarData: SidebarData = {
@@ -10,6 +10,7 @@ export const sidebarData: SidebarData = {
         { title: "Subir archivos", url: "/subir-archivos", icon: Upload, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos-evaluados", icon: FileStack, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos", icon: FileStack, roles: ["INVESTIGADOR"] },
+        { title: "Crear nuevo caso", url: "/crear-nuevo-caso", icon: FilePlus2, roles: ["INVESTIGADOR"] },
         { title: "Estadísticas", url: "/estadisticas", icon: ChartLine, roles: ["EVALUADOR"] }
       ]
     },

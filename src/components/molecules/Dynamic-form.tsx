@@ -26,9 +26,10 @@ import type {
     TextAreaFormField,
     FieldType,
 } from "@/types/formTypes"
-
-function baseValidationForType(type: FieldType): z.ZodString {
-    let schema = z.string().trim()
+  
+/*function baseValidationForType(type: FieldType):  z.ZodTypeAny  {
+   // let schema = z.string().trim()
+   let schema: z.ZodTypeAny
     switch (type) {
         case "email":
             schema = schema.email("El email no es válido").max(50, "Máximo 50 caracteres")
@@ -51,14 +52,98 @@ function baseValidationForType(type: FieldType): z.ZodString {
         case "address":
             schema = schema.max(100, "Máximo 100 caracteres")
             break
+        case "number":
+            /*return z.preprocess(
+                (v) => (v === "" ? NaN : Number(v)),
+                z.number({ invalid_type_error: "Debe ser un número" })
+                 .refine((v) => !Number.isNaN(v), "Debe ser un número")
+              )
+            const preprocessNumber = z.preprocess(
+            (v) => {
+                if (v === "" || v === null || v === undefined) return undefined
+                const n = Number(v)
+                return Number.isNaN(n) ? NaN : n
+            },
+            z.number().optional()          // acepta undefined (para que luego refine "required")
+            )
+        
+            // ② si hay valor y es NaN → error “Debe ser un número”
+            schema = preprocessNumber.refine(
+            (v) => v === undefined || !Number.isNaN(v),
+            { message: "Debe ser un número" }
+            )
+        break
         default:
             break
     }
     return schema
-}
+}*/
 
 
-function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string> {
+function baseValidationForType(type: FieldType): z.ZodTypeAny {
+    // ① declara schema como “cualquier Zod” (no sólo string)
+    let schema: z.ZodTypeAny
+  
+    switch (type) {
+      /* ──────── casillas tipo string ─────────── */
+      case "email":
+        schema = z.string().trim()
+                   .email("El email no es válido")
+                   .max(50, "Máximo 50 caracteres")
+        break
+      case "password":
+        schema = z.string().trim()
+                   .min(6, "Mínimo 6 caracteres")
+                   .max(50, "Máximo 50 caracteres")
+        break
+      case "phone":
+        schema = z.string().trim()
+                   .regex(/^\d+$/, "Solo dígitos")
+                   .max(10, "Máximo 10 dígitos")
+        break
+      case "extension-phone":
+        schema = z.string().trim()
+                   .regex(/^\d+$/, "Solo dígitos")
+                   .max(2, "Máximo 2 dígitos")
+        break
+      case "document":
+        schema = z.string().trim().max(50, "Máximo 50 caracteres")
+        break
+      case "user":
+        schema = z.string().trim().max(40, "Máximo 40 caracteres")
+        break
+      case "address":
+        schema = z.string().trim().max(100, "Máximo 100 caracteres")
+        break
+  
+      /* ──────── numérico ─────────────────────── */
+      case "number": {
+        const preprocessNumber = z.preprocess(
+          (v) => {
+            if (v === "" || v === null || v === undefined) return undefined
+            const n = Number(v)
+            return Number.isNaN(n) ? NaN : n
+          },
+          z.number().optional()        // permite undefined
+        )
+  
+        schema = preprocessNumber.refine(
+          (v) => v === undefined || !Number.isNaN(v),
+          { message: "Debe ser un número" }
+        )
+        break
+      }
+  
+      /* ─────── por defecto: string simple ─────── */
+      default:
+        schema = z.string().trim()
+        break
+    }
+  
+    return schema
+  }
+  
+/*function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string> {
     let schema = baseValidationForType(field.type)
     if (field.required) {
         schema = schema.nonempty("Este campo es requerido")
@@ -73,7 +158,39 @@ function buildZodSchemaForField(field: FormField): z.ZodType<string, any, string
         schema = schema.max(field.maxLength, `Máximo ${field.maxLength} caracteres`)
     }
     return schema
-}
+}*/
+
+export function buildZodSchemaForField(field: FormField): z.ZodTypeAny {
+    let schema = baseValidationForType(field.type)
+  
+    /* ───── Campo requerido ───────────────────── */
+    if (field.required) {
+      if (schema instanceof z.ZodString) {
+        schema = schema.nonempty("Este campo es requerido")
+      } else {
+        // para números u otros tipos
+        schema = schema.refine(
+            (v) => v !== undefined && v !== null && v !== "",
+            { message: "Este campo es requerido" }
+        )
+      }
+    }
+  
+    /* ───── min / max sólo en strings ─────────── */
+    if (schema instanceof z.ZodString) {
+      if (typeof field.minLength !== "undefined") {
+        schema = schema.min(field.minLength, `Mínimo ${field.minLength} caracteres`)
+      }
+    }
+    if (typeof field.maxLength !== "undefined") {
+        schema = (schema as z.ZodString).max(
+          field.maxLength,
+          `Máximo ${field.maxLength} caracteres`
+        )
+      }
+  
+    return schema
+  }
 
 /** Aplana si es un array de arrays */
 function flattenFields(data: FormField[] | FormField[][]): FormField[] {
@@ -82,9 +199,14 @@ function flattenFields(data: FormField[] | FormField[][]): FormField[] {
     return data as FormField[]
 }
 
-export interface DynamicFormHandles {
+/*export interface DynamicFormHandles {
     handleSubmit: <T>(onValid: (data: { [key: string]: any }) => T) => (e?: React.BaseSyntheticEvent) => Promise<void>
-}
+}*/
+export interface DynamicFormHandles {
+    handleSubmit: <T>(onValid: (data: any) => T) => (e?: React.BaseSyntheticEvent) => Promise<void>
+    trigger: (name?: string | string[]) => Promise<boolean>   //  ←  NUEVO
+  }
+  
 
 export interface DynamicFormProps {
     formDataConfig: FormField[] | FormField[][]
@@ -101,8 +223,8 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     initialData = {},
 }, ref) => {
     const flatFields = flattenFields(formDataConfig)
-    const shape: Record<string,z.ZodDefault<z.ZodType<string, any, string>>> = {}
-
+   // const shape: Record<string,z.ZodDefault<z.ZodType<string, any, string>>> = {}
+   const shape: Record<string, z.ZodTypeAny> = {}
     flatFields.forEach((field) => {
         shape[field.key] = buildZodSchemaForField(field).default("")
     })
@@ -122,9 +244,15 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
         handleSubmit,
     } = form
 
+   /* useImperativeHandle(ref, () => ({
+        handleSubmit,
+    }))*/
     useImperativeHandle(ref, () => ({
         handleSubmit,
+        trigger: form.trigger,          //  ←  NUEVO
+        __formInstance: form,
     }))
+          
 
     useEffect(() => {
         const subscription = watch((values) => {
@@ -133,7 +261,8 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
         return () => subscription.unsubscribe()
     }, [watch, onChange])
 
-    const renderField = (field: FormField) => (
+    /*const renderField = (field: FormField) => (
+    
         <ShadcnFormField
             key={field.key}
             control={control}
@@ -144,7 +273,9 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                     className={cn(field.width ? "max-w-full" : "flex-1", "flex flex-col p-0.5")}
                     style={field.width ? { width: `${field.width}%` } : {}}
                 >
-                    {field.placeholder && <FormLabel>{field.placeholder}</FormLabel>}
+                    <FormLabel>
+                        {field.label ?? field.placeholder}
+                    </FormLabel>
                     <FormControl>
                         {(() => {
                             if (field.type === "custom") {
@@ -207,7 +338,85 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                 </FormItem>
             )}
         />
-    )
+    )*/
+
+    const renderField = (field: FormField) => {
+        if (field.hidden === true) return null    // se pinta salvo que sea true
+        
+        //  ⬇  ¡el switch completo para dibujar el control! (igual que antes)
+        return (
+            <ShadcnFormField
+            key={field.key}
+            control={control}
+            name={field.key}
+            render={({ field: controllerField }) => (
+                <FormItem
+                className={cn(
+                    field.width ? "max-w-full" : "flex-1",
+                    "flex flex-col p-0.5"
+                )}
+                style={field.width ? { width: `${field.width}%` } : {}}
+                >
+                <FormLabel>{field.label ?? field.placeholder}</FormLabel>
+        
+                <FormControl>
+                    {(() => {
+                    if (field.type === "custom") {
+                        return (field as CustomFormField).component
+                    }
+                    if (field.type === "select") {
+                        const f = field as SelectFormField
+                        return (
+                        <Select
+                            value={controllerField.value || ""}
+                            onValueChange={controllerField.onChange}
+                        >
+                            <SelectTrigger className="w-full">
+                            <SelectValue
+                                placeholder={f.selectPlaceholder || f.placeholder}
+                            />
+                            </SelectTrigger>
+                            <SelectContent>
+                            {f.options.map((opt) => (
+                                <SelectItem key={opt.value} value={opt.value}>
+                                {opt.label}
+                                </SelectItem>
+                            ))}
+                            </SelectContent>
+                        </Select>
+                        )
+                    }
+                    if (field.type === "textarea") {
+                        const f = field as TextAreaFormField
+                        return (
+                        <Textarea
+                            autoAdjust={f.autoAdjust}
+                            placeholder={f.placeholder}
+                            value={controllerField.value || ""}
+                            onChange={controllerField.onChange}
+                        />
+                        )
+                    }
+                    /* input normal */
+                    return (
+                        <Input
+                        inputType={field.type}
+                        placeholder={field.placeholder}
+                        value={controllerField.value || ""}
+                        onChange={controllerField.onChange}
+                        />
+                    )
+                    })()}
+                </FormControl>
+        
+                <FormMessage className="min-h-[1.25rem]">
+                    {errors[field.key]?.message as string}
+                </FormMessage>
+                </FormItem>
+            )}
+            />
+        )
+        }
 
     const isMultipleRows =
         Array.isArray(formDataConfig) &&
@@ -215,7 +424,24 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
         Array.isArray(formDataConfig[0])
 
     const renderRows = () => {
+        const visibleRows = isMultipleRows
+            ? (formDataConfig as FormField[][]).map((row) => row.filter((f) => !f.hidden))
+            : (formDataConfig as FormField[]).filter((f) => !f.hidden)
+
         if (isMultipleRows) {
+            return (visibleRows as FormField[][]).map((row, i) => (
+            <div key={i} className="flex flex-wrap gap-4 mb-4">
+                {row.map((field) => renderField(field))}
+            </div>
+            ))
+        }
+        return (visibleRows as FormField[]).map((field) => (
+            <div key={field.key} className="mb-4">
+            {renderField(field)}
+            </div>
+   ))
+
+       /* if (isMultipleRows) {
             return (formDataConfig as FormField[][]).map((row, i) => (
                 <div key={i} className="flex flex-wrap gap-4 mb-4">
                     {row.map((field) => renderField(field))}
@@ -226,7 +452,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
             <div key={field.key} className="mb-4">
                 {renderField(field)}
             </div>
-        ))
+        ))*/
     }
 
     return (

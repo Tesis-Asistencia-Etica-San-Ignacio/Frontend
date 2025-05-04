@@ -59,6 +59,11 @@ export function getConfigForType(type: InputType) {
         maxLength: 100,
         icon: <SearchIcon className="w-5 h-5 text-gray-400" />,
       }
+      case "number":
+            return {
+               maxLength: 12,            // o el que necesites
+               icon: undefined,
+           }
     default:
       return {
         maxLength: 100,
@@ -100,6 +105,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
       nativeType = "email"
     } else if (inputType === "search") {
       nativeType = "search"
+    } else if (inputType === "number") {
+      nativeType = "number"  
     } else if (
       inputType === "phone" ||
       inputType === "extension-phone" ||

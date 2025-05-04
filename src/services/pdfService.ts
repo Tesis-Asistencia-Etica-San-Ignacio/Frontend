@@ -10,3 +10,14 @@ export const generatePdfByEvaluationId = async (
     );
     return response.data;
   };
+
+  export const generatePdfInvestigator = async (
+    data: any
+  ): Promise<Blob> => {
+    const response = await pdfApi.post(
+      `/pdf/generate-investigator`,
+      { data },
+      { responseType: "blob" }
+    );
+    return response.data;
+  };
