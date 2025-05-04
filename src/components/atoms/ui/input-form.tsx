@@ -132,6 +132,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           value={value}
           onChange={onChange}
           className={cn(inputStyle, finalIcon ? "pl-8" : "pl-2")}
+          spellCheck={true}
           {...props}
         />
         {inputType === "password" && (
