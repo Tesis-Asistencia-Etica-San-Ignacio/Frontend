@@ -3,7 +3,7 @@ import { formatISO, subMonths, startOfDay } from "date-fns"
 import { ArrowUpRight, CheckCircle, XCircle, CalendarSync } from "lucide-react"
 
 import DashboardTemplate from "@/components/templates/DashBoardTemplate"
-import { useGetEvaluationStats } from "../../hooks/stats/useGetEvaluationStatsHook"
+import { useGetEvaluationStats } from "../../hooks/stats/useGetEvaluationStats"
 import type { CardMetric, LinePoint, PieSlice } from "@/types/statsTypes"
 import type { StatsCardProps } from "@/components/molecules/Stats-card"
 

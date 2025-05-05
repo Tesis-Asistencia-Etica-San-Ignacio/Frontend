@@ -20,10 +20,9 @@ export default function AppearanceScreen() {
     },
   })
 
-  // Al hacer submit, actualizamos el contexto y mostramos toast
   function onSubmit(data: AppearanceFormValues) {
     setTheme(data.theme)
-    
+
   }
 
   return (

@@ -1,9 +1,9 @@
 import { useRef, useEffect, useState } from "react";
 import { DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import PromptsTemplate from "@/components/templates/settings/PromptsTemplate";
-import useGetMyPrompts from "@/hooks/prompts/useGetPromptsByEvaluatorHook";
-import useUpdatePromptText from "@/hooks/prompts/useUpdatePromptHook";
-import useRefreshPrompts from "@/hooks/prompts/useRefreshPromptsHook";
+import useGetMyPrompts from "@/hooks/prompts/useGetPromptsByEvaluator";
+import useUpdatePromptText from "@/hooks/prompts/useUpdatePrompt";
+import useRefreshPrompts from "@/hooks/prompts/useRefreshPrompts";
 import type { FormField } from "@/types/formTypes";
 import { useNotify } from "@/hooks/useNotify";
 

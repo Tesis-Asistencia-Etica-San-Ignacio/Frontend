@@ -1,12 +1,12 @@
-import { pdfApi } from '../lib/api/pdfApi';
+import { requestsApi } from '../lib/api/requestsApi';
 
 export const generatePdfByEvaluationId = async (
-    evaluationId: string
-  ): Promise<Blob> => {
-    const response = await pdfApi.post(
-      `/pdf/generate`,
-      { evaluationId },
-      { responseType: "blob" }
-    );
-    return response.data;
-  };
+  evaluationId: string
+): Promise<Blob> => {
+  const response = await requestsApi.post(
+    `/pdf/generate`,
+    { evaluationId },
+    { responseType: "blob" }
+  );
+  return response.data;
+};
