@@ -2,6 +2,7 @@ import axios from 'axios';
 
 export const pdfApi = axios.create({
     baseURL: import.meta.env.VITE_BACKEND_URL,
+    withCredentials: true,
 });
 
 pdfApi.interceptors.request.use(
