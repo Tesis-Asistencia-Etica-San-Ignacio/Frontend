@@ -5,34 +5,41 @@ import {
     DropdownMenuItem,
     DropdownMenuLabel,
     DropdownMenuSeparator,
-    DropdownMenuTrigger
+    DropdownMenuTrigger,
 } from "@/components/atoms/ui/dropdown-menu"
 import {
     SidebarMenu,
     SidebarMenuButton,
     SidebarMenuItem,
-    useSidebar
+    useSidebar,
 } from "@/components/atoms/ui/sidebar"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/atoms/ui/avatar"
-import { ChevronsUpDown, LogOut, Palette, BrainCircuit, User as LucideUser } from "lucide-react"
+import { ChevronsUpDown, LogOut } from "lucide-react"
 import { Link } from "react-router-dom"
 import type { User } from "@/types/userType"
+import type { NavItem } from "@/types/sideBar"
 
 interface NavUserProps {
     user: User | null
     onLogout: () => Promise<void>
     getInitials: () => string
+    settingsItems: NavItem[]
 }
 
-export function NavUser({ user, onLogout, getInitials }: NavUserProps) {
+export function NavUser({
+    user,
+    onLogout,
+    getInitials,
+    settingsItems,
+}: NavUserProps) {
     const { isMobile } = useSidebar()
     if (!user) return null
 
     async function handleLogout() {
         try {
             await onLogout()
-        } catch (error) {
-            console.error("Error cerrando sesión:", error)
+        } catch (e) {
+            console.error("Error cerrando sesión:", e)
         }
     }
 
@@ -47,7 +54,9 @@ export function NavUser({ user, onLogout, getInitials }: NavUserProps) {
                         >
                             <Avatar className="h-8 w-8 rounded-lg">
                                 <AvatarImage src={user.avatar} alt={user.name} />
-                                <AvatarFallback className="rounded-lg">{getInitials()}</AvatarFallback>
+                                <AvatarFallback className="rounded-lg">
+                                    {getInitials()}
+                                </AvatarFallback>
                             </Avatar>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-semibold">{user.name}</span>
@@ -56,17 +65,21 @@ export function NavUser({ user, onLogout, getInitials }: NavUserProps) {
                             <ChevronsUpDown className="ml-auto size-4" />
                         </SidebarMenuButton>
                     </DropdownMenuTrigger>
+
                     <DropdownMenuContent
                         className="w-[--radix-dropdown-menu-trigger-width] min-w-56 rounded-lg"
                         side={isMobile ? "bottom" : "right"}
                         align="end"
                         sideOffset={4}
                     >
+                        {/* cabecera */}
                         <DropdownMenuLabel className="p-0 font-normal">
                             <div className="flex items-center gap-2 px-1 py-1.5 text-left text-sm">
                                 <Avatar className="h-8 w-8 rounded-lg">
                                     <AvatarImage src={user.avatar} alt={user.name} />
-                                    <AvatarFallback className="rounded-lg">{getInitials()}</AvatarFallback>
+                                    <AvatarFallback className="rounded-lg">
+                                        {getInitials()}
+                                    </AvatarFallback>
                                 </Avatar>
                                 <div className="grid flex-1 text-left text-sm leading-tight">
                                     <span className="truncate font-semibold">{user.name}</span>
@@ -74,32 +87,34 @@ export function NavUser({ user, onLogout, getInitials }: NavUserProps) {
                                 </div>
                             </div>
                         </DropdownMenuLabel>
+
                         <DropdownMenuSeparator />
-                        <DropdownMenuGroup>
-                            <DropdownMenuItem asChild>
-                                <Link to="/ajustes/cuenta">
-                                    <LucideUser />
-                                    Cuenta
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link to="/ajustes/prompts">
-                                    <BrainCircuit />
-                                    Prompts
-                                </Link>
-                            </DropdownMenuItem>
-                            <DropdownMenuItem asChild>
-                                <Link to="/ajustes/apariencia">
-                                    <Palette />
-                                    Apariencia
-                                </Link>
-                            </DropdownMenuItem>
-                        </DropdownMenuGroup>
-                        <DropdownMenuSeparator />
+
+                        {/* Ajustes dinámicos */}
+                        {settingsItems.length > 0 && (
+                            <>
+                                <DropdownMenuGroup>
+                                    {settingsItems.map(it => {
+                                        const Icon = it.icon
+                                        return (
+                                            <DropdownMenuItem asChild key={it.title}>
+                                                <Link to={it.url ?? "#"}>
+                                                    {Icon && <Icon className="mr-2" />}
+                                                    {it.title}
+                                                </Link>
+                                            </DropdownMenuItem>
+                                        )
+                                    })}
+                                </DropdownMenuGroup>
+                                <DropdownMenuSeparator />
+                            </>
+                        )}
+
+                        {/* logout */}
                         <DropdownMenuItem onClick={handleLogout}>
-                            <LogOut />
+                            <LogOut className="mr-2" />
                             Cerrar sesión
-                            <Link to="/"></Link>
+                            <Link to="/auth" />
                         </DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>

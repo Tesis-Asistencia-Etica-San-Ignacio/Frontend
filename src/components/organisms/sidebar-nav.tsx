@@ -10,13 +10,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/atoms/ui/select'
+import type { NavItem } from "@/types/sideBar"
 
 interface SidebarNavProps extends React.HTMLAttributes<HTMLElement> {
-  items: {
-    href: string
-    title: string
-    icon: JSX.Element
-  }[]
+  items: NavItem[]
 }
 
 export default function SidebarNav({
@@ -42,9 +39,9 @@ export default function SidebarNav({
           </SelectTrigger>
           <SelectContent>
             {items.map((item) => (
-              <SelectItem key={item.href} value={item.href}>
+              <SelectItem key={item.url} value={item.url ?? ''}>
                 <div className='flex gap-x-4 px-2 py-1'>
-                  <span className='scale-125'>{item.icon}</span>
+                  {item.icon && <item.icon />}
                   <span className='text-md'>{item.title}</span>
                 </div>
               </SelectItem>
@@ -66,17 +63,17 @@ export default function SidebarNav({
         >
           {items.map((item) => (
             <Link
-              key={item.href}
-              to={item.href}
+              key={item.url}
+              to={item.url ?? ''}
               className={cn(
                 buttonVariants({ variant: 'ghost' }),
-                pathname === item.href
+                pathname === item.url
                   ? 'bg-muted hover:bg-muted'
                   : 'hover:bg-transparent hover:underline',
                 'justify-start'
               )}
             >
-              <span className='mr-2'>{item.icon}</span>
+              {item.icon && <item.icon />}
               {item.title}
             </Link>
           ))}

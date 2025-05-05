@@ -5,11 +5,9 @@ import { DynamicFormHandles, DynamicForm } from "../molecules/Dynamic-form"
 import type { FormField } from "@/types/formTypes"
 import { FormProvider, useForm } from "react-hook-form"
 import { FormSection } from "@/components/organisms/FormSection"
-import {FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
+import { FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
 import { Input } from "../atoms/ui/input-form"
-//import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator"
 import { LTMatch, checkSpellingWithLT } from "@/lib/api/languageApi"
-import PdfRenderer from "../organisms/PdfRenderer"
 import ModalForm from "../organisms/dialogs/ModalForm"
 interface CreateCaseTemplateProps {
   onPreviewPdf: (allData: Record<string, any>) => Promise<void>;
@@ -24,28 +22,25 @@ interface CreateCaseTemplateProps {
 export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
   onPreviewPdf,
   modalOpen,
-  onModalOpenChange ,
+  onModalOpenChange,
   onModalSubmit,
   modalFormFields,
-  pdfUrl,
-  loading
 }
 ) => {
-  // --- react-hook-form para los campos custom en los fragments ---
   const methods = useForm<{ genero_doctor: string }>({
     defaultValues: { genero_doctor: "" },
-    mode: "onChange" 
+    mode: "onChange"
   })
   const { watch, getValues: getOuterValues } = methods
   const genero = watch("genero_doctor")
   const sufijo = genero === "Femenino" ? "investigadora" : "investigador"
   const tituloDoc = genero === "Femenino" ? "Dra." : "Dr."
-  
+
   const cabeceraRef = useRef<DynamicFormHandles>(null!)
   const introRef = useRef<DynamicFormHandles>(null!)
   const infoRef = useRef<DynamicFormHandles>(null!)
   const authRef = useRef<DynamicFormHandles>(null!)
-  
+
 
   // --- estado global de valores y controles de secciones ---
   const [formValues, setFormValues] = useState<Record<string, string>>({})
@@ -62,7 +57,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }))
   }
 
-  
+
   const handleDateSelect = (date: Date | undefined) => {
     setFecha(date)
     if (date) {
@@ -81,10 +76,10 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
   const handleSpellCheck = (fieldKey: string, matches: LTMatch[]) => {
     setSpellingWarnings(prev => ({ ...prev, [fieldKey]: matches }))
   }
-  
+
   const doSpellCheck = async (fieldKey: string, text: string, cb: (key: string, matches: LTMatch[]) => void) => {
     if (!text || text.trim() === "") return
-  
+
     try {
       const matches = await checkSpellingWithLT(text)
       console.log("Matches para", fieldKey, matches)
@@ -260,7 +255,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
       hidden: true,
       options: [
         { value: "Masculino", label: "Masculino" },
-        { value: "Femenino",  label: "Femenino" },
+        { value: "Femenino", label: "Femenino" },
       ],
     },
     {
@@ -281,7 +276,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
       required: true,
       hidden: true,
     },
-    
+
     {
       key: "cel_correo_dir_investigaciones",
       type: "text",
@@ -359,7 +354,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
           <div>
             En caso que necesite información o emergencia, póngase en contacto con{" "}
             <ShadcnFormField
-              
+
               name="genero_doctor"
               render={({ field }) => (
                 <FormItem className="inline-block">
@@ -367,11 +362,11 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
                     <select
                       {...field}
                       onChange={(e) => {
-                         field.onChange(e)
-                         methods.setValue("genero_doctor", e.target.value, {
-                           shouldValidate: false, // no lo validamos dos veces
-                         })
-                       }}
+                        field.onChange(e)
+                        methods.setValue("genero_doctor", e.target.value, {
+                          shouldValidate: false, // no lo validamos dos veces
+                        })
+                      }}
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                     >
                       <option value=""></option>
@@ -420,7 +415,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
                 <FormMessage className="text-xs text-red-500 ml-1" />
               </FormItem>)}
             />
-            . A fin de activar la póliza la investigadora contactará a la Directora de la Oficina de Investigaciones del Hospital Universitario San Ignacio, 
+            . A fin de activar la póliza la investigadora contactará a la Directora de la Oficina de Investigaciones del Hospital Universitario San Ignacio,
             <ShadcnFormField
               name="nombre_dir_investigaciones"
               render={({ field }) => (<FormItem className="inline-block">
@@ -452,8 +447,8 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
                   />
                 </FormControl>
                 <FormMessage className="text-xs text-red-500 ml-1" />
-            </FormItem>)}
-          />.
+              </FormItem>)}
+            />.
           </div>
 
           <p>
@@ -465,165 +460,167 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
   ]
 
   const autorizacionFields: FormField[] = [
-    { key:"nombre_estudio",       type:"text",     required:true, hidden:true },
-    { key:"genero_inv_principal", type:"select",   required:true, hidden:true,
-      options:[ {value:"Masculino",label:"Masculino"},
-                {value:"Femenino", label:"Femenino"} ] },
-    { key:"nombre_inv_principal",        type:"text",     required:true, hidden:true },
-    { key:"cel_inv_principal",    type:"number",   required:true, hidden:true },
-    { key:"ext_inv_principal",    type:"number",   required:true, hidden:true },
-    { key:"tel_inv_principal",    type:"number",   required:true, hidden:true },
-    { key:"nombre_presidente",    type:"text",     required:true, hidden:true },
+    { key: "nombre_estudio", type: "text", required: true, hidden: true },
+    {
+      key: "genero_inv_principal", type: "select", required: true, hidden: true,
+      options: [{ value: "Masculino", label: "Masculino" },
+      { value: "Femenino", label: "Femenino" }]
+    },
+    { key: "nombre_inv_principal", type: "text", required: true, hidden: true },
+    { key: "cel_inv_principal", type: "number", required: true, hidden: true },
+    { key: "ext_inv_principal", type: "number", required: true, hidden: true },
+    { key: "tel_inv_principal", type: "number", required: true, hidden: true },
+    { key: "nombre_presidente", type: "text", required: true, hidden: true },
 
     {
       key: "textoAutorizacion",
       type: "custom",
-        component: (
-          <div className="text-sm text-gray-700 leading-[2] space-y-4 border-t pt-4 mt-4">
-            <p>
-              He comprendido las explicaciones que en un lenguaje claro y sencillo se me han brindado. El investigador me ha permitido expresar todas mis observaciones y ha aclarado todas las dudas y preguntas que he planteado respecto a los fines, métodos, ventajas, inconvenientes y pronóstico de participar en el estudio. Se me ha proporcionado una copia de este documento.
-            </p>
-            <div>
-              Al firmar este documento doy mi consentimiento voluntario para participar en el estudio{" "}
-              <ShadcnFormField
-                name="nombre_estudio"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="text"
-                        placeholder="nombre del estudio"
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                        onBlur={async (e) => {
-                          const texto = (e.target as HTMLInputElement).value;
-                          const matches: LTMatch[] = await checkSpellingWithLT(texto);
-                          handleSpellCheck("nombre_estudio", matches);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />.
-            </div>
-            <div className="pt-4">
-              Si usted tiene dudas acerca de su participación en este estudio puede comunicarse con el investigador principal: 
-              <ShadcnFormField
-                name="genero_inv_principal"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <select
-                        {...field}
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                      >
-                        <option value=""></option>
-                        <option value="Masculino">Dr.</option>
-                        <option value="Femenino">Dra.</option>
-                      </select>
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />{" "}
-              <ShadcnFormField
-                name="nombre_inv_principal"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="text"
-                        placeholder="nombre"
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                        onBlur={async (e) => {
-                          const texto = (e.target as HTMLInputElement).value;
-                          const matches: LTMatch[] = await checkSpellingWithLT(texto);
-                          handleSpellCheck("nombre_inv_principal", matches);
-                        }}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />, celular{" "}
-              <ShadcnFormField
-                name="cel_inv_principal"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="number"
-                        placeholder="número de celular"
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />, telefono{" "}
-              <ShadcnFormField
-                name="tel_inv_principal"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="number"
-                        placeholder="télefono"
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />, ext.{" "}
-              <ShadcnFormField
-                name="ext_inv_principal"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="number"
-                        placeholder="ext. "
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />.
-            </div>
-            <div>
-              También puede comunicarse con el Presidente del Comité de Ética Institucional:{" "}
-              <ShadcnFormField
-                name="nombre_presidente"
-                render={({ field }) => (
-                  <FormItem className="inline-block">
-                    <FormControl>
-                      <Input
-                        {...field}
-                        inputType="text"
-                        placeholder="nombre presidente"
-                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                        onBlur={async (e) => {
-                            const texto = (e.target as HTMLInputElement).value;
-                            const matches: LTMatch[] = await checkSpellingWithLT(texto);
-                            handleSpellCheck("nombre_presidente", matches);
-                          }}
-                      />
-                    </FormControl>
-                    <FormMessage className="text-xs text-red-500 ml-1" />
-                  </FormItem>
-                )}
-              />, Calle 42 No. 4–49, oficina 507. Teléfono 5946161 ext. 2470.
-            </div>
+      component: (
+        <div className="text-sm text-gray-700 leading-[2] space-y-4 border-t pt-4 mt-4">
+          <p>
+            He comprendido las explicaciones que en un lenguaje claro y sencillo se me han brindado. El investigador me ha permitido expresar todas mis observaciones y ha aclarado todas las dudas y preguntas que he planteado respecto a los fines, métodos, ventajas, inconvenientes y pronóstico de participar en el estudio. Se me ha proporcionado una copia de este documento.
+          </p>
+          <div>
+            Al firmar este documento doy mi consentimiento voluntario para participar en el estudio{" "}
+            <ShadcnFormField
+              name="nombre_estudio"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="text"
+                      placeholder="nombre del estudio"
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={async (e) => {
+                        const texto = (e.target as HTMLInputElement).value;
+                        const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                        handleSpellCheck("nombre_estudio", matches);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />.
           </div>
-        ),
-      },
+          <div className="pt-4">
+            Si usted tiene dudas acerca de su participación en este estudio puede comunicarse con el investigador principal:
+            <ShadcnFormField
+              name="genero_inv_principal"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <select
+                      {...field}
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                    >
+                      <option value=""></option>
+                      <option value="Masculino">Dr.</option>
+                      <option value="Femenino">Dra.</option>
+                    </select>
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />{" "}
+            <ShadcnFormField
+              name="nombre_inv_principal"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="text"
+                      placeholder="nombre"
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={async (e) => {
+                        const texto = (e.target as HTMLInputElement).value;
+                        const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                        handleSpellCheck("nombre_inv_principal", matches);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />, celular{" "}
+            <ShadcnFormField
+              name="cel_inv_principal"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="number"
+                      placeholder="número de celular"
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />, telefono{" "}
+            <ShadcnFormField
+              name="tel_inv_principal"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="number"
+                      placeholder="télefono"
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />, ext.{" "}
+            <ShadcnFormField
+              name="ext_inv_principal"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="number"
+                      placeholder="ext. "
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />.
+          </div>
+          <div>
+            También puede comunicarse con el Presidente del Comité de Ética Institucional:{" "}
+            <ShadcnFormField
+              name="nombre_presidente"
+              render={({ field }) => (
+                <FormItem className="inline-block">
+                  <FormControl>
+                    <Input
+                      {...field}
+                      inputType="text"
+                      placeholder="nombre presidente"
+                      className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={async (e) => {
+                        const texto = (e.target as HTMLInputElement).value;
+                        const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                        handleSpellCheck("nombre_presidente", matches);
+                      }}
+                    />
+                  </FormControl>
+                  <FormMessage className="text-xs text-red-500 ml-1" />
+                </FormItem>
+              )}
+            />, Calle 42 No. 4–49, oficina 507. Teléfono 5946161 ext. 2470.
+          </div>
+        </div>
+      ),
+    },
   ]
 
   // Submit: recoge valores de todos los formularios + fecha
@@ -643,40 +640,40 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
     // Aquí podrías llamar a tu API o generar PDF, etc.
   }*/
 
-    // dentro de handleSubmitForm
-const handleSubmitForm = async () => {
-  /* 1)  validamos el “formulario externo” (los selects de género, etc.) */
-  const outerValid = await methods.trigger()
-  if (!outerValid) return               // aborta, se pintan los errores
+  // dentro de handleSubmitForm
+  const handleSubmitForm = async () => {
+    /* 1)  validamos el “formulario externo” (los selects de género, etc.) */
+    const outerValid = await methods.trigger()
+    if (!outerValid) return               // aborta, se pintan los errores
 
-  /* 2)  validamos cada DynamicForm */
-  const refs = [cabeceraRef, introRef, infoRef, authRef]
+    /* 2)  validamos cada DynamicForm */
+    const refs = [cabeceraRef, introRef, infoRef, authRef]
 
-  let everyValid = true
-  for (const ref of refs) {
-    if (ref.current) {
-      const ok = await ref.current.trigger()   //  ←  usa el nuevo método
-      if (!ok) everyValid = false
+    let everyValid = true
+    for (const ref of refs) {
+      if (ref.current) {
+        const ok = await ref.current.trigger()   //  ←  usa el nuevo método
+        if (!ok) everyValid = false
+      }
     }
-  }
-  if (!everyValid) return               
+    if (!everyValid) return
 
-  /* 3)  todas las secciones son válidas → ya podemos recolectar datos */
-  const allData: Record<string, any> = { fecha, ...methods.getValues() }
+    /* 3)  todas las secciones son válidas → ya podemos recolectar datos */
+    const allData: Record<string, any> = { fecha, ...methods.getValues() }
 
-  for (const ref of refs) {
-    const inst = (ref.current as any)?.__formInstance
-    if (inst) Object.assign(allData, inst.getValues())
-  }
+    for (const ref of refs) {
+      const inst = (ref.current as any)?.__formInstance
+      if (inst) Object.assign(allData, inst.getValues())
+    }
 
-  console.log("Datos enviados:", allData)
-  /*const url = await fetchPdfInvestigator(allData);
-    if (url) {
-      console.log("Datos recibidos PDF:", url) 
-*/
+    console.log("Datos enviados:", allData)
+    /*const url = await fetchPdfInvestigator(allData);
+      if (url) {
+        console.log("Datos recibidos PDF:", url) 
+  */
     await onPreviewPdf(allData)
-      // por ejemplo, abrir en una nueva pestaña
-      //window.open(url, "_blank");
+    // por ejemplo, abrir en una nueva pestaña
+    //window.open(url, "_blank");
   }
 
 
@@ -727,7 +724,7 @@ const handleSubmitForm = async () => {
           initialData={formValues}
           onChange={handleSectionChange}
           onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
-          spellWarnings={spellingWarnings} 
+          spellWarnings={spellingWarnings}
 
         />
         <FormSection
@@ -740,8 +737,8 @@ const handleSubmitForm = async () => {
           initialData={formValues}
           onChange={handleSectionChange}
           onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
-          spellWarnings={spellingWarnings} 
- 
+          spellWarnings={spellingWarnings}
+
         />
         <FormSection
           sectionKey="auth"
@@ -753,11 +750,11 @@ const handleSubmitForm = async () => {
           initialData={formValues}
           onChange={handleSectionChange}
           onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
-          spellWarnings={spellingWarnings}  
+          spellWarnings={spellingWarnings}
 
         />
-       <Button onClick={() => onModalOpenChange(true)}>
-            Guardar
+        <Button onClick={() => onModalOpenChange(true)}>
+          Guardar
         </Button>
 
         {modalFormFields && onModalSubmit && (
@@ -772,10 +769,7 @@ const handleSubmitForm = async () => {
             height="90%"
           />
         )
-      }
-
-       
-
+        }
         {/* {modalFormFields && onModalSubmit && (
           <ModalForm
             open={open}
@@ -794,7 +788,7 @@ const handleSubmitForm = async () => {
             <div key={key} className="text-xs text-red-600 mb-2">
               <strong>{key}:</strong>
               <ul>
-                {matches.map((m,i) => (
+                {matches.map((m, i) => (
                   <li key={i}>
                     {m.message} → <em>{m.replacements.map(r => r.value).join(", ")}</em>
                   </li>

@@ -1,4 +1,4 @@
-import { LayoutGrid, Upload, FileStack, ChartLine, Settings, User, Palette, BrainCircuit, FilePlus2 } from "lucide-react";
+import { Upload, FileStack, ChartLine, Settings, User, Palette, BrainCircuit, FilePlus2 } from "lucide-react";
 import type { SidebarData } from "../types/sideBar";
 
 export const sidebarData: SidebarData = {
@@ -22,7 +22,7 @@ export const sidebarData: SidebarData = {
           icon: Settings,
           items: [
             { title: "Cuenta", url: "/ajustes/cuenta", icon: User },
-            { title: "Prompts", url: "/ajustes/prompts", icon: BrainCircuit },
+            { title: "Prompts", url: "/ajustes/prompts", icon: BrainCircuit, roles: ["EVALUADOR"] },
             { title: "Apariencia", url: "/ajustes/apariencia", icon: Palette }
           ]
         }

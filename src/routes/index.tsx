@@ -42,9 +42,12 @@ export const AppRoutes = () => {
           <Route path="/" element={<Layout />}>
             {/* Ajustes */}
             <Route path="ajustes" element={<Settings />}>
-              <Route path="apariencia" element={<Appearance />} />
               <Route path="cuenta" element={<Account />} />
-              <Route path="prompts" element={<Prompts />} />
+              <Route path="apariencia" element={<Appearance />} />
+
+              <Route element={<EvaluatorRoutes />}>
+                <Route path="prompts" element={<Prompts />} />
+              </Route>
             </Route>
 
             {/* Rutas para evaluadores */}

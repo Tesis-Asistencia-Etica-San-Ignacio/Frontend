@@ -1,25 +1,18 @@
-import SettingsTemplate, { SidebarNavItem } from "@/components/templates/settings/SettingsTemplate"
-import { BrainCircuit, Palette, User  } from "lucide-react"
-
-const sidebarNavItems: SidebarNavItem[] = [
-    {
-        title: 'Cuenta',
-        icon: <User size={18} />,
-        href: '/ajustes/cuenta',
-    },
-    {
-        title: 'Prompts',
-        icon: <BrainCircuit size={18} />,
-        href: '/ajustes/prompts',
-    },
-    {
-        title: 'Apariencia',
-        icon: <Palette size={18} />,
-        href: '/ajustes/apariencia',
-    },
-    
-]
+import SettingsTemplate from "@/components/templates/settings/SettingsTemplate"
+import { sidebarData } from "@/data/sidebar-data"
+import type { NavItem } from "@/types/sideBar"
+import { useAuthContext } from "@/context/AuthContext"
 
 export default function SettingsScreen() {
+    const { user } = useAuthContext()
+
+    const otrosGroup = sidebarData.navGroups.find(g => g.title === "Otros")
+    const ajustesItem = otrosGroup?.items.find(i => i.title === "Ajustes")
+
+    const sidebarNavItems: NavItem[] =
+        (ajustesItem?.items ?? []).filter(it =>
+            !it.roles || it.roles.includes(user?.type ?? "")
+        )
+
     return <SettingsTemplate sidebarNavItems={sidebarNavItems} />
 }
