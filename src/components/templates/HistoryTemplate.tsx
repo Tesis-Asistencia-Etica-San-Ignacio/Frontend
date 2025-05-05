@@ -1,4 +1,3 @@
-import React from "react";
 import { ColumnConfig } from "@/types/table";
 import { DynamicDataTable } from "../organisms/DynamicDataTable";
 import ConfirmDialog from "@/components/organisms/dialogs/ConfirmDialog";
@@ -9,7 +8,7 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert
 import type { FormField } from "@/types/formTypes";
 import ModalForm from "../organisms/dialogs/ModalForm";
 
-interface EvaluationHistoryTemplateProps {
+interface HistoryTemplateProps {
   /* ---------- Tabla ---------- */
   data: any[];
   columnsConfig: ColumnConfig[];
@@ -31,7 +30,7 @@ interface EvaluationHistoryTemplateProps {
   DataSelectedRow?: { [key: string]: any };
 }
 
-export default function EvaluationHistoryTemplate({
+export default function HistoryTemplate({
   /* ---------- Tabla ---------- */
   data,
   columnsConfig,
@@ -52,7 +51,7 @@ export default function EvaluationHistoryTemplate({
   onModalSubmit,
 
   DataSelectedRow,
-}: Readonly<EvaluationHistoryTemplateProps>) {
+}: Readonly<HistoryTemplateProps>) {
   return (
 
     <section className="pb-8 space-y-4">
@@ -60,7 +59,7 @@ export default function EvaluationHistoryTemplate({
       <div className="mb-4 flex flex-col">
         <h2 className="text-2xl font-bold tracking-tight">Historial de Archivos</h2>
         <p className="text-muted-foreground">
-          Aquí está una lista de todos los archivos evaluados previamente
+          Aquí está una lista de todos los archivos
         </p>
       </div>
       <div className="grid grid-cols-3 gap-4">

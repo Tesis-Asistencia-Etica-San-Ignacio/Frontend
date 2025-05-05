@@ -9,7 +9,7 @@ import React, {
 import { useNavigate } from "react-router-dom"
 import { Plus } from "lucide-react"
 import { toast } from "sonner"
-import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluationHook"
+import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluation"
 import type { FileWithUrl } from "@/types/fileType"
 import FileRow from "@/components/molecules/FileRowDropFile"
 import { Button } from "@/components/atoms/ui/button"

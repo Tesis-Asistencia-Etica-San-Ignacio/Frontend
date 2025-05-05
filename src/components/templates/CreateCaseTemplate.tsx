@@ -7,10 +7,30 @@ import { FormProvider, useForm } from "react-hook-form"
 import { FormSection } from "@/components/organisms/FormSection"
 import {FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
 import { Input } from "../atoms/ui/input-form"
-import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator"
+//import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator"
 import { LTMatch, checkSpellingWithLT } from "@/lib/api/languageApi"
+import PdfRenderer from "../organisms/PdfRenderer"
+import ModalForm from "../organisms/dialogs/ModalForm"
+interface CreateCaseTemplateProps {
+  onPreviewPdf: (allData: Record<string, any>) => Promise<void>;
+  modalOpen: boolean;
+  onModalOpenChange: (open: boolean) => void;
+  onModalSubmit?: (data: any) => Promise<void> | void;
+  modalFormFields: FormField[][];
+  pdfUrl: string;
+  loading: boolean;
+}
 
-export const CreateCaseTemplate: React.FC = () => {
+export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
+  onPreviewPdf,
+  modalOpen,
+  onModalOpenChange ,
+  onModalSubmit,
+  modalFormFields,
+  pdfUrl,
+  loading
+}
+) => {
   // --- react-hook-form para los campos custom en los fragments ---
   const methods = useForm<{ genero_doctor: string }>({
     defaultValues: { genero_doctor: "" },
@@ -20,12 +40,12 @@ export const CreateCaseTemplate: React.FC = () => {
   const genero = watch("genero_doctor")
   const sufijo = genero === "Femenino" ? "investigadora" : "investigador"
   const tituloDoc = genero === "Femenino" ? "Dra." : "Dr."
-  const { fetchPdfInvestigator, pdfUrl, loading } = useGeneratePdfInvestigator();
-  // --- refs a cada segmento de DynamicForm ---
+  
   const cabeceraRef = useRef<DynamicFormHandles>(null!)
   const introRef = useRef<DynamicFormHandles>(null!)
   const infoRef = useRef<DynamicFormHandles>(null!)
   const authRef = useRef<DynamicFormHandles>(null!)
+  
 
   // --- estado global de valores y controles de secciones ---
   const [formValues, setFormValues] = useState<Record<string, string>>({})
@@ -650,14 +670,14 @@ const handleSubmitForm = async () => {
   }
 
   console.log("Datos enviados:", allData)
-  const url = await fetchPdfInvestigator(allData);
+  /*const url = await fetchPdfInvestigator(allData);
     if (url) {
       console.log("Datos recibidos PDF:", url) 
-
+*/
+    await onPreviewPdf(allData)
       // por ejemplo, abrir en una nueva pestaña
       //window.open(url, "_blank");
-    }
-}
+  }
 
 
   return (
@@ -736,10 +756,25 @@ const handleSubmitForm = async () => {
           spellWarnings={spellingWarnings}  
 
         />
+       <Button onClick={() => onModalOpenChange(true)}>
+            Guardar
+        </Button>
 
-        {/* <Button type="submit" variant="form" size="lg" onClick={() => onOpenChange(true)}>
-          Descargar en PDF
-        </Button> */}
+        {modalFormFields && onModalSubmit && (
+          <ModalForm
+            open={modalOpen}
+            onOpenChange={onModalOpenChange}
+            title={{ text: "Visualizador PDF consentimiento informado", align: "left" }}
+            formDataConfig={modalFormFields}
+            onSubmit={onModalSubmit}
+            submitButtonText="Descargar"
+            width="70%"
+            height="90%"
+          />
+        )
+      }
+
+       
 
         {/* {modalFormFields && onModalSubmit && (
           <ModalForm
@@ -773,3 +808,4 @@ const handleSubmitForm = async () => {
     </FormProvider>
   )
 }
+

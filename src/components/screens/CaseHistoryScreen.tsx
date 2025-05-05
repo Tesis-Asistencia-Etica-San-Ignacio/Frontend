@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import HistoryTemplate from "../templates/HistoryTemplate";
-import useGetEvaluationsByUserHook from "@/hooks/evaluation/useGetEvaluationByUser";
-import useDeleteEvaluationHook from "@/hooks/evaluation/useDeleteEvaluation";
-import useUpdateEvaluationHook from "@/hooks/evaluation/useUpdateEvaluation";
 import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
 import { CheckCircle, Circle } from "lucide-react";
+import useGetCasesByUser from "@/hooks/cases/useGetCasesByUser";
+import useDeleteCases from "@/hooks/cases/useDeleteCases";
+import useUpdateCases from "@/hooks/cases/useUpdateCases";
+import HistoryTemplate from "../templates/HistoryTemplate";
 
-export default function EvaluationHistoryScreen() {
+export default function CaseHistoryScreen() {
   // ──────────────────────── hooks y estados ────────────────────────────────
-  const { files, getFilesByUser } = useGetEvaluationsByUserHook();
+  const { files, getFilesByUser } = useGetCasesByUser();
 
-  const { deleteEvaluation } = useDeleteEvaluationHook();
-  const { updateEvaluation } = useUpdateEvaluationHook();
+  const { deleteCase} = useDeleteCases();
+  const { updateCase } = useUpdateCases();
   const navigate = useNavigate();
 
   const [tableData, setTableData] = useState<any[]>([]);
@@ -34,12 +34,12 @@ export default function EvaluationHistoryScreen() {
     setTableData(
       files.map(f => ({
         id: f.id,
-        id_fundanet: f.id_fundanet,
-        correo_estudiante: f.correo_estudiante,
-        file: f.file.split("uploads/")[1],
+        nombre_proyecto: f.nombre_proyecto,
+        version: f.version,
+        fecha: f.fecha,
+      //  file: f.file.split("uploads/")[1],
         tipo_error: f.tipo_error,
-        aprobado: f.aprobado ? "approved" : "notapproved",
-        estado: f.estado,
+        codigo: f.estado,
         createdAt: new Date(f.createdAt).toISOString().split("T")[0],
         updatedAt: new Date(f.updatedAt).toISOString().split("T")[0],
       }))
@@ -47,26 +47,12 @@ export default function EvaluationHistoryScreen() {
   }, [files]);
 
   // ───────────────────── handlers de la tabla ──────────────────────────────
-  const handleRowClick = (row: any) => {
-    setSelectedRow(row);
-  };
 
   const handleEdit = (row: any) => {
     setSelectedRow(row);
     setEditModalOpen(true);
   };
 
-  const handleVerMas = (row: any) => {
-    navigate(`/evaluacion/${row.id}`, {
-      state: { runGenerate: row.estado === "PENDIENTE" }
-    });
-  };
-
-  const handleReEvaluate = (row: any) => {
-    navigate(`/evaluacion/${row.id}`, {
-      state: { runReEvaluate: true }
-    });
-  };
 
   const handleDelete = (row: any) => {
     setToDeleteId(row.id);
@@ -74,7 +60,7 @@ export default function EvaluationHistoryScreen() {
   };
 
   const handleConfirmDelete = async () => {
-    await deleteEvaluation(toDeleteId);
+    await deleteCase(toDeleteId);
     setDeleteDialogOpen(false);
     setConfirmValue("");
     getFilesByUser();
@@ -84,20 +70,18 @@ export default function EvaluationHistoryScreen() {
   const handleEditSubmit = async (data: any) => {
     if (!selectedRow) return;
     const params = {
-      correo_estudiante: data.correo_estudiante,
+      nombre_proyecto: data.nombre_proyecto,
       tipo_error: data.tipo_error,
-      aprobado: data.aprobado === "true",
-      estado: data.estado,
-      id_fundanet: data.id_fundanet,
+      version: data.version,
+      codigo: data.codigo,
     };
-    await updateEvaluation(selectedRow.id, params);
+    await updateCase(selectedRow.id, params);
     setTableData(prev =>
       prev.map(r =>
         r.id === selectedRow.id
           ? {
             ...r,
             ...params,
-            aprobado: params.aprobado ? "approved" : "notapproved",
             updatedAt: new Date().toISOString().split("T")[0],
           }
           : r
@@ -109,11 +93,10 @@ export default function EvaluationHistoryScreen() {
   // ─────────────────── datos iniciales del modal ──────────────────────────
   const editInitialData = selectedRow
     ? {
-      id_fundanet: selectedRow.id_fundanet ?? "",
-      correo_estudiante: selectedRow.correo_estudiante ?? "",
+      nombre_proyecto: selectedRow.nombre_proyecto ?? "",
+      version: selectedRow.version ?? "",
       tipo_error: selectedRow.tipo_error ?? "",
-      aprobado: selectedRow.aprobado === "approved" ? "true" : "false",
-      estado: selectedRow.estado ?? "",
+      codigo: selectedRow.codigo ?? "",
     }
     : {};
 
@@ -121,67 +104,27 @@ export default function EvaluationHistoryScreen() {
   // — Campos base para la edición —
   const editModalFields: FormField[][] = [
     [
-      { type: "document", key: "id_fundanet", placeholder: "ID del documento en FundaNet" },
+      { type: "text", key: "nombre_proyecto", placeholder: "Nombre del proyecto" },
     ],
     [
-      { type: "email", key: "correo_estudiante", placeholder: "Correo del estudiante" },
+      { type: "number", key: "version", placeholder: "Ingrese el número de la versión" },
     ],
     [
       { type: "textarea", key: "tipo_error", placeholder: "Tipo de error", autoAdjust: true },
     ],
     [
-      {
-        type: "select",
-        key: "aprobado",
-        placeholder: "Resultado de la evaluación",
-        selectPlaceholder: "Seleccione un resultado",
-        options: [
-          { value: "true", label: "Aprobado" },
-          { value: "false", label: "Rechazado" },
-        ],
-      },
-    ],
-    [
-      {
-        type: "select",
-        key: "estado",
-        placeholder: "Estado del archivo",
-        selectPlaceholder: "Seleccione un estado",
-        options: [
-          { value: "PENDIENTE", label: "Pendiente" },
-          { value: "EN CURSO", label: "En curso" },
-          { value: "EVALUADO", label: "Evaluado" },
-        ],
-      },
+      { type: "text", key: "codigo", placeholder: "Código del proyecto" },
     ],
   ];
 
   // — Columnas de la tabla —
   const columnsConfig: ColumnConfig[] = [
     { id: "id", accessorKey: "id", headerLabel: "ID", searchable: true },
-    { id: "id_fundanet", accessorKey: "id_fundanet", headerLabel: "ID FundaNet", searchable: true },
-    { id: "correo_estudiante", accessorKey: "correo_estudiante", headerLabel: "Correo Estudiante", searchable: true },
-    { id: "file", accessorKey: "file", headerLabel: "Archivo" },
+    { id: "fecha", accessorKey: "fecha", headerLabel: "Fecha", searchable: false },
+    { id: "nombre_proyecto", accessorKey: "nombre_proyecto", headerLabel: "Nombre Proyecto", searchable: true },
+    { id: "version", accessorKey: "version", headerLabel: "Versión", searchable: true },
+    { id: "codigo", accessorKey: "codigo", headerLabel: "Código", searchable: true  },
     { id: "tipo_error", accessorKey: "tipo_error", headerLabel: "Tipo de error" },
-    {
-      id: "aprobado",
-      accessorKey: "aprobado",
-      headerLabel: "Aprobado",
-      items: [
-        { value: "approved", label: "Aprobado", icon: CheckCircle, badgeVariant: "approved" },
-        { value: "notapproved", label: "No aprobado", icon: Circle, badgeVariant: "notapproved" },
-      ],
-    },
-    {
-      id: "estado",
-      accessorKey: "estado",
-      headerLabel: "Estado",
-      items: [
-        { value: "PENDIENTE", label: "Pendiente" },
-        { value: "EN CURSO", label: "En curso" },
-        { value: "EVALUADO", label: "Evaluado" },
-      ],
-    },
     { id: "createdAt", accessorKey: "createdAt", headerLabel: "Creado" },
     { id: "updatedAt", accessorKey: "updatedAt", headerLabel: "Actualizado" },
     {
@@ -189,8 +132,6 @@ export default function EvaluationHistoryScreen() {
       type: "actions",
       actionItems: [
         { label: "Editar", onClick: handleEdit },
-        { label: "Ver más", onClick: handleVerMas },
-        { label: "Reevaluar", onClick: handleReEvaluate, visible: r => r.estado === "EVALUADO" || r.estado === "EN CURSO" },
         { label: "Eliminar", onClick: handleDelete },
       ],
     },
@@ -202,7 +143,6 @@ export default function EvaluationHistoryScreen() {
       /* ---------- Tabla ---------- */
       data={tableData}
       columnsConfig={columnsConfig}
-      onRowClick={handleRowClick}
       selectedRowId={selectedRow?.id}
 
       /* -------- Eliminación ------ */

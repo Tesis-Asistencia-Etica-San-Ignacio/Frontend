@@ -1,4 +1,4 @@
-import EvaluationHistoryTemplate from "../../templates/EvaluationHistoryTemplate"
+import EvaluationHistoryTemplate from "../../templates/HistoryTemplate"
 import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 

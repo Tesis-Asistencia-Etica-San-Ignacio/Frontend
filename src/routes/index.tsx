@@ -7,13 +7,13 @@ const Auth = lazy(() => import("../components/screens/AuthScreen"));
 const Layout = lazy(() => import("../components/screens/LayoutScreen"));
 const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"));
-const FileHistory = lazy(() => import("../components/screens/EvaluationHistoryScreen"));
+const EvaluationHistory = lazy(() => import("../components/screens/EvaluationHistoryScreen"));
+const CaseHistory = lazy(() => import("../components/screens/CaseHistoryScreen"));
 const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));
 const NotFoundErrorScreen = lazy(() => import("../components/screens/errors/404"));
 const CreateCaseScreen = lazy(() => import("../components/screens/CreateCaseScreen"));
-
 
 // rutas de rol
 const EvaluatorRoutes = lazy(() => import("./EvaluatorRoutes"));
@@ -52,13 +52,13 @@ export const AppRoutes = () => {
               <Route path="inicio" element={<Landing />} />
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
-              <Route path="historial-archivos-evaluados" element={<FileHistory />} />
+              <Route path="historial-archivos-evaluados" element={<EvaluationHistory />} />
               <Route path="evaluacion/:evaluationId" element={<Evaluation />} />
             </Route>
 
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="historial-archivos" element={<FileHistory />} />
+              <Route path="historial-archivos" element={<CaseHistory />} />
               <Route path="crear-nuevo-caso" element={<CreateCaseScreen />} />
             </Route>
           </Route>
