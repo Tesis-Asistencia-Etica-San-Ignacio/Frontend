@@ -26,6 +26,7 @@ import type {
     TextAreaFormField,
     FieldType,
 } from "@/types/formTypes"
+import { LTMatch } from "@/lib/api/languageApi"
   
 /*function baseValidationForType(type: FieldType):  z.ZodTypeAny  {
    // let schema = z.string().trim()
@@ -212,6 +213,9 @@ export interface DynamicFormProps {
     formDataConfig: FormField[] | FormField[][]
     onSubmit?: (data: { [key: string]: any }) => void
     onChange?: (data: { [key: string]: any }) => void
+    //onSpellCheck?: (fieldKey: string, matches: LTMatch[]) => void
+    onSpellCheck?: (key: string, text: string) => void 
+    spellWarnings?: Record<string, LTMatch[]>
     containerClassName?: string
     initialData?: { [key: string]: any }
 }
@@ -219,7 +223,9 @@ export interface DynamicFormProps {
 export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     formDataConfig,
     onChange,
+    onSpellCheck,
     containerClassName,
+    spellWarnings = {},
     initialData = {},
 }, ref) => {
     const flatFields = flattenFields(formDataConfig)
@@ -394,6 +400,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                             placeholder={f.placeholder}
                             value={controllerField.value || ""}
                             onChange={controllerField.onChange}
+                            onBlur={e => onSpellCheck?.(field.key, e.target.value)}
                         />
                         )
                     }
@@ -404,13 +411,15 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                         placeholder={field.placeholder}
                         value={controllerField.value || ""}
                         onChange={controllerField.onChange}
+                        onBlur={e => onSpellCheck?.(field.key, e.target.value)}
+
                         />
                     )
                     })()}
                 </FormControl>
         
                 <FormMessage className="min-h-[1.25rem]">
-                    {errors[field.key]?.message as string}
+                    {errors[field.key]?.message as string||spellWarnings[field.key]?.[0]?.message }
                 </FormMessage>
                 </FormItem>
             )}

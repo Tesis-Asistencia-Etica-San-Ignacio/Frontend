@@ -13,6 +13,7 @@ import {
   BookLock
 } from "lucide-react"
 import { type InputType } from "@/types/formTypes"
+import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi"
 
 
 
@@ -90,10 +91,11 @@ export interface InputProps
   icon?: React.ReactNode
   value?: string
   onChange?: (event: React.ChangeEvent<HTMLInputElement>) => void
+  onSpellCheck?: (matches: LTMatch[]) => void;
 }
 
 export const Input = React.forwardRef<HTMLInputElement, InputProps>(
-  ({ className, inputType, icon, value = "", onChange, maxLength, ...props }, ref) => {
+  ({ className, inputType, icon, value = "", onChange, maxLength, onSpellCheck, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
     const { maxLength: defaultMaxLength, icon: defaultIcon } = getConfigForType(inputType)
@@ -132,6 +134,12 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           value={value}
           onChange={onChange}
           className={cn(inputStyle, finalIcon ? "pl-8" : "pl-2")}
+          onBlur={async (e) => {
+             if (onSpellCheck) {
+               const matches = await checkSpellingWithLT(e.currentTarget.value);
+               onSpellCheck(matches);
+             }
+           }}
           spellCheck={true}
           {...props}
         />

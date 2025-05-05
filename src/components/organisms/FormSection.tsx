@@ -7,6 +7,7 @@ import {
 import { SectionHeader } from "@/components/molecules/SectionHeader"
 import { DynamicForm, DynamicFormHandles } from "../molecules/Dynamic-form"
 import type { FormField } from "@/types/formTypes"
+import { LTMatch } from "@/lib/api/languageApi"
 
 export interface FormSectionProps {
   sectionKey: string
@@ -17,6 +18,9 @@ export interface FormSectionProps {
   fields: FormField[]
   initialData: Record<string, string>
   onChange: (vals: Record<string, string>) => void
+  //onSpellCheck?: (fieldKey: string, matches: LTMatch[]) => void
+  onSpellCheck?: (key: string, text: string) => void
+  spellWarnings?: Record<string, LTMatch[]>
 }
 
 export const FormSection: React.FC<FormSectionProps> = ({
@@ -27,6 +31,8 @@ export const FormSection: React.FC<FormSectionProps> = ({
   fields,
   initialData,
   onChange,
+  onSpellCheck,
+  spellWarnings,
 }) => {
   return (
     <Collapsible open={open} onOpenChange={onToggle}>
@@ -44,6 +50,8 @@ export const FormSection: React.FC<FormSectionProps> = ({
           formDataConfig={fields}
           initialData={initialData}
           onChange={onChange}
+          onSpellCheck={onSpellCheck}
+          spellWarnings={spellWarnings}
           containerClassName="flex flex-col gap-6"
         />
       </CollapsibleContent>

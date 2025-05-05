@@ -8,6 +8,7 @@ import { FormSection } from "@/components/organisms/FormSection"
 import {FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
 import { Input } from "../atoms/ui/input-form"
 import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator"
+import { LTMatch, checkSpellingWithLT } from "@/lib/api/languageApi"
 
 export const CreateCaseTemplate: React.FC = () => {
   // --- react-hook-form para los campos custom en los fragments ---
@@ -35,6 +36,8 @@ export const CreateCaseTemplate: React.FC = () => {
     auth: true,
   })
 
+  const [spellingWarnings, setSpellingWarnings] = useState<Record<string, LTMatch[]>>({})
+
   const handleToggle = (section: keyof typeof openSections) => {
     setOpenSections((prev) => ({ ...prev, [section]: !prev[section] }))
   }
@@ -55,7 +58,21 @@ export const CreateCaseTemplate: React.FC = () => {
     setFormValues((prev) => ({ ...prev, ...vals }))
   }
 
+  const handleSpellCheck = (fieldKey: string, matches: LTMatch[]) => {
+    setSpellingWarnings(prev => ({ ...prev, [fieldKey]: matches }))
+  }
   
+  const doSpellCheck = async (fieldKey: string, text: string, cb: (key: string, matches: LTMatch[]) => void) => {
+    if (!text || text.trim() === "") return
+  
+    try {
+      const matches = await checkSpellingWithLT(text)
+      console.log("Matches para", fieldKey, matches)
+      cb(fieldKey, matches)
+    } catch (err) {
+      console.error("Error al verificar ortografía:", err)
+    }
+  }
   // Configuración de campos
   const cabeceraFields: FormField[] = [
     {
@@ -268,6 +285,7 @@ export const CreateCaseTemplate: React.FC = () => {
                       inputType="text"
                       placeholder="Nombre del patrocinador"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={(e) => doSpellCheck("patrocinador", e.target.value, handleSpellCheck)}
                     />
                   </FormControl>
                   <FormMessage className="text-xs text-red-500 ml-1" />
@@ -288,6 +306,11 @@ export const CreateCaseTemplate: React.FC = () => {
                       inputType="text"
                       placeholder="Nombre de la compañía"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={async (e) => {
+                        const texto = (e.target as HTMLInputElement).value;
+                        const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                        handleSpellCheck("compania_seguro", matches);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs text-red-500 ml-1" />
@@ -324,9 +347,7 @@ export const CreateCaseTemplate: React.FC = () => {
                     <select
                       {...field}
                       onChange={(e) => {
-                         /* 1) actualiza el DynamicForm */
                          field.onChange(e)
-                         /* 2) actualiza el formulario externo para el sufijo */
                          methods.setValue("genero_doctor", e.target.value, {
                            shouldValidate: false, // no lo validamos dos veces
                          })
@@ -353,6 +374,11 @@ export const CreateCaseTemplate: React.FC = () => {
                       inputType="text"
                       placeholder="Nombre del investigador"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                      onBlur={async (e) => {
+                        const texto = (e.target as HTMLInputElement).value;
+                        const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                        handleSpellCheck("nombre_doctor", matches);
+                      }}
                     />
                   </FormControl>
                   <FormMessage className="text-xs text-red-500 ml-1" />
@@ -384,6 +410,11 @@ export const CreateCaseTemplate: React.FC = () => {
                     inputType="text"
                     placeholder="Director/a Of. Investigaciones"
                     className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                    onBlur={async (e) => {
+                      const texto = (e.target as HTMLInputElement).value;
+                      const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                      handleSpellCheck("nombre_dir_investigaciones", matches);
+                    }}
                   />
                 </FormControl>
                 <FormMessage className="text-xs text-red-500 ml-1" />
@@ -444,6 +475,11 @@ export const CreateCaseTemplate: React.FC = () => {
                         inputType="text"
                         placeholder="nombre del estudio"
                         className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                        onBlur={async (e) => {
+                          const texto = (e.target as HTMLInputElement).value;
+                          const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                          handleSpellCheck("nombre_estudio", matches);
+                        }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-500 ml-1" />
@@ -481,6 +517,11 @@ export const CreateCaseTemplate: React.FC = () => {
                         inputType="text"
                         placeholder="nombre"
                         className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                        onBlur={async (e) => {
+                          const texto = (e.target as HTMLInputElement).value;
+                          const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                          handleSpellCheck("nombre_inv_principal", matches);
+                        }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-500 ml-1" />
@@ -548,6 +589,11 @@ export const CreateCaseTemplate: React.FC = () => {
                         inputType="text"
                         placeholder="nombre presidente"
                         className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                        onBlur={async (e) => {
+                            const texto = (e.target as HTMLInputElement).value;
+                            const matches: LTMatch[] = await checkSpellingWithLT(texto);
+                            handleSpellCheck("nombre_presidente", matches);
+                          }}
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-500 ml-1" />
@@ -660,6 +706,9 @@ const handleSubmitForm = async () => {
           fields={introduccionFields}
           initialData={formValues}
           onChange={handleSectionChange}
+          onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
+          spellWarnings={spellingWarnings} 
+
         />
         <FormSection
           sectionKey="info"
@@ -670,6 +719,9 @@ const handleSubmitForm = async () => {
           fields={informacionGeneralFields}
           initialData={formValues}
           onChange={handleSectionChange}
+          onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
+          spellWarnings={spellingWarnings} 
+ 
         />
         <FormSection
           sectionKey="auth"
@@ -680,11 +732,43 @@ const handleSubmitForm = async () => {
           fields={autorizacionFields}
           initialData={formValues}
           onChange={handleSectionChange}
+          onSpellCheck={(key, text) => doSpellCheck(key, text, handleSpellCheck)}
+          spellWarnings={spellingWarnings}  
+
         />
 
-        <Button type="submit" variant="form" size="lg">
+        {/* <Button type="submit" variant="form" size="lg" onClick={() => onOpenChange(true)}>
           Descargar en PDF
-        </Button>
+        </Button> */}
+
+        {/* {modalFormFields && onModalSubmit && (
+          <ModalForm
+            open={open}
+            onOpenChange={onOpenChange}
+            title={{ text: "Enviar resultado de la evaluación", align: "left" }}
+            formDataConfig={modalFormFields}
+            onSubmit={onModalSubmit}
+            submitButtonText="Enviar resultado"
+            width="70%"
+            height="80%"
+          />
+        )} */}
+
+        {Object.entries(spellingWarnings).map(([key, matches]) =>
+          matches.length > 0 ? (
+            <div key={key} className="text-xs text-red-600 mb-2">
+              <strong>{key}:</strong>
+              <ul>
+                {matches.map((m,i) => (
+                  <li key={i}>
+                    {m.message} → <em>{m.replacements.map(r => r.value).join(", ")}</em>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null
+        )}
+
       </form>
     </FormProvider>
   )
