@@ -14,14 +14,15 @@ export type InputType =
     | "address"
     | "extension-phone"
     | "search"
-    | "number" 
+    | "number"
     | undefined;
 
 export type FieldType =
     InputType
     | "select"
     | "custom"
-    | "textarea";
+    | "textarea"
+    | "datePicker";
 
 /**
  * Estructura base para cualquier campo.
@@ -50,7 +51,7 @@ export interface BaseFormField {
      * width en porcentaje. Ej: 33 => 33% del contenedor
      */
     width?: number
-    hidden?: boolean 
+    hidden?: boolean
 }
 
 /**
@@ -82,6 +83,17 @@ export interface TextAreaFormField extends BaseFormField {
 }
 
 /**
+ * Campo tipo "datePicker"
+ */
+export interface DateFormField extends BaseFormField {
+    type: "datePicker"
+    /** opcional: fecha mínima */
+    minDate?: Date
+    /** opcional: fecha máxima */
+    maxDate?: Date
+}
+
+/**
  * Tipo unificado para el arreglo de campos.
  * Puede ser base, select, custom o textarea.
  */
@@ -90,3 +102,4 @@ export type FormField =
     | SelectFormField
     | CustomFormField
     | TextAreaFormField
+    | DateFormField

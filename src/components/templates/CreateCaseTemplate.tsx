@@ -104,6 +104,13 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
       placeholder: "Ingresa el código del FCI",
       required: true,
     },
+    {
+      key: "fecha",
+      type: "datePicker",
+      label: "Fecha",
+      required: true,
+      placeholder: "Ingresa una fecha",
+    },
   ]
 
   const introduccionFields: FormField[] = [
@@ -704,14 +711,14 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
         </div>
 
         {/* Fecha */}
-        <div className="flex flex-col gap-1">
+       {/*  <div className="flex flex-col gap-1">
           <label className="text-sm font-semibold text-[#111827]">Fecha</label>
           <Calendar
             mode="single"
             selected={fecha}
             onSelect={handleDateSelect}
           />
-        </div>
+        </div> */}
 
         {/* Secciones */}
         <FormSection

@@ -3,9 +3,9 @@ import { format, subMonths } from "date-fns"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { DateRange, SelectRangeEventHandler } from "react-day-picker"
 import { cn } from "@/lib/utils"
-import { Button } from "../atoms/ui/button"
-import { Calendar } from "../atoms/ui/calendar"
-import { Popover, PopoverContent, PopoverTrigger } from "../atoms/ui/popover"
+import { Button } from "../../atoms/ui/button"
+import { Calendar } from "../../atoms/ui/calendar"
+import { Popover, PopoverContent, PopoverTrigger } from "../../atoms/ui/popover"
 
 export interface DatePickerWithRangeProps {
   from: Date
