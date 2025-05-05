@@ -15,7 +15,6 @@ export default function AccountScreen() {
   const { mutateAsync: updatePassword } = useUpdatePassword();
 
   const onConfirmAccount = async () => {
-    // El form te pasará { name, last_name, email }
     await accountFormRef.current?.handleSubmit(updateUser)();
   };
 
@@ -23,7 +22,6 @@ export default function AccountScreen() {
     await passwordFormRef.current?.handleSubmit(
       async (values: { [key: string]: any }) => {
         const typedValues = values as { password: string; newPassword: string };
-        // aquí values sí cumple UpdatePasswordInput
         await updatePassword(typedValues);
       }
     )();

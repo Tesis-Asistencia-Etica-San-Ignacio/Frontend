@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import { login as loginService, logout as logoutService, getSession } from "@/services/authService";
-import { useCreateUser } from "@/hooks/user/useCreateUserHook";
+import { useCreateUser } from "@/hooks/user/useCreateUser";
 import { User } from "@/types";
 
 interface IAuthContext {
@@ -49,7 +49,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
     const createAccount = async (userData: any) => {
         await createUserMutation.mutateAsync(userData);
-        // Según tu flujo, podrías hacer checkSession() aquí también si se necesita.
     };
 
     const value: IAuthContext = {

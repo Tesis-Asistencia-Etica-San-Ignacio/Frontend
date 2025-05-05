@@ -16,14 +16,12 @@ export const createUser = async (
     return data;
 };
 
-// --- update profile (name / last_name / email) ---
 export const updateUser = async (
     updates: UpdateUserInput,
 ): Promise<User> => {
     const { data } = await userApi.patch<User>('/user/', updates);
     return data;
 };
-// --- update profile (password) ---
 export const updatePassword = async (
     payload: UpdatePasswordInput,
 ): Promise<User> => {

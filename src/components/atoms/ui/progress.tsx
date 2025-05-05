@@ -7,7 +7,6 @@ interface ProgressProps extends React.HTMLAttributes<HTMLDivElement> {
 }
 
 export function Progress({ value = 0, isError, className, ...props }: ProgressProps) {
-  // Aseguramos que el valor esté entre 0 y 100
   const clamped = Math.min(Math.max(value, 0), 100)
 
   const progressColor = isError

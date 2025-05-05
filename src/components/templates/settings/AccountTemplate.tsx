@@ -18,10 +18,6 @@ interface AccountTemplateProps {
     passwordFormRef: React.RefObject<DynamicFormHandles | null>;
     onConfirmAccount: () => Promise<void> | void;
     onConfirmPassword: () => Promise<void> | void;
-    //accountSuccessToast: ConfirmDialogProps["successToast"];
-    //accountErrorToast: ConfirmDialogProps["errorToast"];
-    //passwordSuccessToast: ConfirmDialogProps["successToast"];
-    //passwordErrorToast: ConfirmDialogProps["errorToast"];
     accountInitialData?: { [key: string]: any };
     passwordInitialData?: { [key: string]: any };
 }
@@ -35,10 +31,6 @@ export default function AccountTemplate({
     passwordFormRef,
     onConfirmAccount,
     onConfirmPassword,
-    //accountSuccessToast,
-    //accountErrorToast,
-    //passwordSuccessToast,
-    //passwordErrorToast,
     accountInitialData = {},
     passwordInitialData = {},
 }: AccountTemplateProps) {
@@ -76,8 +68,6 @@ export default function AccountTemplate({
                 open={openAccount}
                 onOpenChange={setOpenAccount}
                 handleConfirm={onConfirmAccount}
-                //successToast={accountSuccessToast}
-                //errorToast={accountErrorToast}
                 title="¿Actualizar datos de la cuenta?"
                 description="Se guardarán los cambios realizados."
                 confirmText="Sí, actualizar"
@@ -89,8 +79,6 @@ export default function AccountTemplate({
                 handleConfirm={onConfirmPassword}
                 disabled={confirmValue.trim() !== "ACTUALIZAR"}
                 destructive
-                //successToast={passwordSuccessToast}
-                //errorToast={passwordErrorToast}
                 title={
                     <span className="text-destructive">
                         <TriangleAlert size={18} className="inline-block mr-1" />
