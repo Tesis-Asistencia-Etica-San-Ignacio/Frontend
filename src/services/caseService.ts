@@ -1,7 +1,5 @@
 import { requestsApi } from "@/lib/api/requestsApi";
 import type { FileItem } from "@/types/fileType";
-import type { UpdateEvaluationParams } from "@/types/evaluationType";
-import { AxiosProgressEvent } from "axios";
 import { UpdateCaseParams } from "@/types/caseType";
 
 

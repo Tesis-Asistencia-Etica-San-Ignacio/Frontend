@@ -1,6 +1,5 @@
 import React, { useRef, useState } from "react"
 import { Button } from "@/components/atoms/ui/button"
-import { Calendar } from "@/components/atoms/ui/calendar"
 import { DynamicFormHandles, DynamicForm } from "../molecules/Dynamic-form"
 import type { FormField } from "@/types/formTypes"
 import { FormProvider, useForm } from "react-hook-form"
@@ -31,7 +30,8 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
     defaultValues: { genero_doctor: "" },
     mode: "onChange"
   })
-  const { watch, getValues: getOuterValues } = methods
+  /* const { watch, getValues: getOuterValues } = methods */
+  const { watch } = methods
   const genero = watch("genero_doctor")
   const sufijo = genero === "Femenino" ? "investigadora" : "investigador"
   const tituloDoc = genero === "Femenino" ? "Dra." : "Dr."
@@ -44,7 +44,8 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
 
   // --- estado global de valores y controles de secciones ---
   const [formValues, setFormValues] = useState<Record<string, string>>({})
-  const [fecha, setFecha] = useState<Date | undefined>(undefined)
+  /* const [fecha, setFecha] = useState<Date | undefined>(undefined) */
+  const [fecha] = useState<Date | undefined>(undefined)
   const [openSections, setOpenSections] = useState({
     intro: true,
     info: true,
@@ -58,7 +59,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
   }
 
 
-  const handleDateSelect = (date: Date | undefined) => {
+  /* const handleDateSelect = (date: Date | undefined) => {
     setFecha(date)
     if (date) {
       setFormValues(prev => ({
@@ -66,7 +67,7 @@ export const CreateCaseTemplate: React.FC<CreateCaseTemplateProps> = ({
         fecha: date.toISOString().split("T")[0]
       }))
     }
-  }
+  } */
 
   // recoge los cambios de cualquier DynamicForm
   const handleSectionChange = (vals: Record<string, string>) => {

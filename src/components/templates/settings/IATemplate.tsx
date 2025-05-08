@@ -10,13 +10,23 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert
 import type { FormField } from "@/types/formTypes";
 
 interface IATemplateProps {
-    title: string;
-    desc: string;
     // API Key
+    titleSection1: string;
+    descSection1: string;
     apiKeyFields: FormField[];
     apiKeyFormRef: React.RefObject<DynamicFormHandles | null>;
     onConfirmApiKey: (newKey: string) => Promise<void>;
+
+    // API model
+    titleSection2: string;
+    descSection2: string;
+    modelFields: FormField[];
+    modelFormRef: React.RefObject<DynamicFormHandles | null>;
+    onConfirmModel: (model: string) => Promise<void>;
+
     // Prompts
+    titleSection3: string;
+    descSection3: string;
     promptsFields: FormField[][];
     promptsFormRef: React.RefObject<DynamicFormHandles | null>;
     initialValuesPrompts: Record<string, string>;
@@ -25,17 +35,27 @@ interface IATemplateProps {
 }
 
 export default function IATemplate({
-    title,
-    desc,
+    titleSection1,
+    descSection1,
     apiKeyFields,
     apiKeyFormRef,
     onConfirmApiKey,
+
+    titleSection2,
+    descSection2,
+    modelFormRef,
+    modelFields,
+    onConfirmModel,
+
+    titleSection3,
+    descSection3,
     promptsFields,
     promptsFormRef,
     initialValuesPrompts,
     onConfirmUpdatePrompts,
     onConfirmResetPrompts,
 }: IATemplateProps) {
+    const [openModel, setOpenModel] = useState(false);
     const [openApiKey, setOpenApiKey] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const [openReset, setOpenReset] = useState(false);
@@ -45,7 +65,7 @@ export default function IATemplate({
 
     return (
         <div className="flex flex-col w-full">
-            <ContentSection title="API Key" desc="Cambiar la API Key puede afectar el funcionamiento de la plataforma.">
+            <ContentSection title={titleSection1} desc={descSection1}>
                 <div className="lg:max-w-xl space-y-4">
                     <DynamicForm
                         ref={apiKeyFormRef}
@@ -59,7 +79,7 @@ export default function IATemplate({
                     open={openApiKey}
                     onOpenChange={setOpenApiKey}
                     handleConfirm={async () => {
-                        await onConfirmResetPrompts();
+                        await onConfirmApiKey;
                         setOpenReset(false);
                         setConfirmValue("");
                     }}
@@ -94,7 +114,34 @@ export default function IATemplate({
                 />
             </ContentSection>
 
-            <ContentSection title={title} desc={desc}>
+            <ContentSection title={titleSection2} desc={descSection2}>
+                <div className="lg:max-w-xl space-y-4">
+                    <DynamicForm
+                        ref={modelFormRef}
+                        formDataConfig={modelFields}
+                        initialData={{}}
+                        containerClassName="flex flex-col gap-4"
+                    />
+                    <Button onClick={() => setOpenModel(true)}>Cambiar Modelo de IA</Button>
+                </div>
+
+                <ConfirmDialog
+                    open={openModel}
+                    onOpenChange={setOpenModel}
+                    handleConfirm={() =>
+                        modelFormRef.current?.handleSubmit(async (data) => {
+                            await onConfirmModel(data);
+                            setOpenModel(false);
+                        })()
+                    }
+                    title="¿Estas seguro de cambiar el modelo?"
+                    description="Esto cambiara el modelo de IA de la plataforma."
+                    confirmText="Sí, actualizar"
+                />
+
+            </ContentSection>
+
+            <ContentSection title={titleSection3} desc={descSection3}>
                 <>
                     <DynamicForm
                         key={dynamicKey}

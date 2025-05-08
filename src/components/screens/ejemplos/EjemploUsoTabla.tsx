@@ -1,5 +1,5 @@
-import EvaluationHistoryTemplate from "../../templates/HistoryTemplate"
-import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
+/* import EvaluationHistoryTemplate from "../../templates/HistoryTemplate"
+ */import { ArrowDown, ArrowRight, ArrowUp, CheckCircle, Circle, HelpCircle } from "lucide-react"
 import { ColumnConfig } from "@/types/table"
 
 
@@ -102,9 +102,10 @@ const columnsConfig: ColumnConfig[] = [
         ],
     },
 ]
+console.log(columnsConfig)
 
 // Datos de ejemplo
-const tableData = [
+/* const tableData = [
     {
         "id": "TASK-8782",
         "title": [
@@ -149,18 +150,17 @@ const tableData = [
         "status": "backlog",
         "priority": "high", "hola": "hola"
     },
-]
-
+] */
+/* 
 export default function Ejemplo() {
 
     return (
         <div>
-            {/* Tabla dinámica (arriba) */}
             <EvaluationHistoryTemplate data={tableData} columnsConfig={columnsConfig} />
         </div>
     )
 }
-
+ */
 
 //Ejemplo de uso
 /* const registryFields: FormField[][] = [

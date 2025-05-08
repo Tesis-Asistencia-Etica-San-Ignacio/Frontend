@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
-import { CheckCircle, Circle } from "lucide-react";
 import useGetCasesByUser from "@/hooks/cases/useGetCasesByUser";
 import useDeleteCases from "@/hooks/cases/useDeleteCases";
 import useUpdateCases from "@/hooks/cases/useUpdateCases";
@@ -14,7 +12,6 @@ export default function CaseHistoryScreen() {
 
   const { deleteCase} = useDeleteCases();
   const { updateCase } = useUpdateCases();
-  const navigate = useNavigate();
 
   const [tableData, setTableData] = useState<any[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);

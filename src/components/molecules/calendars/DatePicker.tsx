@@ -157,7 +157,6 @@ function MonthGrid({
     className,
     children,
     isYearView,
-    setIsYearView,
     startDate,
     endDate,
     years,

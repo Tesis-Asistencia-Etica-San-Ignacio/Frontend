@@ -4,7 +4,6 @@ import {
 } from 'recharts';
 import { LinePoint, LINE_COLORS } from '@/types/statsTypes';
 import React from 'react';
-import { Skeleton } from '@/components/atoms/ui/skeleton'
 
 export const LineChartComponent: React.FC<{
     data: LinePoint[];

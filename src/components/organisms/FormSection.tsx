@@ -4,7 +4,6 @@ import {
   CollapsibleTrigger,
   CollapsibleContent,
 } from "@/components/atoms/ui/collapsible"
-import { SectionHeader } from "@/components/molecules/SectionHeader"
 import { DynamicForm, DynamicFormHandles } from "../molecules/Dynamic-form"
 import type { FormField } from "@/types/formTypes"
 import { LTMatch } from "@/lib/api/languageApi"

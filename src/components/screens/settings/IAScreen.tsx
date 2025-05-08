@@ -7,11 +7,14 @@ import useRefreshPrompts from "@/hooks/prompts/useRefreshPrompts";
 import type { FormField } from "@/types/formTypes";
 import { useNotify } from "@/hooks/useNotify";
 import useUpdateApiKey from "@/hooks/ia/useUpdateApiKey";
+import useGetModels from '@/hooks/ia/useGetModels';
 
 export default function IAScreen() {
     const apiKeyFormRef = useRef<DynamicFormHandles>(null);
     const promptsFormRef = useRef<DynamicFormHandles>(null);
+    const modelFormRef = useRef<DynamicFormHandles>(null);
 
+    const { data: models = [], isLoading: loadingModels } = useGetModels();
     const { updateApiKey } = useUpdateApiKey();
     const { prompts, fetchPrompts } = useGetMyPrompts();
     const { updatePromptText } = useUpdatePromptText();
@@ -60,6 +63,9 @@ export default function IAScreen() {
         await updateApiKey(newKey);
     };
 
+    const handleConfirmModel = async () => {
+    };
+
     const handleConfirmUpdatePrompts = async (formData: Record<string, string>) => {
         const changed = Object.entries(formData).filter(
             ([id, txt]) => txt !== initialValuesPrompts[id]
@@ -84,13 +90,33 @@ export default function IAScreen() {
         { type: "password", key: "apiKey", placeholder: "Nueva API Key", maxLength: 100 },
     ];
 
+    const modelFields: FormField[] = [
+        {
+            type: 'select',
+            key: 'model',
+            placeholder: loadingModels ? 'Cargando...' : 'Selecciona el modelo',
+            required: true,
+            options: models.map((m) => ({ value: m, label: m })),
+        },
+    ];
+
     return (
         <IATemplate
-            title="Prompts"
-            desc="Modifica los prompts de la plataforma."
+            titleSection1="API Key"
+            descSection1="Cambiar la API Key puede afectar el funcionamiento de la plataforma."
             apiKeyFields={apiKeyFields}
             apiKeyFormRef={apiKeyFormRef}
             onConfirmApiKey={handleConfirmApiKey}
+
+            titleSection2="Prompts"
+            descSection2="Modifica los prompts de la plataforma."
+            modelFields={modelFields}
+            modelFormRef={modelFormRef}
+            onConfirmModel={handleConfirmModel}
+
+
+            titleSection3="Prompts"
+            descSection3="Modifica los prompts de la plataforma."
             promptsFields={fieldsPrompts}
             promptsFormRef={promptsFormRef}
             initialValuesPrompts={initialValuesPrompts}

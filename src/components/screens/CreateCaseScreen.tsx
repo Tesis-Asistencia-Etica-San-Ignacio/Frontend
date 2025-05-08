@@ -3,7 +3,7 @@ import { FormField } from "@/types/formTypes";
 import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator"
 
 import PdfRenderer from "../organisms/PdfRenderer";
-import { useEffect, useRef, useState } from "react";
+import { useState } from "react";
 
 export default function CreateCaseScreen() {
   const [pdfModalOpen, setPdfModalOpen] = useState(false)
@@ -14,7 +14,7 @@ export default function CreateCaseScreen() {
         const url = await fetchPdfInvestigator(formData)
         if (url) setPdfModalOpen(true)
       }
-      const handlePdfModalFormSubmit = async (data: any) => {
+      const handlePdfModalFormSubmit = async () => {
         setPdfModalOpen(false)
       }
       
