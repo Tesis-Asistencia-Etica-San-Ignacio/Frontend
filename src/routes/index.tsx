@@ -22,7 +22,7 @@ const ResearcherRoutes = lazy(() => import("./ResearcherRoutes"));
 const Settings = lazy(() => import("../components/screens/settings/SettingsScreen"));
 const Appearance = lazy(() => import("../components/screens/settings/AppearanceScreen"));
 const Account = lazy(() => import("../components/screens/settings/AccountScreen"));
-const Prompts = lazy(() => import("../components/screens/settings/PromptsScreen"));
+const IASettings = lazy(() => import("../components/screens/settings/IAScreen"));
 
 export const AppRoutes = () => {
   return (
@@ -46,7 +46,7 @@ export const AppRoutes = () => {
               <Route path="apariencia" element={<Appearance />} />
 
               <Route element={<EvaluatorRoutes />}>
-                <Route path="prompts" element={<Prompts />} />
+                <Route path="ia" element={<IASettings />} />
               </Route>
             </Route>
 

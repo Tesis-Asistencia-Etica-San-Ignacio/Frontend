@@ -7,14 +7,14 @@ import { Slide } from "../molecules/Carousel";
 
 const loginFields: FormField[] = [
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true, minLength: 6 },
 ];
 
 const registryFields: FormField[] = [
   { type: "user", key: "name", placeholder: "Ingresa tu nombre", required: true },
   { type: "user", key: "last_name", placeholder: "Ingresa tu apellido", required: true },
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true, minLength: 6 },
 ];
 
 const slides: Slide[] = [

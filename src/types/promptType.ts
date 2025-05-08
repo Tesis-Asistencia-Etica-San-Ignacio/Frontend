@@ -7,6 +7,7 @@ export interface Prompt {
     activo: boolean;
     createdAt: string;
     updatedAt: string;
+    codigo: string;
   }
 
   export interface UpdatePromptTextParams {

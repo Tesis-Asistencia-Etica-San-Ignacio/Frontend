@@ -22,7 +22,7 @@ export const sidebarData: SidebarData = {
           icon: Settings,
           items: [
             { title: "Cuenta", url: "/ajustes/cuenta", icon: User },
-            { title: "Prompts", url: "/ajustes/prompts", icon: BrainCircuit, roles: ["EVALUADOR"] },
+            { title: "Inteligencia artificial", url: "/ajustes/ia", icon: BrainCircuit, roles: ["EVALUADOR"] },
             { title: "Apariencia", url: "/ajustes/apariencia", icon: Palette }
           ]
         }

@@ -7,3 +7,7 @@ export const generateEvaluation = async (evaluationId: string): Promise<void> =>
 
 export const reEvaluateEvaluation = async (evaluationId: string): Promise<void> =>
     requestsApi.post("/ia/re-evaluate", { evaluationId });
+
+export const updateApiKey = async (payload: { apiKey: string }): Promise<void> => {
+    await requestsApi.patch('/ia/settings', payload);
+};
