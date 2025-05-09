@@ -1,120 +1,162 @@
-import { useRef, useEffect, useState } from "react";
-import { DynamicFormHandles } from "@/components/molecules/Dynamic-form";
-import IATemplate from "@/components/templates/settings/IATemplate";
-import useGetMyPrompts from "@/hooks/prompts/useGetPromptsByEvaluator";
-import useUpdatePromptText from "@/hooks/prompts/useUpdatePrompt";
-import useRefreshPrompts from "@/hooks/prompts/useRefreshPrompts";
-import type { FormField } from "@/types/formTypes";
-import { useNotify } from "@/hooks/useNotify";
-import useUpdateApiKey from "@/hooks/ia/useUpdateApiKey";
-import useGetModels from '@/hooks/ia/useGetModels';
+import { useRef, useEffect, useState, useMemo } from 'react'
+import { DynamicFormHandles } from '@/components/molecules/Dynamic-form'
+import IATemplate from '@/components/templates/settings/IATemplate'
+
+import useUpdateApiKey from '@/hooks/ia/useUpdateApiKey'
+import { useIaProviders } from '@/hooks/ia/useIaProviders'   // nuevo hook (ya creado)
+import useGetMyPrompts from '@/hooks/prompts/useGetPromptsByEvaluator'
+import useUpdatePromptText from '@/hooks/prompts/useUpdatePrompt'
+import useRefreshPrompts from '@/hooks/prompts/useRefreshPrompts'
+import { useNotify } from '@/hooks/useNotify'
+import type { FormField } from '@/types/formTypes'
 
 export default function IAScreen() {
-    const apiKeyFormRef = useRef<DynamicFormHandles>(null);
-    const promptsFormRef = useRef<DynamicFormHandles>(null);
-    const modelFormRef = useRef<DynamicFormHandles>(null);
+    /* ─── refs ───────────────────────────────────────────────────────── */
+    const providerFormRef = useRef<DynamicFormHandles>(null)
+    const apiKeyFormRef = useRef<DynamicFormHandles>(null)
+    const modelFormRef = useRef<DynamicFormHandles>(null)
+    const promptsFormRef = useRef<DynamicFormHandles>(null)
 
-    const { data: models = [], isLoading: loadingModels } = useGetModels();
-    const { updateApiKey } = useUpdateApiKey();
-    const { prompts, fetchPrompts } = useGetMyPrompts();
-    const { updatePromptText } = useUpdatePromptText();
-    const { refreshPrompts } = useRefreshPrompts();
-    const { notifyInfo } = useNotify();
+    /* ─── proveedores / modelos ─────────────────────────────────────── */
+    const { data: providers = [], isLoading: loadingProviders } = useIaProviders()
+    const firstProvider = providers[0]?.provider ?? ''
+    const [providerSelected, setProviderSelected] = useState(firstProvider)
 
-    const [fieldsPrompts, setFieldsPrompts] = useState<FormField[][]>([]);
-    const [initialValuesPrompts, setInitialValuesPrompts] = useState<Record<string, string>>({});
-    const [idToNamePrompts, setIdToNamePrompts] = useState<Record<string, string>>({});
+    useEffect(() => {
+        if (firstProvider) setProviderSelected(firstProvider)
+    }, [firstProvider])
+
+    const providerOptions = providers.map(p => ({ value: p.provider, label: p.provider }))
+    const modelsOfProvider = useMemo(
+        () => providers.find(p => p.provider === providerSelected)?.models ?? [],
+        [providers, providerSelected],
+    )
+
+    /* ─── prompts del evaluador ──────────────────────────────────────── */
+    const { prompts, fetchPrompts } = useGetMyPrompts()
+    const { updatePromptText } = useUpdatePromptText()
+    const { refreshPrompts } = useRefreshPrompts()
+    const { notifyInfo } = useNotify()
+
+    const [fieldsPrompts, setFieldsPrompts] = useState<FormField[][]>([])
+    const [initialValuesPrompts, setInitialValuesPrompts] = useState<Record<string, string>>({})
+    const [idToNamePrompts, setIdToNamePrompts] = useState<Record<string, string>>({})
 
     useEffect(() => {
         fetchPrompts();
     }, [fetchPrompts]);
 
     useEffect(() => {
-        const sorted = [...prompts].sort((a, b) => {
-            console.log("Sorting prompts:", a, b);
-            const na = parseFloat(a.codigo.replace(/^Q/, "")) || 0;
-            const nb = parseFloat(b.codigo.replace(/^Q/, "")) || 0;
-            return na - nb;
-        });
+        const sorted = [...prompts].sort(
+            (a, b) => parseFloat(a.codigo.replace(/^Q/, '')) - parseFloat(b.codigo.replace(/^Q/, '')),
+        )
 
-
-        const init: Record<string, string> = {};
-        const nameMap: Record<string, string> = {};
-        const rows: FormField[][] = [];
+        const init: Record<string, string> = {}
+        const nameMap: Record<string, string> = {}
+        const rows: FormField[][] = []
 
         sorted.forEach((p, i) => {
-            init[p.id] = p.texto;
-            nameMap[p.id] = p.nombre ?? "";
-            if (i % 2 === 0) rows.push([]);
+            init[p.id] = p.texto
+            nameMap[p.id] = p.nombre ?? ''
+            if (i % 2 === 0) rows.push([])
             rows[rows.length - 1].push({
-                type: "textarea",
+                type: 'textarea',
                 key: p.id,
                 placeholder: p.nombre ?? `Prompt ${i + 1}`,
                 required: false,
-            });
-        });
+            })
+        })
 
-        setInitialValuesPrompts(init);
-        setFieldsPrompts(rows);
-        setIdToNamePrompts(nameMap);
-    }, [prompts]);
+        setInitialValuesPrompts(init)
+        setFieldsPrompts(rows)
+        setIdToNamePrompts(nameMap)
+    }, [prompts])
 
-    const handleConfirmApiKey = async (newKey: string) => {
-        await updateApiKey(newKey);
-    };
+    /* ─── handlers ───────────────────────────────────────────────────── */
+    const { updateApiKey } = useUpdateApiKey()
 
-    const handleConfirmModel = async () => {
-    };
+    const handleConfirmProvider = async (prov: string) => {
+        setProviderSelected(prov)
+    }
+
+    const handleConfirmApiKey = async (data: { provider: string; apiKey: string }) => {
+        setProviderSelected(data.provider)
+        await updateApiKey(data)
+    }
+
+    const handleConfirmModel = async (selectedModel: string) => {
+        // TODO: llamar a endpoint cuando exista
+        console.log('Nuevo modelo:', selectedModel)
+    }
 
     const handleConfirmUpdatePrompts = async (formData: Record<string, string>) => {
-        const changed = Object.entries(formData).filter(
-            ([id, txt]) => txt !== initialValuesPrompts[id]
-        ) as [string, string][];
-        if (changed.length === 0) {
-            notifyInfo({ title: "Sin cambios", description: "No hay prompts modificados.", closeButton: true });
-            return;
+        const changes = Object.entries(formData).filter(([id, txt]) => txt !== initialValuesPrompts[id])
+        if (!changes.length) {
+            notifyInfo({ title: 'Sin cambios', description: 'No hay prompts modificados.', icon: 'ℹ️', closeButton: true })
+            return
         }
-        for (const [id, texto] of changed) {
-            const nombre = idToNamePrompts[id] ?? id;
-            await updatePromptText(id, { texto }, nombre);
+        for (const [id, texto] of changes) {
+            await updatePromptText(id, { texto }, idToNamePrompts[id] ?? id)
         }
-        fetchPrompts();
-    };
+        fetchPrompts()
+    }
 
     const handleConfirmResetPrompts = async () => {
-        await refreshPrompts();
-        fetchPrompts();
-    };
+        await refreshPrompts()
+        fetchPrompts()
+    }
 
+    /* ─── campos dinámicos ───────────────────────────────────────────── */
+    const providerFields: FormField[] = [
+        {
+            type: 'select',
+            key: 'provider',
+            placeholder: loadingProviders ? 'Cargando…' : 'Proveedor',
+            required: true,
+            options: providerOptions,
+        },
+    ]
+
+    /* ─── campos dinámicos ───────────────────────────────────────────── */
     const apiKeyFields: FormField[] = [
-        { type: "password", key: "apiKey", placeholder: "Nueva API Key", maxLength: 100 },
-    ];
+        { type: 'password', key: 'apiKey', placeholder: 'Nueva API Key', maxLength: 100 },
+    ]
 
     const modelFields: FormField[] = [
         {
             type: 'select',
             key: 'model',
-            placeholder: loadingModels ? 'Cargando...' : 'Selecciona el modelo',
+            placeholder: loadingProviders ? 'Cargando…' : 'Modelo',
             required: true,
-            options: models.map((m) => ({ value: m, label: m })),
+            options: modelsOfProvider.map((m) => ({ value: m, label: m })),
         },
-    ];
+    ]
 
+    /* ─── render ─────────────────────────────────────────────────────── */
     return (
         <IATemplate
-            titleSection1="API Key"
-            descSection1="Cambiar la API Key puede afectar el funcionamiento de la plataforma."
+            /* provider */
+            providerTitle='Proveedor'
+            providerDesc='Selecciona el proveedor de IA que utilizará la plataforma.'
+            providerFields={providerFields}
+            providerFormRef={providerFormRef}
+            onConfirmProvider={handleConfirmProvider}
+
+            /* API-Key */
+            titleSection1="Proveedor y API Key"
+            descSection1="Configura la clave para el proveedor de IA seleccionado."
             apiKeyFields={apiKeyFields}
             apiKeyFormRef={apiKeyFormRef}
             onConfirmApiKey={handleConfirmApiKey}
 
-            titleSection2="Prompts"
-            descSection2="Modifica los prompts de la plataforma."
+            /* Modelo */
+            titleSection2="Modelo por defecto"
+            descSection2="Selecciona el modelo que usará la plataforma."
             modelFields={modelFields}
             modelFormRef={modelFormRef}
             onConfirmModel={handleConfirmModel}
 
-
+            /* Prompts */
             titleSection3="Prompts"
             descSection3="Modifica los prompts de la plataforma."
             promptsFields={fieldsPrompts}
@@ -123,5 +165,5 @@ export default function IAScreen() {
             onConfirmUpdatePrompts={handleConfirmUpdatePrompts}
             onConfirmResetPrompts={handleConfirmResetPrompts}
         />
-    );
+    )
 }

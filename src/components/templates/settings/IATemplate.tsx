@@ -10,12 +10,19 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert
 import type { FormField } from "@/types/formTypes";
 
 interface IATemplateProps {
+    // Provider
+    providerTitle: string
+    providerDesc: string
+    providerFields: FormField[]
+    providerFormRef: React.RefObject<DynamicFormHandles | null>
+    onConfirmProvider: (provider: string) => Promise<void>
+
     // API Key
     titleSection1: string;
     descSection1: string;
     apiKeyFields: FormField[];
     apiKeyFormRef: React.RefObject<DynamicFormHandles | null>;
-    onConfirmApiKey: (newKey: string) => Promise<void>;
+    onConfirmApiKey: (data: { provider: string; apiKey: string }) => Promise<void>
 
     // API model
     titleSection2: string;
@@ -35,6 +42,12 @@ interface IATemplateProps {
 }
 
 export default function IATemplate({
+    providerTitle,
+    providerDesc,
+    providerFields,
+    providerFormRef,
+    onConfirmProvider,
+
     titleSection1,
     descSection1,
     apiKeyFields,
@@ -55,8 +68,9 @@ export default function IATemplate({
     onConfirmUpdatePrompts,
     onConfirmResetPrompts,
 }: IATemplateProps) {
-    const [openModel, setOpenModel] = useState(false);
+    const [openProvider, setOpenProvider] = useState(false)
     const [openApiKey, setOpenApiKey] = useState(false);
+    const [openModel, setOpenModel] = useState(false);
     const [openUpdate, setOpenUpdate] = useState(false);
     const [openReset, setOpenReset] = useState(false);
     const [confirmValue, setConfirmValue] = useState("");
@@ -64,82 +78,112 @@ export default function IATemplate({
     const dynamicKey = Object.keys(initialValuesPrompts).join("|");
 
     return (
+
         <div className="flex flex-col w-full">
-            <ContentSection title={titleSection1} desc={descSection1}>
-                <div className="lg:max-w-xl space-y-4">
+            <ContentSection title={providerTitle} desc={providerDesc}>
+                <div className=' space-y-4'>
                     <DynamicForm
-                        ref={apiKeyFormRef}
-                        formDataConfig={apiKeyFields}
+                        ref={providerFormRef}
+                        formDataConfig={providerFields}
                         initialData={{}}
-                        containerClassName="flex flex-col gap-4"
+                        containerClassName='flex flex-col gap-4'
                     />
-                    <Button onClick={() => setOpenApiKey(true)}>Actualizar API Key</Button>
-                </div>
-                <ConfirmDialog
-                    open={openApiKey}
-                    onOpenChange={setOpenApiKey}
-                    handleConfirm={async () => {
-                        await onConfirmApiKey;
-                        setOpenReset(false);
-                        setConfirmValue("");
-                    }}
-                    disabled={confirmValue.trim() !== "CAMBIAR API KEY"}
-                    destructive
-                    title={
-                        <span className="text-destructive">
-                            <TriangleAlert size={18} className="inline-block mr-1" />
-                            Cambiar API Key
-                        </span>
-                    }
-                    description={
-                        <div className="space-y-4">
-                            <p>
-                                Esto cambiara la API Key de la plataforma.
-                                Para confirmar, escribe <code>CAMBIAR API KEY</code>
-                            </p>
-                            <Label>
-                                <Input
-                                    value={confirmValue}
-                                    onChange={(e) => setConfirmValue(e.target.value)}
-                                    placeholder="CAMBIAR API KEY"
-                                />
-                            </Label>
-                            <Alert variant="destructive">
-                                <AlertTitle>¡Atención!</AlertTitle>
-                                <AlertDescription>Esta acción podria cambiar el funcionamiento de la plataforma.</AlertDescription>
-                            </Alert>
-                        </div>
-                    }
-                    confirmText="Reiniciar"
-                />
-            </ContentSection>
-
-            <ContentSection title={titleSection2} desc={descSection2}>
-                <div className="lg:max-w-xl space-y-4">
-                    <DynamicForm
-                        ref={modelFormRef}
-                        formDataConfig={modelFields}
-                        initialData={{}}
-                        containerClassName="flex flex-col gap-4"
-                    />
-                    <Button onClick={() => setOpenModel(true)}>Cambiar Modelo de IA</Button>
+                    <Button onClick={() => setOpenProvider(true)}>Seleccionar proveedor</Button>
                 </div>
 
                 <ConfirmDialog
-                    open={openModel}
-                    onOpenChange={setOpenModel}
+                    open={openProvider}
+                    onOpenChange={setOpenProvider}
                     handleConfirm={() =>
-                        modelFormRef.current?.handleSubmit(async (data) => {
-                            await onConfirmModel(data);
-                            setOpenModel(false);
+                        providerFormRef.current?.handleSubmit(async ({ provider }) => {
+                            await onConfirmProvider(provider)
+                            setOpenProvider(false)
                         })()
                     }
-                    title="¿Estas seguro de cambiar el modelo?"
-                    description="Esto cambiara el modelo de IA de la plataforma."
-                    confirmText="Sí, actualizar"
+                    title='¿Cambiar proveedor de IA?'
+                    description='Esto actualizará el proveedor por defecto de la plataforma.'
+                    confirmText='Cambiar'
                 />
-
             </ContentSection>
+
+            <div className="flex flex-row gap-8 mb-8">
+                <ContentSection title={titleSection1} desc={descSection1}>
+                    <div className="lg:max-w-xl space-y-4">
+                        <DynamicForm
+                            ref={apiKeyFormRef}
+                            formDataConfig={apiKeyFields}
+                            initialData={{}}
+                            containerClassName="flex flex-col gap-4"
+                        />
+                        <Button onClick={() => setOpenApiKey(true)}>Actualizar API Key</Button>
+                    </div>
+                    <ConfirmDialog
+                        open={openApiKey}
+                        onOpenChange={setOpenApiKey}
+                        handleConfirm={async () => {
+                            await onConfirmApiKey;
+                            setOpenReset(false);
+                            setConfirmValue("");
+                        }}
+                        disabled={confirmValue.trim() !== "CAMBIAR API KEY"}
+                        destructive
+                        title={
+                            <span className="text-destructive">
+                                <TriangleAlert size={18} className="inline-block mr-1" />
+                                Cambiar API Key
+                            </span>
+                        }
+                        description={
+                            <div className="space-y-4">
+                                <p>
+                                    Esto cambiara la API Key de la plataforma.
+                                    Para confirmar, escribe <code>CAMBIAR API KEY</code>
+                                </p>
+                                <Label>
+                                    <Input
+                                        value={confirmValue}
+                                        onChange={(e) => setConfirmValue(e.target.value)}
+                                        placeholder="CAMBIAR API KEY"
+                                    />
+                                </Label>
+                                <Alert variant="destructive">
+                                    <AlertTitle>¡Atención!</AlertTitle>
+                                    <AlertDescription>Esta acción podria cambiar el funcionamiento de la plataforma.</AlertDescription>
+                                </Alert>
+                            </div>
+                        }
+                        confirmText="Reiniciar"
+                    />
+                </ContentSection>
+
+                <ContentSection title={titleSection2} desc={descSection2}>
+                    <div className="lg:max-w-xl space-y-4">
+                        <DynamicForm
+                            key={modelFields.map(f => f.key).join("|")}
+                            ref={modelFormRef}
+                            formDataConfig={modelFields}
+                            initialData={{}}
+                            containerClassName="flex flex-col gap-4"
+                        />
+                        <Button onClick={() => setOpenModel(true)}>Cambiar Modelo de IA</Button>
+                    </div>
+
+                    <ConfirmDialog
+                        open={openModel}
+                        onOpenChange={setOpenModel}
+                        handleConfirm={() =>
+                            modelFormRef.current?.handleSubmit(async (data) => {
+                                await onConfirmModel(data);
+                                setOpenModel(false);
+                            })()
+                        }
+                        title="¿Estas seguro de cambiar el modelo?"
+                        description="Esto cambiara el modelo de IA de la plataforma."
+                        confirmText="Sí, actualizar"
+                    />
+
+                </ContentSection>
+            </div>
 
             <ContentSection title={titleSection3} desc={descSection3}>
                 <>
