@@ -16,7 +16,7 @@ export const generatePdfByEvaluationId = async (
   ): Promise<Blob> => {
     const response = await requestsApi.post(
       `/pdf/generate-investigator`,
-      { data },
+       data ,
       { responseType: "blob" }
     );
     return response.data;
