@@ -1,6 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
-import { getIaProviders, staticIaProviders, IaProvider } from '@/services/iaService'
+import { getIaProviders, IaProvider } from '@/services/iaService'
 import { useNotify } from '@/hooks/useNotify'
+
+interface IaProvidersResponse {
+    success: boolean
+    models: IaProvider[]
+}
 
 export const useIaProviders = () => {
     const { notifyError } = useNotify()
@@ -9,7 +14,8 @@ export const useIaProviders = () => {
         queryKey: ['iaProviders'],
         queryFn: async () => {
             try {
-                return await getIaProviders()
+                const response = await getIaProviders() as unknown as IaProvidersResponse
+                return response.models
             } catch (err) {
                 console.error('Error cargando proveedores IA:', err)
                 notifyError({
@@ -18,7 +24,7 @@ export const useIaProviders = () => {
                     icon: '🚫',
                     closeButton: true,
                 })
-                return staticIaProviders
+                return []
             }
         },
         staleTime: 1000 * 60 * 30,
