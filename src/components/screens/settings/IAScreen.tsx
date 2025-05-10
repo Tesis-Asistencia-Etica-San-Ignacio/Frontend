@@ -79,10 +79,11 @@ export default function IAScreen() {
         setProviderSelected(prov)
     }
 
-    const handleConfirmApiKey = async (data: { provider: string; apiKey: string }) => {
-        setProviderSelected(data.provider)
-        await updateApiKey(data)
+    const handleConfirmApiKey = async (apiKey: string) => {
+        console.log('Nueva API Key:', apiKey, providerSelected)
+        await updateApiKey({ provider: providerSelected, apiKey })
     }
+
 
     const handleConfirmModel = async (selectedModel: string) => {
         // TODO: llamar a endpoint cuando exista
@@ -136,21 +137,21 @@ export default function IAScreen() {
     return (
         <IATemplate
             /* provider */
-            providerTitle='Proveedor'
+            providerTitle={`Proveedor actual: ${providerSelected}`}
             providerDesc='Selecciona el proveedor de IA que utilizará la plataforma.'
             providerFields={providerFields}
             providerFormRef={providerFormRef}
             onConfirmProvider={handleConfirmProvider}
 
             /* API-Key */
-            titleSection1="Proveedor y API Key"
+            titleSection1={`Proveedor y API Key de ${providerSelected}`}
             descSection1="Configura la clave para el proveedor de IA seleccionado."
             apiKeyFields={apiKeyFields}
             apiKeyFormRef={apiKeyFormRef}
             onConfirmApiKey={handleConfirmApiKey}
 
             /* Modelo */
-            titleSection2="Modelo por defecto"
+            titleSection2={`Modelo por defecto de ${providerSelected}`}
             descSection2="Selecciona el modelo que usará la plataforma."
             modelFields={modelFields}
             modelFormRef={modelFormRef}

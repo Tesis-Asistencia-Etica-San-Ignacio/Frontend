@@ -22,7 +22,7 @@ interface IATemplateProps {
     descSection1: string;
     apiKeyFields: FormField[];
     apiKeyFormRef: React.RefObject<DynamicFormHandles | null>;
-    onConfirmApiKey: (data: { provider: string; apiKey: string }) => Promise<void>
+    onConfirmApiKey: (apiKey: string) => Promise<void>
 
     // API model
     titleSection2: string;
@@ -120,11 +120,13 @@ export default function IATemplate({
                     <ConfirmDialog
                         open={openApiKey}
                         onOpenChange={setOpenApiKey}
-                        handleConfirm={async () => {
-                            await onConfirmApiKey;
-                            setOpenReset(false);
-                            setConfirmValue("");
-                        }}
+                        handleConfirm={() =>
+                            apiKeyFormRef.current?.handleSubmit(async ({ apiKey }) => {
+                                await onConfirmApiKey(apiKey)
+                                setOpenApiKey(false)
+                                setConfirmValue("")
+                            })()
+                        }
                         disabled={confirmValue.trim() !== "CAMBIAR API KEY"}
                         destructive
                         title={
@@ -152,7 +154,7 @@ export default function IATemplate({
                                 </Alert>
                             </div>
                         }
-                        confirmText="Reiniciar"
+                        confirmText="Cambiar API Key"
                     />
                 </ContentSection>
 
