@@ -12,6 +12,7 @@ import { LTMatch } from "@/lib/api/languageApi"
 export interface FormSectionProps {
   sectionKey: string
   title: string
+  dynamicFormKey?: string
   open: boolean
   onToggle: () => void
   formRef: React.RefObject<DynamicFormHandles>
@@ -24,12 +25,14 @@ export interface FormSectionProps {
 }
 
 export const FormSection: React.FC<FormSectionProps> = ({
+  sectionKey,
   title,
   open,
   onToggle,
   formRef,
   fields,
   initialData,
+  dynamicFormKey,
   onChange,
   onSpellCheck,
   spellWarnings,
@@ -46,6 +49,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
       </CollapsibleTrigger>
       <CollapsibleContent className="p-4 border border-gray-300 rounded-md flex flex-col gap-4">
         <DynamicForm
+          key={dynamicFormKey ?? sectionKey}
           ref={formRef}
           formDataConfig={fields}
           initialData={initialData}

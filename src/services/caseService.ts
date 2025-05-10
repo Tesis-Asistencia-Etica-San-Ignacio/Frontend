@@ -15,6 +15,12 @@ export const deleteCase = async (caseId: string): Promise<void> => {
   await requestsApi.delete(`/cases/${caseId}`);
 };
 
+export const createCase = async (caseData: Record<string, any>): Promise<void> => {
+  await requestsApi.post("/cases", caseData, {
+    headers: { "Content-Type": "application/json" },
+  });
+};
+
 
 /*export const uploadFile = async (
   formData: FormData,
