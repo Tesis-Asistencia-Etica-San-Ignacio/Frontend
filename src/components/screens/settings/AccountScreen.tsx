@@ -45,7 +45,6 @@ export default function AccountScreen() {
       placeholder: "Contraseña actual",
       required: true,
       minLength: 6,
-      maxLength: 50,
     },
     {
       type: "password",
@@ -53,7 +52,6 @@ export default function AccountScreen() {
       placeholder: "Nueva contraseña",
       required: true,
       minLength: 6,
-      maxLength: 50,
     },
   ];
 

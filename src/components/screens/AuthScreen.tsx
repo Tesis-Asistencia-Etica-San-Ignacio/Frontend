@@ -4,29 +4,32 @@ import { useNavigate, useLocation } from "react-router-dom";
 import AuthTemplate from "@/components/templates/AuthTemplate";
 import type { FormField } from "@/types/formTypes";
 import { Slide } from "../molecules/Carousel";
+import bgMedicina from "@/assets/bg-Medicina.jpg";
+import ponti from "@/assets/ponti.jpg";
+
 
 const loginFields: FormField[] = [
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true, minLength: 6 },
 ];
 
 const registryFields: FormField[] = [
   { type: "user", key: "name", placeholder: "Ingresa tu nombre", required: true },
   { type: "user", key: "last_name", placeholder: "Ingresa tu apellido", required: true },
   { type: "email", key: "email", placeholder: "Ingresa tu correo institucional", required: true },
-  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true },
+  { type: "password", key: "password", placeholder: "Ingresa tu contraseña", required: true, minLength: 6 },
 ];
 
 const slides: Slide[] = [
   {
-    imageUrl: "src/assets/bg-Medicina.jpg",
+    imageUrl: bgMedicina,
     title: "Bienvenido",
     description: "Al sistema de asistencia a la evaluación ética del HUSI",
   },
   {
-    imageUrl: "src/assets/ponti.jpg",
-    title: "Último Slide",
-    description: "Pequeña descripción final",
+    imageUrl: ponti,
+    title: "Únete a nosotros",
+    description: "Ayuda a mejorar la calidad de la investigación en salud",
   },
 ];
 

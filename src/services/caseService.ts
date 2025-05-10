@@ -1,7 +1,5 @@
 import { requestsApi } from "@/lib/api/requestsApi";
 import type { FileItem } from "@/types/fileType";
-import type { UpdateEvaluationParams } from "@/types/evaluationType";
-import { AxiosProgressEvent } from "axios";
 import { UpdateCaseParams } from "@/types/caseType";
 
 
@@ -31,6 +29,13 @@ export const createCase = async (caseData: Record<string, any>): Promise<void> =
     onUploadProgress: onProgress,
   })
 }*/
+export const getCasePdf = async (filename: string): Promise<Blob> => {
+  // llama a tu endpoint que sirve el PDF
+  const response = await requestsApi.get(`/files/pdf/${filename}`, {
+    responseType: "blob"
+  });
+  return response.data;
+};
 
 export const updateCase = async (
     caseId: string,
@@ -40,4 +45,5 @@ export const updateCase = async (
   await requestsApi.patch(`/cases/${caseId}`, updateData, {
     headers: { "Content-Type": "application/json" },
   });
+
 };

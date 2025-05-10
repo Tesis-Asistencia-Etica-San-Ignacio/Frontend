@@ -98,7 +98,6 @@ function baseValidationForType(type: FieldType): z.ZodTypeAny {
             break
         case "password":
             schema = z.string().trim()
-                .min(6, "Mínimo 6 caracteres")
                 .max(50, "Máximo 50 caracteres")
             break
         case "phone":

@@ -50,7 +50,7 @@ export default function EvaluationResultTemplate({
 }: Readonly<EvaluationResultTemplateProps>) {
 
   return (
-    <section className="pb-8 space-y-4">
+    <section className="pb-16">
       <div className="mb-4 flex flex-col">
         <h2 className="text-2xl font-bold tracking-tight">Resultado de la evaluación</h2>
         <p className="text-muted-foreground">

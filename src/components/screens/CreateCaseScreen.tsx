@@ -14,19 +14,6 @@ import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi";
 import { Input } from "../atoms/ui/input-form";
 import useCreateCases from "@/hooks/cases/useCreateCases";
 
-/* ───────────────────────── Campos (formDataConfig) ─────────────────────── */
-const cabeceraFields: FormField[] = [
-  { key: "version", type: "number", label: "Versión", placeholder: "Ingresa la versión del FCI", required: true },
-  { key: "codigo",  type: "text",   label: "Código",  placeholder: "Ingresa el código del FCI", required: false },
-  { key: "fecha",   type: "datePicker", label: "Fecha", placeholder: "Ingresa una fecha", required: true },
-];
-
-const introduccionFields: FormField[] = [
-  { key: "nombre_proyecto", type: "text", label: "Nombre del Proyecto", placeholder: "Ingrese el nombre", required: true },
-  { key: "instituciones", type: "text", label: "Institución(es) Participantes", placeholder: "Nombre institución", required: true },
-];
-
-
 
   export default function CreateCaseScreen() {
     /* -------- Hooks pdf -------- */
@@ -116,7 +103,8 @@ const introduccionFields: FormField[] = [
         if(inst) Object.assign(data, inst.getValues());
       });
   
-      await createCase(data);
+      console.log(data);
+     // await createCase(data);
       await handlePreviewPdf(data);
     };
   
@@ -126,7 +114,17 @@ const introduccionFields: FormField[] = [
     };
     const handleModalSubmit = () => setPdfModalOpen(false);
 
-    
+    /* ───────────────────────── Campos (formDataConfig) ─────────────────────── */
+    const cabeceraFields: FormField[] = [
+      { key: "version", type: "number", label: "Versión", placeholder: "Ingresa la versión del FCI", required: true },
+      { key: "codigo",  type: "text",   label: "Código",  placeholder: "Ingresa el código del FCI", required: false },
+      { key: "fecha",   type: "datePicker", label: "Fecha", placeholder: "Ingresa una fecha", required: true },
+    ];
+
+    const introduccionFields: FormField[] = [
+      { key: "nombre_proyecto", type: "text", label: "Nombre del Proyecto", placeholder: "Ingrese el nombre", required: true },
+      { key: "instituciones", type: "text", label: "Institución(es) Participantes", placeholder: "Nombre institución", required: true },
+    ];
     const informacionGeneralFields: FormField[] = useMemo(() => {
       let idx = 1;
       const fields: FormField[] = [];
@@ -665,13 +663,7 @@ const introduccionFields: FormField[] = [
   
     /* -------- JSX pre-construido que se pasa al template -------- */
     const cabeceraForm = (
-      /*<DynamicForm
-        ref={cabeceraRef}
-        formDataConfig={cabeceraFields}
-        initialData={formValues}
-        onChange={onSectionChange}
-        containerClassName="flex flex-col gap-4"
-      />*/
+     
       <FormSection
         sectionKey="head" title="Cabecera"
         open={openSections.head} onToggle={()=>toggle("head")}

@@ -25,6 +25,7 @@ const useUpdateEthicalNormHook = () => {
           title: "Error al actualizar norma ética",
           description: error?.message,
           closeButton: true,
+          icon: "🚫"
         });
       } finally {
         setLoading(false);

@@ -1,12 +1,13 @@
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
 import type { ColumnConfig } from "@/types/table";
 import type { FormField } from "@/types/formTypes";
-import { CheckCircle, Circle } from "lucide-react";
 import useGetCasesByUser from "@/hooks/cases/useGetCasesByUser";
 import useDeleteCases from "@/hooks/cases/useDeleteCases";
 import useUpdateCases from "@/hooks/cases/useUpdateCases";
+import ModalForm from "@/components/organisms/dialogs/ModalForm";
+import PdfRenderer from "@/components/organisms/PdfRenderer";
 import HistoryTemplate from "../templates/HistoryTemplate";
+import useFetchCasePdf from "@/hooks/cases/useFetchCasesPdf";
 
 export default function CaseHistoryScreen() {
   // ──────────────────────── hooks y estados ────────────────────────────────
@@ -14,7 +15,6 @@ export default function CaseHistoryScreen() {
 
   const { deleteCase} = useDeleteCases();
   const { updateCase } = useUpdateCases();
-  const navigate = useNavigate();
 
   const [tableData, setTableData] = useState<any[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -24,6 +24,12 @@ export default function CaseHistoryScreen() {
   // edición
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  //pdf
+
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const { pdfUrl, fetchCasePdf, loading: pdfLoading } = useFetchCasePdf();
+
 
   // ───────────────────────────── efectos ───────────────────────────────────
   useEffect(() => {
@@ -38,7 +44,7 @@ export default function CaseHistoryScreen() {
         version: f.version,
         fecha: f.fecha,
       //  file: f.file.split("uploads/")[1],
-        tipo_error: f.tipo_error,
+        pdf: f.pdf,
         codigo: f.estado,
         createdAt: new Date(f.createdAt).toISOString().split("T")[0],
         updatedAt: new Date(f.updatedAt).toISOString().split("T")[0],
@@ -52,6 +58,13 @@ export default function CaseHistoryScreen() {
     setSelectedRow(row);
     setEditModalOpen(true);
   };
+
+  const handleViewPdf  = async (row: any) => {
+    const parts = (row.pdf as string).split("/");
+    const filename = parts[parts.length - 1];
+    await fetchCasePdf(filename);
+    setPdfModalOpen(true);
+  }
 
 
   const handleDelete = (row: any) => {
@@ -110,9 +123,6 @@ export default function CaseHistoryScreen() {
       { type: "number", key: "version", placeholder: "Ingrese el número de la versión" },
     ],
     [
-      { type: "textarea", key: "tipo_error", placeholder: "Tipo de error", autoAdjust: true },
-    ],
-    [
       { type: "text", key: "codigo", placeholder: "Código del proyecto" },
     ],
   ];
@@ -124,7 +134,6 @@ export default function CaseHistoryScreen() {
     { id: "nombre_proyecto", accessorKey: "nombre_proyecto", headerLabel: "Nombre Proyecto", searchable: true },
     { id: "version", accessorKey: "version", headerLabel: "Versión", searchable: true },
     { id: "codigo", accessorKey: "codigo", headerLabel: "Código", searchable: true  },
-    { id: "tipo_error", accessorKey: "tipo_error", headerLabel: "Tipo de error" },
     { id: "createdAt", accessorKey: "createdAt", headerLabel: "Creado" },
     { id: "updatedAt", accessorKey: "updatedAt", headerLabel: "Actualizado" },
     {
@@ -133,6 +142,7 @@ export default function CaseHistoryScreen() {
       actionItems: [
         { label: "Editar", onClick: handleEdit },
         { label: "Eliminar", onClick: handleDelete },
+        { label: "Ver PDF", onClick: handleViewPdf },
       ],
     },
   ];
@@ -162,6 +172,31 @@ export default function CaseHistoryScreen() {
       onModalSubmit={handleEditSubmit}
 
       DataSelectedRow={editInitialData}
+
+      /*-----PDF-----*/
+      extraModal={
+        <ModalForm
+        open={pdfModalOpen}
+        onOpenChange={open => {
+          setPdfModalOpen(open);
+          if (!open) URL.revokeObjectURL(pdfUrl);  // libera memoria
+        }}
+        title={{ text: "Ver Consentimiento Informado", align: "left" }}
+        formDataConfig={[[
+          {
+            type: "custom",
+            key: "pdfPreview",
+            placeholder: "Vista previa",
+            component: <PdfRenderer url={pdfUrl} externalLoading={pdfLoading} />,
+            required: false,
+          }
+        ]]}
+        onSubmit={() => setPdfModalOpen(false)}
+        submitButtonText="Cerrar"
+        width="70%"
+        height="90%"
+      />
+      }
     />
   );
 }
