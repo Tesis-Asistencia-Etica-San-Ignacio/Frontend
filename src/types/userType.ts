@@ -5,6 +5,8 @@ export interface User {
   type: string;
   password: string;
   avatar: string;
+  modelo?: string;
+  provider?: string;
   //quitar
   _id: string;
 }
@@ -18,6 +20,8 @@ export interface UpdateUserInput {
   name?: string;
   last_name?: string;
   email?: string;
+  modelo?: string;
+  provider?: string;
 }
 
 export interface UpdatePasswordInput {

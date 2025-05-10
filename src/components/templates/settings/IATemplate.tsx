@@ -10,6 +10,9 @@ import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert
 import type { FormField } from "@/types/formTypes";
 
 interface IATemplateProps {
+    initialProvider: string
+    initialModel: string
+
     // Provider
     providerTitle: string
     providerDesc: string
@@ -42,6 +45,7 @@ interface IATemplateProps {
 }
 
 export default function IATemplate({
+    initialProvider,
     providerTitle,
     providerDesc,
     providerFields,
@@ -54,6 +58,7 @@ export default function IATemplate({
     apiKeyFormRef,
     onConfirmApiKey,
 
+    initialModel,
     titleSection2,
     descSection2,
     modelFormRef,
@@ -85,7 +90,7 @@ export default function IATemplate({
                     <DynamicForm
                         ref={providerFormRef}
                         formDataConfig={providerFields}
-                        initialData={{}}
+                        initialData={{ provider: initialProvider }}
                         containerClassName='flex flex-col gap-4'
                     />
                     <Button onClick={() => setOpenProvider(true)}>Seleccionar proveedor</Button>
@@ -164,7 +169,7 @@ export default function IATemplate({
                             key={modelFields.map(f => f.key).join("|")}
                             ref={modelFormRef}
                             formDataConfig={modelFields}
-                            initialData={{}}
+                            initialData={{ model: initialModel }}
                             containerClassName="flex flex-col gap-4"
                         />
                         <Button onClick={() => setOpenModel(true)}>Cambiar Modelo de IA</Button>
@@ -174,9 +179,9 @@ export default function IATemplate({
                         open={openModel}
                         onOpenChange={setOpenModel}
                         handleConfirm={() =>
-                            modelFormRef.current?.handleSubmit(async (data) => {
-                                await onConfirmModel(data);
-                                setOpenModel(false);
+                            modelFormRef.current?.handleSubmit(async ({ model }) => {
+                                await onConfirmModel(model)
+                                setOpenModel(false)
                             })()
                         }
                         title="¿Estas seguro de cambiar el modelo?"
