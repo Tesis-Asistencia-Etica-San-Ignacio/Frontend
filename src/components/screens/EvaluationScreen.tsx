@@ -11,8 +11,10 @@ import useGeneratePdfByEvaluationId from "@/hooks/pdf/useGeneratePdfByEvaluation
 import useUpdateEthicalNormHook from "@/hooks/ethicalRules/useUpdateEthicalRulesHook"
 import useGenerateEvaluationHook from "@/hooks/ia/useGenerateAnalisisHook"
 import useReEvaluateEvaluationHook from "@/hooks/ia/useReEvaluateEvaluation"
+import { useAuthContext } from "@/context/AuthContext"
 
 export default function EvaluationScreen() {
+  const { user } = useAuthContext()
   const { evaluationId = "" } = useParams<{ evaluationId: string }>()
   const location = useLocation()
   const { runGenerate = false, runReEvaluate = false } = (location.state as { runGenerate?: boolean; runReEvaluate?: boolean } | undefined) ?? {}
@@ -76,7 +78,7 @@ export default function EvaluationScreen() {
 
 
   const handleMailModalFormSubmit = async (data: any) => {
-    await sendEmailMutation({ ...data, evaluationId })
+    await sendEmailMutation({ ...data, evaluationId, modelo: user?.modelo })
     setMailModalOpen(false)
   }
 

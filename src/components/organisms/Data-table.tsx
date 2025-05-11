@@ -105,6 +105,7 @@ export function DataTable<TData, TValue>({
     enableRowSelection: true,
     globalFilterFn: globalFilterFn,
     meta: tableMeta,
+    autoResetPageIndex: false,
   })
 
   // 4) Verificar si existe la columna "select".
