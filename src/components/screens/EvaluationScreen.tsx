@@ -160,7 +160,7 @@ export default function EvaluationScreen() {
     [
       {
         type: "textarea",
-        key: "justificacion",
+        key: "justification",
         placeholder: "Justificación",
         required: false,
         autoAdjust: true,
