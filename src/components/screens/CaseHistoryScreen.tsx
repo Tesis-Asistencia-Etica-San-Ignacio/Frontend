@@ -45,7 +45,7 @@ export default function CaseHistoryScreen() {
         fecha: f.fecha,
       //  file: f.file.split("uploads/")[1],
         pdf: f.pdf,
-        codigo: f.estado,
+        codigo: f.codigo,
         createdAt: new Date(f.createdAt).toISOString().split("T")[0],
         updatedAt: new Date(f.updatedAt).toISOString().split("T")[0],
       }))
@@ -108,7 +108,6 @@ export default function CaseHistoryScreen() {
     ? {
       nombre_proyecto: selectedRow.nombre_proyecto ?? "",
       version: selectedRow.version ?? "",
-      tipo_error: selectedRow.tipo_error ?? "",
       codigo: selectedRow.codigo ?? "",
     }
     : {};
@@ -140,7 +139,7 @@ export default function CaseHistoryScreen() {
       id: "actions",
       type: "actions",
       actionItems: [
-        { label: "Editar", onClick: handleEdit },
+       // { label: "Editar", onClick: handleEdit },
         { label: "Eliminar", onClick: handleDelete },
         { label: "Ver PDF", onClick: handleViewPdf },
       ],

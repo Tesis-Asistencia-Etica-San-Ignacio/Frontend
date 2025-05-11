@@ -57,6 +57,7 @@ const ModalForm: React.FC<ModalFormProps> = ({
 
     const handleFormSubmit = (e: React.FormEvent) => {
         e.preventDefault();
+        e.stopPropagation(); 
         if (!formRef.current) return;
 
         formRef.current.handleSubmit(async (data: any) => {

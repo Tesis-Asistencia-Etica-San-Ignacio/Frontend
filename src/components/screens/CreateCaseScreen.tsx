@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateCaseTemplate } from "@/components/templates/CreateCaseTemplate";
 import { DynamicFormHandles, DynamicForm } from "@/components/molecules/Dynamic-form";
@@ -13,7 +13,10 @@ import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator
 import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi";
 import { Input } from "../atoms/ui/input-form";
 import useCreateCases from "@/hooks/cases/useCreateCases";
+import { pick } from "lodash";
 
+/* ────────────── constantes para localStorage ────────────── */
+const LS_KEY = "caseDraft";
 
   export default function CreateCaseScreen() {
     /* -------- Hooks pdf -------- */
@@ -21,6 +24,14 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
     const { fetchPdfInvestigator, pdfUrl, loading } = useGeneratePdfInvestigator();
     const { createCase } = useCreateCases();
 
+      /* -------- borrador almacenado -------- */
+    const stored = useMemo(() => {
+      try {
+        return JSON.parse(localStorage.getItem(LS_KEY) ?? "{}");
+      } catch {
+        return {};
+      }
+    }, []);
     /* -------- React-Hook-Form -------- */
     const methods = useForm<Record<string, any>>({
       defaultValues: {
@@ -28,6 +39,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
         clasificacion_riesgo: "",
         tipo_poblacion: "",
         tipo_estudio: "",
+        ...stored,
       },
       mode: "onChange",
     });
@@ -39,22 +51,24 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
     const authRef     = useRef<DynamicFormHandles>(null!);
   
     /* -------- State de secciones y ortografía -------- */
-    const [formValues, setFormValues] = useState<Record<string,string>>({});
+    const [formValues, setFormValues] = useState<Record<string,string>>(stored);
     const [fecha, setFecha]           = useState<Date>();
     const [openSections,setOpen]      = useState({ intro:true, info:true, auth:true, head: true });
     const [spellingWarnings,setWarn]  = useState<Record<string,LTMatch[]>>({});
-   // const [spellingWarnings, setSpellingWarnings] = useState<Record<string, LTMatch[]>>({})
+    // arriba, junto a los demás estados
+    const [formData, setFormData] = useState<Record<string, any> | null>(null);
+    
+  
 
     const { watch } = methods;
     const genero = watch("genero_doctor");
-    const clasificacionRiesgo = formValues.clasificacion_riesgo ?? "";
-    const tipoPoblacion       = formValues.tipo_poblacion       ?? "";
-    const tipoEstudio         = formValues.tipo_estudio         ?? "";
 
-    // ¿Mostramos asentimiento (pregunta “12”)?
+    const clasificacionRiesgo = methods.watch("clasificacion_riesgo") ?? "";
+    const tipoPoblacion = methods.watch("tipo_poblacion") ?? "";
+    const tipoEstudio = methods.watch("tipo_estudio") ?? "";
+    
     const mostrarAsentimiento = ["menores", "discapacitados"].includes(tipoPoblacion);
 
-    // ¿Mostramos póliza (pregunta “13”)?
     const mostrarPoliza = clasificacionRiesgo === "riesgo_mayor" || (tipoEstudio === "intervencion_medica" || tipoEstudio === "intervencion_muestras");
 
     const sufijo     = genero === "Femenino" ? "investigadora" : "investigador";
@@ -62,9 +76,24 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
   
     /* ─────────── Handlers auxiliares ────────── */
     const toggle = (k: keyof typeof openSections) => setOpen(p => ({ ...p, [k]: !p[k] }));
-    const onSectionChange = (vals:Record<string,string>) => setFormValues(p=>({ ...p, ...vals }));
+  
+    const onSectionChange = (vals: Record<string, string>) => {
+      Object.entries(vals).forEach(([k, v]) =>
+        methods.setValue(k, v, { shouldDirty: true, shouldTouch: true })
+      );
+    };
     const onSpellCheck = (k:string, matches:LTMatch[]) => setWarn(p=>({ ...p, [k]: matches }));
   
+
+       /* ───────────────────────── Persistencia auto a localStorage ───────────────────────── */
+
+    useEffect(() => {
+      const sub = methods.watch((all) =>
+        localStorage.setItem(LS_KEY, JSON.stringify(all))
+      );
+      return () => sub.unsubscribe();
+    }, [methods]);
+
     const doSpellCheck = async (k:string, txt:string) => {
       if(!txt.trim()) return;
       try{ onSpellCheck(k, await checkSpellingWithLT(txt)); }catch(e){ console.error(e); }
@@ -86,6 +115,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       };
       return fields;
     }
+    
     /* ─────────── Submit (genera PDF) ────────── */
     const handleSubmit = async () => {
       /* validar formulario externo */
@@ -98,21 +128,35 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
   
       /* recolectar */
       const data:Record<string,any> = { fecha, ...methods.getValues() };
-      refs.forEach(r=>{
+ 
+      for (const r of refs) {
         const inst = (r.current as any)?.__formInstance;
-        if(inst) Object.assign(data, inst.getValues());
-      });
+        if (inst) {
+          await inst.trigger();
+          Object.assign(data, inst.getValues());
+        }
+      }
   
       console.log(data);
-     // await createCase(data);
-      await handlePreviewPdf(data);
+    
+      setFormData(data);                
+      await handlePreviewPdf(data); 
     };
   
     const handlePreviewPdf = async (formData:any)=>{
       const url = await fetchPdfInvestigator(formData);
-      if(url) setPdfModalOpen(true);
+      if (url) {
+        setPdfModalOpen(true);
+      }
     };
-    const handleModalSubmit = () => setPdfModalOpen(false);
+    const handleModalSubmit = async () => {
+          
+      if (!formData) return;   
+        console.log(formData);         
+        await createCase(formData); 
+        localStorage.removeItem(LS_KEY);      
+        setPdfModalOpen(false);
+    };
 
     /* ───────────────────────── Campos (formDataConfig) ─────────────────────── */
     const cabeceraFields: FormField[] = [
@@ -188,21 +232,21 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       fields.push({
         key: "riesgos",
         type: "textarea",
-        label: `${idx++}¿Cuáles son las molestias o los riesgos esperados?`,
+        label: `${idx++}. ¿Cuáles son las molestias o los riesgos esperados?`,
         placeholder: "Describir molestias y riesgos. En caso de que no existan molestias o riesgos igualmente se debe informar.",
         required: true,
       } as FormField);
       fields.push({
         key: "beneficios",
         type: "textarea",
-        label: `${idx++}	¿Cuáles son los beneficios que puedo obtener por participar? Enunciar. `,
+        label: `${idx++}.	¿Cuáles son los beneficios que puedo obtener por participar? Enunciar. `,
         placeholder: "Enunciar beneficios. En caso de que no existan beneficios igualmente se debe informar. ",
         required: true,
       } as FormField);
       fields.push({
         key: "confidencialidad",
         type: "textarea",
-        label: `${idx++}	¿Existe confidencialidad en el manejo de mis datos? Este proyecto se acoge a la ley 1581 de 2012 (Hábeas Data) que aplica para el tratamiento de datos personales.`,
+        label: `${idx++}.	¿Existe confidencialidad en el manejo de mis datos? Este proyecto se acoge a la ley 1581 de 2012 (Hábeas Data) que aplica para el tratamiento de datos personales.`,
         placeholder:
           "Indique brevemente cómo se manejarán los datos: Describa en dónde se almacenarán los datos e información, los mecanismos de custodia y seguridad de los mismos y el tiempo de custodia Describa quiénes tendrán acceso a la información y bajo qué parámetros de seguridad se accederá a ello Describa cómo se llevará a cabo la anonimización de los datos tanto para los análisis como para la publicación de los resultados. Describa la posibilidad de conocer los datos personales registrados en la base de datos del estudio, solicitar rectificación de los mismos y de retirar su consentimiento para el tratamiento de los datos en cualquier momento del estudio, excepto a partir de la anonimización.  -  Describa los procesos de transferencia de datos a terceros, en caso de estudios colaborativos, y la garantía de mantener la privacidad, confidencialidad y seguridad en el tratamiento por parte del tercero.",
         required: true,
@@ -210,7 +254,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       fields.push({
         key: "p_alternativos",
         type: "textarea",
-        label: `${idx++}	¿Existen procedimientos alternativos que pudieran ser ventajosos para mi?`,
+        label: `${idx++}.	¿Existen procedimientos alternativos que pudieran ser ventajosos para mi?`,
         placeholder: "En caso de que se realicen intervenciones con dispositivos, procedimiento médico-quirúrgico o medicamentos explicar si existen otras intervenciones que puedan realizarse para la patología del paciente. ",
         required: true,
       } as FormField);
@@ -218,7 +262,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
         key: "compromiso_info",
         type: "textarea",
         label:
-         `${idx++}  Expresar el compromiso de proporcionar información actualizada obtenida durante el estudio, aunque ésta pudiera afectar la voluntad del sujeto para continuar participando.`,
+         `${idx++}.  Expresar el compromiso de proporcionar información actualizada obtenida durante el estudio, aunque ésta pudiera afectar la voluntad del sujeto para continuar participando.`,
         placeholder:
           "En caso de realización de estudios que requieran entrega de resultados de procedimiento o consejería (genética, por ejemplo), explicar el proceso.",
         required: true,
@@ -226,21 +270,21 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       fields.push({
         key: "ob_financiera",
         type: "textarea",
-        label: `${idx++}	¿Existe alguna obligación financiera? Participar en este estudio no tiene ningún costo económico para usted.`,
+        label: `${idx++}.	¿Existe alguna obligación financiera? Participar en este estudio no tiene ningún costo económico para usted.`,
         placeholder: "En caso contrario, enunciar costos generados por participar en el estudio, describir cuáles: transporte, alimentación etc. y la forma cómo serán asumidos con cargo al presupuesto del proyecto. ",
         required: true,
       } as FormField);
       fields.push({
         key: "duracion",
         type: "textarea",
-        label: `${idx++} ¿Cuánto tiempo durará mi participación en el estudio? `,
+        label: `${idx++}. ¿Cuánto tiempo durará mi participación en el estudio? `,
         placeholder: "Indique el tiempo de participación y en caso de ser necesario la frecuencia de las intervenciones. ",
         required: true,
       } as FormField);
       fields.push({
         key: "afectaciones",
         type: "textarea",
-        label: `${idx++} ¿Qué sucede si no deseo participa o me retiro del estudio? Usted puede decidir no participar o retirarse en cualquier momento del estudio, sin que esto afecte de manera alguna el tratamiento médico que necesita. `,
+        label: `${idx++}. ¿Qué sucede si no deseo participa o me retiro del estudio? Usted puede decidir no participar o retirarse en cualquier momento del estudio, sin que esto afecte de manera alguna el tratamiento médico que necesita. `,
         placeholder:
           "Indique que el retiro no afecta derechos ni tratamientos",
         required: true,
@@ -261,7 +305,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
           key: "riesgo_salud_poliza",
           type: "textarea",
           label:
-            `${idx++} ¿Qué sucede si esta investigación afecta directamente mi salud?`,
+            `${idx++}. ¿Qué sucede si esta investigación afecta directamente mi salud?`,
           placeholder:
             "En estudios en los que se involucran menores de edad o discapacitados físicos y mentales adultos, que propongan intervenciones o procedimientos que superan el riesgo mínimo (no hacen parte del estándar de manejo), se debe evaluar la capacidad de entendimiento de acuerdo a la Res. 8430 de 1993. (Mantener o retirar el numeral 12 de acuerdo a la naturaleza del estudio)",
           required: true,
@@ -287,7 +331,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       } as FormField);
       fields.push({
         key: "genero_doctor",
-        type: "select",               // o "text"
+        type: "select",               
         required: true,
         hidden: true,
         options: [
@@ -336,7 +380,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
                         inputType="text"
                         placeholder="Nombre del patrocinador"
                         className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
-                        onBlur={(e) => doSpellCheck("patrocinador", e.target.value, /*handleSpellCheck*/)}
+                        onBlur={(e) => doSpellCheck("patrocinador", e.target.value, )}
                       />
                     </FormControl>
                     <FormMessage className="text-xs text-red-500 ml-1" />
@@ -400,7 +444,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
                         onChange={(e) => {
                           field.onChange(e)
                           methods.setValue("genero_doctor", e.target.value, {
-                            shouldValidate: false, // no lo validamos dos veces
+                            shouldValidate: false, 
                           })
                         }}
                         className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
@@ -662,43 +706,68 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
     ]
   
     /* -------- JSX pre-construido que se pasa al template -------- */
+    const cabeceraInitial = useMemo(
+      () => pick(methods.getValues(), cabeceraFields.map(f => f.key)),
+      [watch("version"), watch("codigo"), watch("fecha")]  // keys de la cabecera
+    );
     const cabeceraForm = (
      
       <FormSection
         sectionKey="head" title="Cabecera"
         open={openSections.head} onToggle={()=>toggle("head")}
         formRef={cabeceraRef} fields={cabeceraFields}
-        initialData={formValues} onChange={onSectionChange}
-        onSpellCheck={(k,t)=>doSpellCheck(k,t)} spellWarnings={spellingWarnings}
+        initialData={cabeceraInitial}
+        onChange={onSectionChange}
+        
+      
       />
     );
+    
+    const introInitial = useMemo(
+        () => pick(methods.getValues(), introduccionFields.map(f => f.key)),
+        [watch("nombre_proyecto"), watch("instituciones")]
+      );
   
     const introSection = (
       <FormSection
         sectionKey="intro" title="Introducción"
         open={openSections.intro} onToggle={()=>toggle("intro")}
         formRef={introRef} fields={introduccionFields}
-        initialData={formValues} onChange={onSectionChange}
+        initialData={introInitial}
+        onChange={onSectionChange}
         onSpellCheck={(k,t)=>doSpellCheck(k,t)} spellWarnings={spellingWarnings}
       />
     );
+
+    const infoInitial = useMemo(
+        () => pick(methods.getValues(), informacionGeneralFields.map(f => f.key)),
+        [methods, informacionGeneralFields.map(f => watch(f.key)).join("|")]
+      );
     const infoSection = (
       <FormSection
-       // key={informacionGeneralFields.map(f => f.key).join("|")}
+       
         sectionKey="info" title="Información general"
         open={openSections.info} onToggle={()=>toggle("info")}
         formRef={infoRef} fields={informacionGeneralFields}
         dynamicFormKey={informacionGeneralFields.map(f => f.key).join("|")}
-        initialData={formValues} onChange={onSectionChange}
+  
+        initialData={infoInitial}
+        onChange={onSectionChange}
         onSpellCheck={(k,t)=>doSpellCheck(k,t)} spellWarnings={spellingWarnings}
       />
     );
+
+    const authInitial = useMemo(
+        () => pick(methods.getValues(), autorizacionFields.map(f => f.key)),
+        [methods, autorizacionFields.map(f => watch(f.key)).join("|")]
+      );
     const authSection = (
       <FormSection
         sectionKey="auth" title="Autorización"
         open={openSections.auth} onToggle={()=>toggle("auth")}
         formRef={authRef} fields={autorizacionFields}
-        initialData={formValues} onChange={onSectionChange}
+        initialData={authInitial}
+        onChange={onSectionChange}
         onSpellCheck={(k,t)=>doSpellCheck(k,t)} spellWarnings={spellingWarnings}
       />
     );
@@ -720,7 +789,7 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
           }]
         ]}
         onSubmit={handleModalSubmit}
-        submitButtonText="Descargar"
+        submitButtonText="Cerrar"
         width="70%" height="90%"
       />
     );
@@ -757,3 +826,4 @@ import useCreateCases from "@/hooks/cases/useCreateCases";
       </FormProvider>
     );
   }
+

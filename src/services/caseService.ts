@@ -14,7 +14,7 @@ export const deleteCase = async (caseId: string): Promise<void> => {
 };
 
 export const createCase = async (caseData: Record<string, any>): Promise<void> => {
-  await requestsApi.post("/cases", caseData, {
+  await requestsApi.post("/pdf/save-investigator", caseData, {
     headers: { "Content-Type": "application/json" },
   });
 };
