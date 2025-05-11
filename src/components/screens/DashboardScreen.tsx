@@ -33,6 +33,7 @@ export default function DashboardScreen() {
                 value: cards.tasaDevolucion.value * 100,
                 previousValue: cards.tasaDevolucion.previousValue * 100,
             },
+            cards.tasaDevolucion,
         ]
 
         const icons = [

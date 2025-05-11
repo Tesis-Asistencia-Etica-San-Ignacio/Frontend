@@ -9,7 +9,7 @@ export interface StatsGridProps {
 export function StatsGrid({
   cards,
   loading,
-  gridClassName = "grid gap-4 md:grid-cols-2 lg:grid-cols-4",
+  gridClassName = "grid gap-4 md:grid-cols-2 lg:grid-cols-5",
 }: StatsGridProps) {
   return (
     <div className={gridClassName}>
