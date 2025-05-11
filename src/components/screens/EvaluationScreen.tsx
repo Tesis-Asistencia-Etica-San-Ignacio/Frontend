@@ -103,7 +103,7 @@ export default function EvaluationScreen() {
     ? {
       estado: selectedRow.status,
       cita: selectedRow.cita,
-      justificacion: selectedRow.justification,
+      justification: selectedRow.justification,
     }
     : {}
 
