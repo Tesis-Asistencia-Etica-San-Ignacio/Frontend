@@ -1,5 +1,5 @@
 import React from "react"
-import { PieChart, Pie, Cell, ResponsiveContainer } from "recharts"
+import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip } from "recharts"
 import type { PieSlice } from "@/types/statsTypes"
 
 const COLORS = ["#0088FE", "#00C49F", "#FFBB28", "#FF8042"]
@@ -30,6 +30,8 @@ const renderLabel = ({
     )
 }
 
+
+
 export const PieChartComponent: React.FC<{
     data: PieSlice[]
     loading?: boolean
@@ -52,6 +54,7 @@ export const PieChartComponent: React.FC<{
                         label={renderLabel}
                         outerRadius="70%"
                         dataKey="value"
+                        nameKey="label"
                     >
                         {chartData.map((_, idx) => (
                             <Cell
@@ -60,6 +63,8 @@ export const PieChartComponent: React.FC<{
                             />
                         ))}
                     </Pie>
+                    <Tooltip />
+                    
                 </PieChart>
             </ResponsiveContainer>
 

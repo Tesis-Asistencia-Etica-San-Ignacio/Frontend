@@ -1,32 +1,36 @@
-import { useState, useCallback } from "react";
-import { getEthicalNormsByEvaluationId } from "@/services/ethicalNormService";
-import type { EthicalNormResponseDto } from "@/types/ethicalNormTypes";
-import { useNotify } from "@/hooks/useNotify";
+import { useQuery } from '@tanstack/react-query'
+import { getEthicalNormsByEvaluationId } from '@/services/ethicalNormService'
+import type { EthicalNormResponseDto } from '@/types/ethicalNormTypes'
+import { useNotify } from '@/hooks/useNotify'
+import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants'
+import { useEffect } from 'react'
 
-const useGetEthicalRulesByEvaluationId = (evaluationId: string) => {
-  const [norms, setNorms] = useState<EthicalNormResponseDto[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
-  const { notifyError } = useNotify();
+export default function useGetEthicalRulesByEvaluationIdHook(evaluationId: string) {
+  const { notifyError } = useNotify()
 
-  const fetchNorms = useCallback(async () => {
-    if (!evaluationId) return;
-    setLoading(true);
-    try {
-      const data = await getEthicalNormsByEvaluationId(evaluationId);
-      setNorms(data);
-    } catch (error: any) {
-      console.error("Error al obtener las normas éticas:", error);
+  const {
+    data: norms = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<EthicalNormResponseDto[], Error>({
+    queryKey: QUERY_KEYS.ETHICAL_NORMS(evaluationId),
+    queryFn: () => getEthicalNormsByEvaluationId(evaluationId),
+    enabled: !!evaluationId,
+    ...DEFAULT_QUERY_OPTIONS,
+  })
+
+  // notificar en caso de error
+  useEffect(() => {
+    if (isError && error instanceof Error) {
       notifyError({
-        title: "Error al obtener normas éticas",
-        description: error?.message,
+        title: 'Error al obtener normas éticas',
+        description: error.message,
         closeButton: true,
-      });
-    } finally {
-      setLoading(false);
+      })
     }
-  }, [evaluationId, notifyError]);
+  }, [isError, error, notifyError])
 
-  return { norms, fetchNorms, loading };
-};
-
-export default useGetEthicalRulesByEvaluationId;
+  return { norms, isLoading, refetch }
+}

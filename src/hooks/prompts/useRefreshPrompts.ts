@@ -1,34 +1,32 @@
-import { useState, useCallback } from "react";
-import { resetMyPrompts } from "@/services/promptService";
-import { useNotify } from "@/hooks/useNotify";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { resetMyPrompts } from '@/services/promptService'
+import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants'
+import { useNotify } from '@/hooks/useNotify'
 
-const useRefreshPrompts = () => {
-  const [loading, setLoading] = useState(false);
-  const { notifySuccess, notifyError } = useNotify();
+export default function useRefreshPrompts() {
+  const qc = useQueryClient()
+  const { notifySuccess, notifyError } = useNotify()
 
-  const refreshPrompts = useCallback(async () => {
-    setLoading(true);
-    try {
-      await resetMyPrompts();
+  const mutation = useMutation<void, Error>({
+    mutationFn: resetMyPrompts,
+    ...DEFAULT_QUERY_OPTIONS,
+    onSuccess: () => {
       notifySuccess({
-        title: "Prompts reiniciados",
-        description: "Se restauraron al estado base.",
+        title: 'Prompts reiniciados',
+        description: 'Se restauraron al estado base.',
+        icon: '✅',
         closeButton: true,
-        icon: "✅"
-      });
-    } catch (error: any) {
-      console.error("Error al reiniciar prompts:", error);
+      })
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.PROMPTS })
+    },
+    onError: err => {
       notifyError({
-        title: "Error al reiniciar prompts",
-        description: error.message ?? "No se pudieron reiniciar los prompts.",
+        title: 'Error al reiniciar prompts',
+        description: err.message ?? 'No se pudieron reiniciar los prompts.',
         closeButton: true,
-      });
-    } finally {
-      setLoading(false);
-    }
-  }, [notifySuccess, notifyError]);
+      })
+    },
+  })
 
-  return { refreshPrompts, loading };
-};
-
-export default useRefreshPrompts;
+  return { refreshPrompts: () => mutation.mutateAsync(), loading: mutation.isPending }
+}

@@ -1,38 +1,43 @@
-import { useState, useCallback } from "react";
-import { updatePromptText } from "@/services/promptService";
-import type { UpdatePromptTextParams } from "@/types/promptType";
-import { useNotify } from "@/hooks/useNotify";
+import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { updatePromptText } from '@/services/promptService'
+import type { UpdatePromptTextParams } from '@/types/promptType'
+import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants'
+import { useNotify } from '@/hooks/useNotify'
 
-const useUpdatePromptText = () => {
-  const [loading, setLoading] = useState(false);
-  const { notifySuccess, notifyError } = useNotify();
+interface Vars {
+  id: string
+  data: UpdatePromptTextParams
+  name?: string
+}
 
-  const updatePromptTextHandler = useCallback(
-    async (id: string, data: UpdatePromptTextParams, name?: string) => {
-      setLoading(true);
-      try {
-        await updatePromptText(id, data);
-        notifySuccess({
-          title: "Prompt actualizado",
-          description: `Prompt ${name ?? id} guardado correctamente.`,
-          closeButton: true,
-          icon: "✅"
-        });
-      } catch (error: any) {
-        console.error("Error al actualizar prompt:", error);
-        notifyError({
-          title: `Error en prompt ${name ?? id}`,
-          description: error.message ?? "No se pudo actualizar el prompt.",
-          closeButton: true,
-        });
-      } finally {
-        setLoading(false);
-      }
+export default function useUpdatePromptText() {
+  const qc = useQueryClient()
+  const { notifySuccess, notifyError } = useNotify()
+
+  const mutation = useMutation<void, Error, Vars>({
+    mutationFn: ({ id, data }) => updatePromptText(id, data),
+    ...DEFAULT_QUERY_OPTIONS,
+    onSuccess: (_, { id, name }) => {
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.PROMPTS })
+      notifySuccess({
+        title: 'Prompt actualizado',
+        description: `Prompt ${name ?? id} guardado correctamente.`,
+        icon: '✅',
+        closeButton: true,
+      })
     },
-    [notifySuccess, notifyError]
-  );
+    onError: (err, { id, name }) => {
+      notifyError({
+        title: `Error en prompt ${name ?? id}`,
+        description: err.message ?? 'No se pudo actualizar el prompt.',
+        closeButton: true,
+      })
+    },
+  })
 
-  return { updatePromptText: updatePromptTextHandler, loading };
-};
-
-export default useUpdatePromptText;
+  return {
+    updatePromptText: (id: string, data: UpdatePromptTextParams, name?: string) =>
+      mutation.mutateAsync({ id, data, name }),
+    loading: mutation.isPending,
+  }
+}

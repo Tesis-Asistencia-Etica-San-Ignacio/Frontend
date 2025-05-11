@@ -11,8 +11,8 @@ export default function AccountScreen() {
   const accountFormRef = useRef<DynamicFormHandles>(null);
   const passwordFormRef = useRef<DynamicFormHandles>(null);
 
-  const { mutateAsync: updateUser } = useUpdateUser();
-  const { mutateAsync: updatePassword } = useUpdatePassword();
+  const { updateUser } = useUpdateUser();
+  const { updatePassword } = useUpdatePassword();
 
   const onConfirmAccount = async () => {
     await accountFormRef.current?.handleSubmit(updateUser)();

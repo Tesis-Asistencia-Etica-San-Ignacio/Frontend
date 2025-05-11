@@ -1,28 +1,43 @@
-import { useState, useCallback } from "react";
-import { updateEvaluation } from "@/services/evaluationService";
-import type { UpdateEvaluationParams } from "@/types/evaluationType";
-import { useNotify } from "@/hooks/useNotify";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { updateEvaluation } from '@/services/evaluationService';
+import { DEFAULT_QUERY_OPTIONS, QUERY_KEYS } from '@/lib/api/constants';
+import { useNotify } from '@/hooks/useNotify';
+import type { UpdateEvaluationParams } from '@/types/evaluationType';
 
 const useUpdateEvaluationHook = () => {
-  const [loading, setLoading] = useState(false);
+  const qc = useQueryClient();
   const { notifySuccess, notifyError } = useNotify();
 
-  const updateEvaluationHandler = useCallback(
-    async (evaluationId: string, updateData: UpdateEvaluationParams) => {
-      setLoading(true);
-      try {
-        await updateEvaluation(evaluationId, updateData);
-        notifySuccess({ title: "Evaluación actualizada", description: "Cambios guardados correctamente.", closeButton: true, icon: "✅" });
-      } catch (error: any) {
-        console.error("Error al actualizar la evaluación:", error);
-        notifyError({ title: "Error actualizando evaluación", description: error?.message, closeButton: true, });
-      }
-      setLoading(false);
-    },
-    [notifySuccess, notifyError]
-  );
+  const mutation = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: UpdateEvaluationParams }) =>
+      updateEvaluation(id, data),
+    ...DEFAULT_QUERY_OPTIONS,
 
-  return { updateEvaluation: updateEvaluationHandler, loading };
+    onSuccess: () => {
+      notifySuccess({
+        title: 'Evaluación actualizada',
+        description: 'Cambios guardados correctamente.',
+        closeButton: true,
+        icon: '✅',
+      });
+    },
+    onError: (error: any) => {
+      notifyError({
+        title: 'Error actualizando evaluación',
+        description: error?.message,
+        closeButton: true,
+      });
+    },
+    onSettled: () => {
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.EVALUATIONS });
+    },
+  });
+
+  return {
+    updateEvaluation: (id: string, data: UpdateEvaluationParams) =>
+      mutation.mutateAsync({ id, data }),
+    loading: mutation.isPending,
+  };
 };
 
 export default useUpdateEvaluationHook;

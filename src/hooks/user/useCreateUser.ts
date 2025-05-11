@@ -1,31 +1,37 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { QUERY_KEYS } from "@/lib/api";
-import { CreateUserInput, User } from "@/types";
-import { createUser } from "@/services/userService";
-import { useNotify } from "@/hooks/useNotify";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { createUser } from '@/services/userService';
+import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants';
+import { useNotify } from '@/hooks/useNotify';
+import type { CreateUserInput, User } from '@/types/userType';
 
 export function useCreateUser() {
-  const queryClient = useQueryClient();
+  const qc = useQueryClient();
   const { notifySuccess, notifyError } = useNotify();
 
-  return useMutation<User, Error, CreateUserInput>({
+  const mutation = useMutation<User, Error, CreateUserInput>({
     mutationFn: createUser,
+    ...DEFAULT_QUERY_OPTIONS,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: [QUERY_KEYS.USERS] });
+      qc.invalidateQueries({ queryKey: [QUERY_KEYS.USERS] });
       notifySuccess({
-        title: "Usuario creado",
-        description: "El nuevo usuario se creó correctamente.",
+        title: 'Usuario creado',
+        description: 'El nuevo usuario se creó correctamente.',
         icon: '✅',
         closeButton: true,
       });
     },
-    onError: (error: Error) => {
-      console.error("Error creando usuario:", error);
+    onError: err => {
       notifyError({
-        title: "Error al crear usuario",
-        description: error.message,
+        title: 'Error al crear usuario',
+        description: err.message,
         closeButton: true,
       });
     },
   });
+
+  return {
+    createUser: (data: CreateUserInput) => mutation.mutateAsync(data),
+    loading: mutation.isPending,
+    error: mutation.error,
+  };
 }

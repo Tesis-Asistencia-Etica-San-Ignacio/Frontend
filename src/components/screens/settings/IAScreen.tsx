@@ -27,9 +27,15 @@ export default function IAScreen() {
     const [providerSelected, setProviderSelected] = useState(initialProvider)
 
     useEffect(() => {
-        if (user?.provider) setProviderSelected(user.provider)
-        else if (firstProvider) setProviderSelected(firstProvider)
-    }, [firstProvider, user?.provider])
+        if (user?.provider && user.provider !== providerSelected) {
+            setProviderSelected(user.provider);
+            return;
+        }
+        if (!user?.provider && firstProvider && firstProvider !== providerSelected) {
+            setProviderSelected(firstProvider);
+        }
+    }, [user?.provider, firstProvider, providerSelected]);
+
 
     const providerOptions = providers.map(p => ({ value: p.provider, label: p.provider }))
     const modelsOfProvider = useMemo(
@@ -38,7 +44,7 @@ export default function IAScreen() {
     )
 
     /* ─── prompts del evaluador ──────────────────────────────────────── */
-    const { prompts, fetchPrompts } = useGetMyPrompts()
+    const { prompts, refetch: fetchPrompts } = useGetMyPrompts()
     const { updatePromptText } = useUpdatePromptText()
     const { refreshPrompts } = useRefreshPrompts()
     const { notifyInfo } = useNotify()
@@ -46,10 +52,6 @@ export default function IAScreen() {
     const [fieldsPrompts, setFieldsPrompts] = useState<FormField[][]>([])
     const [initialValuesPrompts, setInitialValuesPrompts] = useState<Record<string, string>>({})
     const [idToNamePrompts, setIdToNamePrompts] = useState<Record<string, string>>({})
-
-    useEffect(() => {
-        fetchPrompts();
-    }, [fetchPrompts]);
 
     useEffect(() => {
         const sorted = [...prompts].sort(
@@ -68,7 +70,6 @@ export default function IAScreen() {
                 type: 'textarea',
                 key: p.id,
                 placeholder: p.nombre ?? `Prompt ${i + 1}`,
-                required: false,
             })
         })
 
@@ -79,7 +80,7 @@ export default function IAScreen() {
 
     /* ─── handlers ───────────────────────────────────────────────────── */
     const { updateApiKey } = useUpdateApiKey()
-    const { mutateAsync: updateUser } = useUpdateUser()
+    const { updateUser } = useUpdateUser()
 
     const handleConfirmProvider = async (prov: string) => {
         await updateUser({ provider: prov, modelo: "" })
@@ -88,14 +89,12 @@ export default function IAScreen() {
     }
 
     const handleConfirmApiKey = async (apiKey: string) => {
-        console.log('Nueva API Key:', apiKey, providerSelected)
-        await updateApiKey({ provider: providerSelected, apiKey })
+        await updateApiKey(providerSelected, apiKey)
     }
 
 
     const handleConfirmModel = async (model: string) => {
         await updateUser({ modelo: model })
-        console.log('Nuevo modelo:', model)
     }
 
     const handleConfirmUpdatePrompts = async (formData: Record<string, string>) => {

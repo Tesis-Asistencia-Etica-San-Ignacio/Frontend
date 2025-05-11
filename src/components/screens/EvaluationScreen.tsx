@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react"
+import { useEffect, useRef, useMemo, useState } from 'react'
 import { useLocation, useParams } from "react-router-dom"
 import EvaluationResultTemplate from "../templates/EvaluationTemplate"
 import { CheckCircle, Circle } from "lucide-react"
@@ -20,17 +20,23 @@ export default function EvaluationScreen() {
   const { generate, loading: generating } = useGenerateEvaluationHook()
   const { reEvaluate, loading: generatingRe } = useReEvaluateEvaluationHook()
 
-  const { norms, fetchNorms } = useGetEthicalRulesByEvaluationIdHook(evaluationId)
+  const { norms, refetch: fetchNorms } =
+    useGetEthicalRulesByEvaluationIdHook(evaluationId)
   const { mutateAsync: sendEmailMutation } = useSendEmail()
-  const { updateEthicalNorm } = useUpdateEthicalNormHook()
+  const { updateEthicalNorm } = useUpdateEthicalNormHook(evaluationId)
   const { pdfUrl, fetchPdf, loading: loadingPdf } = useGeneratePdfByEvaluationId()
 
-  const [tableData, setTableData] = useState<any[]>([])
   const [selectedRow, setSelectedRow] = useState<any>(null)
   const [mailModalOpen, setMailModalOpen] = useState(false)
   const [editModalOpen, setEditModalOpen] = useState(false)
 
   const alreadyTriggered = useRef(false)
+
+  // ─── tabla derivada directamente de norms ───────────────────────────────
+  const tableData = useMemo(
+    () => norms.map(({ createdAt, updatedAt, ...rest }) => rest),
+    [norms]
+  )
 
   useEffect(() => {
     if (alreadyTriggered.current) {
@@ -41,7 +47,7 @@ export default function EvaluationScreen() {
     if (runGenerate) {
       alreadyTriggered.current = true
       generate(evaluationId)
-        .then(fetchNorms)
+        .then(() => fetchNorms())
         .then(() => {
           // limpiamos el state para que no se vuelva a disparar
           window.history.replaceState({}, "", window.location.pathname)
@@ -52,7 +58,7 @@ export default function EvaluationScreen() {
     if (runReEvaluate) {
       alreadyTriggered.current = true
       reEvaluate(evaluationId)
-        .then(fetchNorms)
+        .then(() => fetchNorms())
         .then(() => {
           window.history.replaceState({}, "", window.location.pathname)
         })
@@ -68,9 +74,6 @@ export default function EvaluationScreen() {
     }
   }, [mailModalOpen, evaluationId, fetchPdf])
 
-  useEffect(() => {
-    setTableData(norms.map(({ evaluationId, createdAt, updatedAt, ...rest }) => rest))
-  }, [norms])
 
   const handleMailModalFormSubmit = async (data: any) => {
     await sendEmailMutation({ ...data, evaluationId })
@@ -79,15 +82,14 @@ export default function EvaluationScreen() {
 
   const handleEditSubmit = async (data: any) => {
     if (!selectedRow) return
+    console.log("data", data)
+    console.log("selectedRow", selectedRow)
     const params = {
       status: data.estado,
       cita: data.cita,
-      justification: data.justificacion,
+      justification: data.justification,
     }
     await updateEthicalNorm(selectedRow.id, params)
-    setTableData(prev =>
-      prev.map(r => (r.id === selectedRow.id ? { ...r, ...params } : r)),
-    )
     setEditModalOpen(false)
   }
 
@@ -101,7 +103,7 @@ export default function EvaluationScreen() {
     ? {
       estado: selectedRow.status,
       cita: selectedRow.cita,
-      justificacion: selectedRow.justificacion,
+      justificacion: selectedRow.justification,
     }
     : {}
 
@@ -207,4 +209,4 @@ export default function EvaluationScreen() {
       editInitialData={editInitialData}
     />
   )
-   }
+}

@@ -14,6 +14,7 @@ interface HistoryTemplateProps {
   columnsConfig: ColumnConfig[];
   selectedRowId?: string;
   onRowClick?: (row: any) => void;
+  tableLoading?: boolean;
 
   /* -------- Eliminación ------ */
   deleteDialogOpen: boolean;
@@ -36,6 +37,7 @@ export default function HistoryTemplate({
   columnsConfig,
   selectedRowId,
   onRowClick,
+  tableLoading = false,
 
   /* -------- Eliminación ------ */
   deleteDialogOpen,
@@ -69,6 +71,7 @@ export default function HistoryTemplate({
             columnsConfig={columnsConfig}
             selectedRowId={selectedRowId}
             onRowClick={onRowClick}
+            loading={tableLoading}
           />
         </div>
       </div>

@@ -1,25 +1,35 @@
-import { useState, useCallback } from "react";
-import { getEvaluationsByUser } from "@/services/evaluationService";
-import { useNotify } from "@/hooks/useNotify";
+import { useEffect } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { getEvaluationsByUser } from '@/services/evaluationService';
+import { useNotify } from '@/hooks/useNotify';
+import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants';
 
 const useGetEvaluationsByUserHook = () => {
-  const [files, setFiles] = useState<any[]>([]);
-  const [loading, setLoading] = useState(false);
   const { notifyError } = useNotify();
 
-  const getFilesByUser = useCallback(async () => {
-    setLoading(true);
-    try {
-      const data = await getEvaluationsByUser();
-      setFiles(data);
-    } catch (error: any) {
-      console.error("Error al obtener los archivos del usuario:", error);
-      notifyError({ title: "Error cargando evaluaciones", description: error?.message, closeButton: true, });
-    }
-    setLoading(false);
-  }, [notifyError]);
+  const {
+    data = [],
+    isLoading,
+    isError,
+    error,
+    refetch,
+  } = useQuery<any[], Error>({
+    queryKey: QUERY_KEYS.EVALUATIONS,
+    queryFn: getEvaluationsByUser,
+    ...DEFAULT_QUERY_OPTIONS,
+  });
 
-  return { files, getFilesByUser, loading };
+  useEffect(() => {
+    if (isError && error instanceof Error) {
+      notifyError({
+        title: 'Error cargando evaluaciones',
+        description: error.message,
+        closeButton: true,
+      });
+    }
+  }, [isError, error, notifyError]);
+
+  return { files: data, isLoading, refetch };
 };
 
 export default useGetEvaluationsByUserHook;

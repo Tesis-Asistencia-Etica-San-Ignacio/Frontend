@@ -1,32 +1,38 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import { updatePassword } from '@/services/userService'
-import { useNotify } from '@/hooks/useNotify'
-import type { UpdatePasswordInput, User } from '@/types/userType'
+import { useMutation } from '@tanstack/react-query';
+import { updatePassword } from '@/services/userService';
+import { DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants';
+import { useNotify } from '@/hooks/useNotify';
+import type { UpdatePasswordInput, User } from '@/types/userType';
 
 export function useUpdatePassword() {
-  const qc = useQueryClient()
-  const { notifySuccess, notifyError } = useNotify()
+  const { notifySuccess, notifyError } = useNotify();
 
-  return useMutation<User, unknown, UpdatePasswordInput>({
+  const mutation = useMutation<User, Error, UpdatePasswordInput>({
     mutationFn: updatePassword,
+    ...DEFAULT_QUERY_OPTIONS,
     onSuccess: () => {
-      qc.invalidateQueries()
       notifySuccess({
         title: 'Contraseña actualizada',
         description: 'Tu nueva contraseña ha sido guardada.',
         icon: '✅',
         closeButton: true,
-      })
+      });
     },
-    onError: (err: any) => {
+    onError: err => {
       notifyError({
         title: 'Error al actualizar contraseña',
         description:
-          err?.response?.data?.message ??
+          (err as any)?.response?.data?.message ??
           'No se pudo actualizar tu contraseña.',
         icon: '🚫',
         closeButton: true,
-      })
+      });
     },
-  })
+  });
+
+  return {
+    updatePassword: (data: UpdatePasswordInput) => mutation.mutateAsync(data),
+    loading: mutation.isPending,
+    error: mutation.error,
+  };
 }
