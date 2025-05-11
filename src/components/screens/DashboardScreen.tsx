@@ -25,9 +25,9 @@ export default function DashboardScreen() {
 
         const { cards } = data
         const rawCards: CardMetric[] = [
-            cards.total,
-            cards.aprobados,
-            cards.rechazados,
+            {...cards.total, title: 'Total de consentiemientos evaluados'},
+            {...cards.aprobados, title: 'Concentiemientos aprobados'},
+            {...cards.rechazados, title: 'Concentiemientos rechazados'},
             {
                 title: 'Tasa de devolución',
                 value: cards.tasaDevolucion.value * 100,
