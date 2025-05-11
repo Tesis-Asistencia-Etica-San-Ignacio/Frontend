@@ -222,6 +222,8 @@ function flattenFields(data: FormField[] | FormField[][]): FormField[] {
 export interface DynamicFormHandles {
     handleSubmit: <T>(onValid: (data: any) => T) => (e?: React.BaseSyntheticEvent) => Promise<void>
     trigger: (name?: string | string[]) => Promise<boolean>   //  ←  NUEVO
+    reset: (values?: Record<string, any>) => void
+
 }
 
 
@@ -273,6 +275,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
         handleSubmit,
         trigger: form.trigger,          //  ←  NUEVO
         __formInstance: form,
+        reset: form.reset,
     }))
 
 

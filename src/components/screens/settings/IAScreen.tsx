@@ -90,6 +90,7 @@ export default function IAScreen() {
     const handleConfirmApiKey = async (apiKey: string) => {
         console.log('Nueva API Key:', apiKey, providerSelected)
         await updateApiKey(providerSelected, apiKey)
+        apiKeyFormRef.current?.reset()
     }
 
 
