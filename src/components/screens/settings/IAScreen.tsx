@@ -128,7 +128,7 @@ export default function IAScreen() {
 
     /* ─── campos dinámicos ───────────────────────────────────────────── */
     const apiKeyFields: FormField[] = [
-        { type: 'password', key: 'apiKey', placeholder: 'Nueva API Key', maxLength: 100 },
+        { type: 'password', key: 'apiKey', placeholder: 'Nueva API Key', maxLength: 200 },
     ]
 
     const modelFields: FormField[] = [

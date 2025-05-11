@@ -27,7 +27,7 @@ export function getConfigForType(type: InputType) {
       }
     case "password":
       return {
-        maxLength: 100,
+        maxLength: 200,
         icon: <Lock className="w-5 h-5 text-gray-400" />,
       }
     case "phone":
