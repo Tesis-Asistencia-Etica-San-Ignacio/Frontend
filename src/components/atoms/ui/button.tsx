@@ -37,54 +37,25 @@ const buttonVariants = cva(
   }
 )
 
-type ButtonProps = React.ComponentProps<"button"> &
-  VariantProps<typeof buttonVariants> & {
-    asChild?: boolean
-    throttleMs?: number
-  }
-
-export function Button({
+function Button({
   className,
   variant,
   size,
   asChild = false,
-  throttleMs = 500,
-  onClick,
-  disabled: disabledProp,
   ...props
-}: ButtonProps) {
+}: React.ComponentProps<"button"> &
+  VariantProps<typeof buttonVariants> & {
+    asChild?: boolean
+  }) {
   const Comp = asChild ? Slot : "button"
-
-  const [blocked, setBlocked] = React.useState(false)
-  const timeoutRef = React.useRef<number | null>(null)
-
-  React.useEffect(() => {
-    return () => {
-      if (timeoutRef.current) clearTimeout(timeoutRef.current)
-    }
-  }, [])
-
-  const handleClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    if (blocked) {
-      e.preventDefault()
-      return
-    }
-    setBlocked(true)
-    onClick?.(e)
-    timeoutRef.current = window.setTimeout(() => {
-      setBlocked(false)
-    }, throttleMs)
-  }
 
   return (
     <Comp
       data-slot="button"
       className={cn(buttonVariants({ variant, size, className }))}
-      onClick={handleClick}
-      disabled={disabledProp || blocked}
       {...props}
     />
   )
 }
 
-export { buttonVariants }
+export { Button, buttonVariants }
