@@ -88,7 +88,8 @@ function baseValidationForType(type: FieldType): z.ZodTypeAny {
                     const n = Number(v)
                     return Number.isNaN(n) ? NaN : n
                 },
-                z.number().optional()        // permite undefined
+                z.number().min(1, "El número debe ser mayor a 0")
+                .optional()       // permite undefined
             )
 
             schema = preprocessNumber.refine(

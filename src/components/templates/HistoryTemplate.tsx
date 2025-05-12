@@ -32,6 +32,9 @@ interface HistoryTemplateProps {
 
   /*-----PDF-----*/
   extraModal?: ReactNode;
+
+  /*-----HideColumns*/
+  hideColumns?: string[];
 }
 
 export default function HistoryTemplate({
@@ -57,6 +60,9 @@ export default function HistoryTemplate({
   /*-----PDF-----*/
   extraModal,
 
+  /*-----HideColumns*/
+  hideColumns,
+
   DataSelectedRow,
 }: Readonly<HistoryTemplateProps>) {
   return (
@@ -76,6 +82,7 @@ export default function HistoryTemplate({
             columnsConfig={columnsConfig}
             selectedRowId={selectedRowId}
             onRowClick={onRowClick}
+            hideColumns={hideColumns}
           />
         </div>
       </div>

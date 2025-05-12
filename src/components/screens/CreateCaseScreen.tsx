@@ -154,7 +154,7 @@ const LS_KEY = "caseDraft";
       if (!formData) return;   
         console.log(formData);         
         await createCase(formData); 
-        localStorage.removeItem(LS_KEY);      
+        localStorage.removeItem(LS_KEY);      // ⟵ POST /pdf/save-investigator
         setPdfModalOpen(false);
     };
 
@@ -294,9 +294,9 @@ const LS_KEY = "caseDraft";
         fields.push({
           key: "asentimiento_informado",
           type: "textarea",
-          label: `${idx++}. Asentimiento Informado para menores o sujetos con representante`,
+          label: `${idx++}. Al menor de edad o la persona que usted representa se le solicitará informar su aceptación para ingresar al estudio a través de un Asentimiento Informado.  De acuerdo a la Resolución 8430 de 1993, el proceso de asentimiento debe estar precedido de una valoración de razonamiento entendimiento y lógica realizada por un psicólogo, neurólogo o psiquiatra.  A través de este documento se solicita su autorización para realizar la valoración.`,
           placeholder:
-            "Explique el proceso de asentimiento y valoración de entendimiento",
+            "En estudios en los que se involucran menores de edad o discapacitados físicos y mentales adultos, que propongan intervenciones o procedimientos que superan el riesgo mínimo (no hacen parte del estándar de manejo), se debe evaluar la capacidad de entendimiento de acuerdo a la Res. 8430 de 1993. ",
           required: true,
           }  as FormField);
       }
@@ -387,10 +387,28 @@ const LS_KEY = "caseDraft";
                   </FormItem>
                 )}
               />{" "}
-              realizará el pago de los gastos médicos relacionados con una lesión directamente causada por medicamentos administrados o procedimientos realizados.
+              realizará el pago de los gastos médicos relacionados con una lesión directamente causada por medicamentos administrados o procedimientos realizados en esta investigación al centro hospitalario del estudio, y el centro del estudio le proporcionará el tratamiento médico sin costo alguno para usted o para el sistema de salud.  
             </div>
             <div>
-              Para garantizar la cobertura,{" "}
+              Para garantizar la cobertura cobertura de los riesgos o los posibles daños y lesiones y la atención adecuada que pueda surgir del estudio, {" "}
+              <ShadcnFormField
+                name="patrocinador"
+                render={({ field }) => (
+                  <FormItem className="inline-block">
+                    <FormControl>
+                      <Input
+                        {...field}
+                        inputType="text"
+                        placeholder="Nombre del patrocinador"
+                        className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
+                        onBlur={(e) => doSpellCheck("patrocinador", e.target.value, )}
+                      />
+                    </FormControl>
+                    <FormMessage className="text-xs text-red-500 ml-1" />
+                  </FormItem>
+                )}
+              />{" "}
+              ha contratado un seguro con la compañía{" "}
               <ShadcnFormField
                 name="compania_seguro"
                 render={({ field }) => (
@@ -412,7 +430,7 @@ const LS_KEY = "caseDraft";
                   </FormItem>
                 )}
               />{" "}
-              ubicada en{" "}
+              con dirección en {" "}
               <ShadcnFormField
                 name="dir_seguro"
                 render={({ field }) => (
@@ -458,7 +476,7 @@ const LS_KEY = "caseDraft";
                   </FormItem>
                 )}
               />{" "}
-              {sufijo} {tituloDoc}{" "}
+              {sufijo} del estudio {tituloDoc}{" "}
               <ShadcnFormField
                 name="nombre_doctor"
                 render={({ field }) => (
@@ -532,7 +550,7 @@ const LS_KEY = "caseDraft";
             </div>
   
             <p>
-              Al firmar este formulario usted no renuncia a ningún derecho legal, ni acepta pagar los gastos médicos.
+             Al firmar este formulario usted no renuncia a ningún derecho legal, aceptar atención médica o aceptar el pago de lo el/la s gastos médicos.
             </p>
           </div>
         ),
@@ -677,7 +695,7 @@ const LS_KEY = "caseDraft";
               />.
             </div>
             <div>
-              También puede comunicarse con el Presidente del Comité de Ética Institucional:{" "}
+              Presidente del Comité de Ética Institucional:{" "}
               <ShadcnFormField
                 name="nombre_presidente"
                 render={({ field }) => (

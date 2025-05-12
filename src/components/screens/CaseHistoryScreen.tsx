@@ -128,8 +128,8 @@ export default function CaseHistoryScreen() {
 
   // — Columnas de la tabla —
   const columnsConfig: ColumnConfig[] = [
-    { id: "id", accessorKey: "id", headerLabel: "ID", searchable: true },
-    { id: "fecha", accessorKey: "fecha", headerLabel: "Fecha", searchable: false },
+   // { id: "id", accessorKey: "id", headerLabel: "ID", searchable: true },
+   // { id: "fecha", accessorKey: "fecha", headerLabel: "Fecha", searchable: false },
     { id: "nombre_proyecto", accessorKey: "nombre_proyecto", headerLabel: "Nombre Proyecto", searchable: true },
     { id: "version", accessorKey: "version", headerLabel: "Versión", searchable: true },
     { id: "codigo", accessorKey: "codigo", headerLabel: "Código", searchable: true  },
@@ -196,6 +196,8 @@ export default function CaseHistoryScreen() {
         height="90%"
       />
       }
+      /*-----Hide Columns-----*/
+      hideColumns={["id", "fecha", "pdf"]}
     />
   );
 }
