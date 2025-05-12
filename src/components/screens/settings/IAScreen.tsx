@@ -3,12 +3,14 @@ import { DynamicFormHandles } from '@/components/molecules/Dynamic-form'
 import IATemplate from '@/components/templates/settings/IATemplate'
 
 import useUpdateApiKey from '@/hooks/ia/useUpdateApiKey'
-import { useIaProviders } from '@/hooks/ia/useIaProviders'   // nuevo hook (ya creado)
+import { useIaProviders } from '@/hooks/ia/useIaProviders'
 import useGetMyPrompts from '@/hooks/prompts/useGetPromptsByEvaluator'
+import { useUpdateUser } from '@/hooks/user/useUpdateUser'
 import useUpdatePromptText from '@/hooks/prompts/useUpdatePrompt'
 import useRefreshPrompts from '@/hooks/prompts/useRefreshPrompts'
 import { useNotify } from '@/hooks/useNotify'
 import type { FormField } from '@/types/formTypes'
+import { useAuthContext } from '@/context/AuthContext'
 
 export default function IAScreen() {
     /* ─── refs ───────────────────────────────────────────────────────── */
@@ -16,15 +18,18 @@ export default function IAScreen() {
     const apiKeyFormRef = useRef<DynamicFormHandles>(null)
     const modelFormRef = useRef<DynamicFormHandles>(null)
     const promptsFormRef = useRef<DynamicFormHandles>(null)
+    const { user } = useAuthContext()
 
     /* ─── proveedores / modelos ─────────────────────────────────────── */
     const { data: providers = [], isLoading: loadingProviders } = useIaProviders()
     const firstProvider = providers[0]?.provider ?? ''
-    const [providerSelected, setProviderSelected] = useState(firstProvider)
+    const initialProvider = user?.provider || firstProvider
+    const [providerSelected, setProviderSelected] = useState(initialProvider)
 
     useEffect(() => {
-        if (firstProvider) setProviderSelected(firstProvider)
-    }, [firstProvider])
+        if (user?.provider) setProviderSelected(user.provider)
+        else if (firstProvider) setProviderSelected(firstProvider)
+    }, [firstProvider, user?.provider])
 
     const providerOptions = providers.map(p => ({ value: p.provider, label: p.provider }))
     const modelsOfProvider = useMemo(
@@ -74,8 +79,11 @@ export default function IAScreen() {
 
     /* ─── handlers ───────────────────────────────────────────────────── */
     const { updateApiKey } = useUpdateApiKey()
+    const { mutateAsync: updateUser } = useUpdateUser()
 
     const handleConfirmProvider = async (prov: string) => {
+        await updateUser({ provider: prov, modelo: "" })
+
         setProviderSelected(prov)
     }
 
@@ -85,9 +93,9 @@ export default function IAScreen() {
     }
 
 
-    const handleConfirmModel = async (selectedModel: string) => {
-        // TODO: llamar a endpoint cuando exista
-        console.log('Nuevo modelo:', selectedModel)
+    const handleConfirmModel = async (model: string) => {
+        await updateUser({ modelo: model })
+        console.log('Nuevo modelo:', model)
     }
 
     const handleConfirmUpdatePrompts = async (formData: Record<string, string>) => {
@@ -137,6 +145,7 @@ export default function IAScreen() {
     return (
         <IATemplate
             /* provider */
+            initialProvider={providerSelected}
             providerTitle={`Proveedor actual: ${providerSelected}`}
             providerDesc='Selecciona el proveedor de IA que utilizará la plataforma.'
             providerFields={providerFields}
@@ -151,6 +160,7 @@ export default function IAScreen() {
             onConfirmApiKey={handleConfirmApiKey}
 
             /* Modelo */
+            initialModel={user?.modelo ?? ''}
             titleSection2={`Modelo por defecto de ${providerSelected}`}
             descSection2="Selecciona el modelo que usará la plataforma."
             modelFields={modelFields}
