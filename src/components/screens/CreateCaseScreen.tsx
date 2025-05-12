@@ -790,7 +790,7 @@ const LS_KEY = "caseDraft";
       />
     );
   
-    const guardarBtn = <Button type="submit">Guardar</Button>;
+    const guardarBtn = <Button type="submit">Previsualizar PDF</Button>;
   
     const modalForm = (
       <ModalForm
@@ -807,7 +807,7 @@ const LS_KEY = "caseDraft";
           }]
         ]}
         onSubmit={handleModalSubmit}
-        submitButtonText="Cerrar"
+        submitButtonText="Guardar caso"
         width="70%" height="90%"
       />
     );
