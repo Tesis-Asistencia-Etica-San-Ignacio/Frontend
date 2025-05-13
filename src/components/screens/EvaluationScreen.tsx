@@ -1,7 +1,7 @@
 import { useEffect, useRef, useMemo, useState } from 'react'
 import { useLocation, useParams } from "react-router-dom"
 import EvaluationResultTemplate from "../templates/EvaluationTemplate"
-import { CheckCircle, Circle } from "lucide-react"
+import { CheckCircle, Circle, CircleDashed } from "lucide-react"
 import type { ColumnConfig } from "@/types/table"
 import type { FormField } from "@/types/formTypes"
 import PdfRenderer from "../organisms/PdfRenderer"
@@ -155,6 +155,7 @@ export default function EvaluationScreen() {
         options: [
           { value: "APROBADO", label: "Aprobado" },
           { value: "NO_APROBADO", label: "No aprobado" },
+          { value: "NO_APLICA", label: "No aplica" },
         ],
       },
     ],
@@ -181,6 +182,7 @@ export default function EvaluationScreen() {
       items: [
         { value: "APROBADO", label: "Aprobado", icon: CheckCircle, badgeVariant: "approved" },
         { value: "NO_APROBADO", label: "No aprobado", icon: Circle, badgeVariant: "notapproved" },
+        { value: "NO_APLICA", label: "No aplica", icon: CircleDashed, badgeVariant: "unknown" },
       ],
     },
     { id: "description", accessorKey: "description", headerLabel: "Descripción" },

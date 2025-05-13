@@ -21,6 +21,8 @@ const badgeVariants = cva(
           "border-green-300 text-green-700",
         notapproved:
           "border-red-300 text-red-700",
+        unknown:
+          "border-yellow-300 text-yellow-700",
       },
     },
     defaultVariants: {
