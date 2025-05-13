@@ -21,7 +21,7 @@ const LS_KEY = "caseDraft";
 export default function CreateCaseScreen() {
   /* -------- Hooks pdf -------- */
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
-  const { fetchPdfInvestigator, pdfUrl, loading } = useGeneratePdfInvestigator();
+  const { fetchPdfInvestigator, pdfUrl, loading, clearPdf } = useGeneratePdfInvestigator();
   const { createCase } = useCreateCases();
 
   /* -------- borrador almacenado -------- */
@@ -87,6 +87,13 @@ export default function CreateCaseScreen() {
   /* ───────────────────────── Persistencia auto a localStorage ───────────────────────── */
 
   useEffect(() => {
+    if (!pdfModalOpen || !formData) return
+    fetchPdfInvestigator(formData)
+  }, [pdfModalOpen, formData, fetchPdfInvestigator])
+
+
+
+  useEffect(() => {
     const sub = methods.watch((all) =>
       localStorage.setItem(LS_KEY, JSON.stringify(all))
     );
@@ -121,23 +128,14 @@ export default function CreateCaseScreen() {
         Object.assign(data, inst.getValues());
       }
     }
-
-    console.log(data);
-
     setFormData(data);
-    await handlePreviewPdf(data);
+    setPdfModalOpen(true);
   };
 
-  const handlePreviewPdf = async (formData: any) => {
-    const url = await fetchPdfInvestigator(formData);
-    if (url) {
-      setPdfModalOpen(true);
-    }
-  };
+
   const handleModalSubmit = async () => {
 
     if (!formData) return;
-    console.log(formData);
     await createCase(formData);
     localStorage.removeItem(LS_KEY);
     setPdfModalOpen(false);
@@ -780,7 +778,12 @@ export default function CreateCaseScreen() {
   const modalForm = (
     <ModalForm
       open={pdfModalOpen}
-      onOpenChange={setPdfModalOpen}
+      onOpenChange={(open) => {
+        if (!open) {
+          clearPdf();
+        }
+        setPdfModalOpen(open);
+      }}
       title={{ text: "Visualizador PDF consentimiento informado", align: "left" }}
       formDataConfig={[
         [{
