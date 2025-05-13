@@ -27,7 +27,7 @@ import {
 
 import { DataTablePagination } from "../molecules/table/Data-table-pagination"
 import { DataTableToolbar } from "../molecules/table/Data-table-toolbar"
-import { Spinner } from "../atoms/Spinner"
+import { Spinner } from "../atoms/spinner"
 
 const STORAGE_KEY = "table_column_visibility"
 

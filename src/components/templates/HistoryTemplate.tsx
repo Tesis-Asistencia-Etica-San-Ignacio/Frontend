@@ -7,6 +7,7 @@ import { Input } from "@/components/atoms/ui/input";
 import { Alert, AlertTitle, AlertDescription } from "@/components/atoms/ui/alert";
 import type { FormField } from "@/types/formTypes";
 import ModalForm from "../organisms/dialogs/ModalForm";
+import { ReactNode } from "react";
 
 interface HistoryTemplateProps {
   /* ---------- Tabla ---------- */
@@ -29,6 +30,12 @@ interface HistoryTemplateProps {
   modalFormFields?: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
   DataSelectedRow?: { [key: string]: any };
+
+  /*-----PDF-----*/
+  extraModal?: ReactNode;
+
+  /*-----HideColumns*/
+  hideColumns?: string[];
 }
 
 export default function HistoryTemplate({
@@ -52,6 +59,12 @@ export default function HistoryTemplate({
   modalFormFields,
   onModalSubmit,
 
+  /*-----PDF-----*/
+  extraModal,
+
+  /*-----HideColumns*/
+  hideColumns,
+
   DataSelectedRow,
 }: Readonly<HistoryTemplateProps>) {
   return (
@@ -72,6 +85,7 @@ export default function HistoryTemplate({
             selectedRowId={selectedRowId}
             onRowClick={onRowClick}
             loading={tableLoading}
+            hideColumns={hideColumns}
           />
         </div>
       </div>
@@ -128,6 +142,8 @@ export default function HistoryTemplate({
           initialData={DataSelectedRow}
         />
       )}
+
+      {extraModal}
     </section>
   );
 }

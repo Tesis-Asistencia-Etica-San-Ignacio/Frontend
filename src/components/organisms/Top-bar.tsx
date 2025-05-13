@@ -1,6 +1,6 @@
 import React from "react"
-import { MainNav } from "../molecules/top-navigation/Main-nav"
-import { UserNav } from "../molecules/top-navigation/User-nav"
+import { MainNav } from "../molecules/top-navigation/main-nav"
+import { UserNav } from "../molecules/top-navigation/user-nav"
 import { cn } from "@/lib/utils"
 
 export interface TopBarProps {

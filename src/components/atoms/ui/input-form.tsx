@@ -65,6 +65,7 @@ export function getConfigForType(type: InputType) {
                maxLength: 12,            // o el que necesites
                icon: undefined,
            }
+           
     default:
       return {
         maxLength: 100,
@@ -98,7 +99,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, inputType, icon, value = "", onChange, maxLength, onSpellCheck, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
-    const { maxLength: defaultMaxLength, icon: defaultIcon } = getConfigForType(inputType)
+    const { maxLength: defaultMaxLength, icon: defaultIcon,   } = getConfigForType(inputType)
 
     let nativeType: React.HTMLInputTypeAttribute = "text"
     if (inputType === "password") {
@@ -130,7 +131,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           type={nativeType}
-          maxLength={finalMaxLength}
+          maxLength={finalMaxLength} 
           value={value}
           onChange={onChange}
           className={cn(inputStyle, finalIcon ? "pl-8" : "pl-2")}
