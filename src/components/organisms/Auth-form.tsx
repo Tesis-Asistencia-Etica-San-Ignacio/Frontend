@@ -50,7 +50,7 @@ export default function AuthForm({
             } catch (err: any) {
                 notifyError({
                     title: "Error al iniciar sesión",
-                    description: err.response?.data?.message ?? "Revise sus credenciales.",
+                    description: "Revise sus credenciales.",
                     icon: "🚫",
                     closeButton: true,
                 });

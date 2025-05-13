@@ -1,8 +1,12 @@
+// src/hooks/ia/useReEvaluateEvaluationHook.ts
 import { useState, useCallback } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { reEvaluateEvaluation } from "@/services/iaService";
 import { useNotify } from "@/hooks/useNotify";
+import { QUERY_KEYS } from "@/lib/api/constants";
 
 export default function useReEvaluateEvaluation() {
+    const qc = useQueryClient();
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<Error | null>(null);
     const { notifySuccess, notifyError } = useNotify();
@@ -10,11 +14,24 @@ export default function useReEvaluateEvaluation() {
     const reEvaluate = useCallback(async (evaluationId: string) => {
         setLoading(true);
         setError(null);
+
         try {
             await reEvaluateEvaluation(evaluationId);
+
+            // ★ Actualiza solo la fecha en cache ★
+            qc.setQueryData<any[]>(QUERY_KEYS.EVALUATIONS, old =>
+                old
+                    ? old.map(ev =>
+                        ev.id === evaluationId
+                            ? { ...ev, updatedAt: new Date().toISOString() }
+                            : ev
+                    )
+                    : []
+            );
+
             notifySuccess({
-                title: "Re-evaluado",
-                description: "La evaluación se ha re-evaluado correctamente",
+                title: "Re-evaluación completada",
+                description: "Se ha actualizado la fecha correctamente.",
                 closeButton: true,
                 icon: "🔄",
             });
@@ -31,7 +48,7 @@ export default function useReEvaluateEvaluation() {
         } finally {
             setLoading(false);
         }
-    }, [notifySuccess, notifyError]);
+    }, [notifySuccess, notifyError, qc]);
 
     return { reEvaluate, loading, error };
 }

@@ -29,6 +29,7 @@ export default function EvaluationHistoryScreen() {
       files.map((f: any) => ({
         id: f.id,
         id_fundanet: f.id_fundanet,
+        version: f.version,
         correo_estudiante: f.correo_estudiante,
         file: f.file.split('uploads/')[1],
         tipo_error: f.tipo_error,
@@ -143,6 +144,12 @@ export default function EvaluationHistoryScreen() {
       id: 'id_fundanet',
       accessorKey: 'id_fundanet',
       headerLabel: 'ID FundaNet',
+      searchable: true,
+    },
+    {
+      id: 'version',
+      accessorKey: 'version',
+      headerLabel: 'Version',
       searchable: true,
     },
     {
