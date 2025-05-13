@@ -1,37 +1,36 @@
-import { useState, useCallback } from "react";
-import { useNotify } from "@/hooks/useNotify";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { createCase } from "@/services/caseService";
+import { QUERY_KEYS } from "@/lib/api/constants";
+import { useNotify } from "@/hooks/useNotify";
 
-const useCreateCaseHook = () => {
-  const [loading, setLoading] = useState(false);
+export default function useCreateCaseHook() {
+  const qc = useQueryClient();
   const { notifySuccess, notifyError } = useNotify();
 
-  const createCaseHandler = useCallback(
-    async (caseData: Record<string, any>) => {
-      setLoading(true);
-      try {
-        await createCase(caseData);
-        notifySuccess({
-          title: "Caso guardado",
-          description: "El caso ha sido guardado en el historial correctamente.",
-          closeButton: true,
-          icon: "✅",
-        });
-      } catch (error: any) {
-        console.error("Error al crear el caso:", error);
-        notifyError({
-          title: "Error guardando el caso",
-          description: error?.message || "Ocurrió un error al guardar el caso.",
-          closeButton: true,
-        });
-      } finally {
-        setLoading(false);
-      }
+  const mutation = useMutation<any, Error, Record<string, any>>({
+    mutationFn: createCase,
+    onSuccess: newCase => {
+      qc.setQueryData<any[]>(QUERY_KEYS.CASES, old =>
+        old ? [...old, newCase] : [newCase]
+      );
+
+      notifySuccess({
+        title: "Caso guardado",
+        description: "Se añadió al historial correctamente.",
+        icon: "✅",
+        closeButton: true,
+      });
     },
-    [notifySuccess, notifyError]
-  );
+    onError: err =>
+      notifyError({
+        title: "Error guardando caso",
+        description: err.message,
+        closeButton: true,
+      }),
+  });
 
-  return { createCase: createCaseHandler, loading };
-};
-
-export default useCreateCaseHook;
+  return {
+    createCase: (data: Record<string, any>) => mutation.mutateAsync(data),
+    loading: mutation.isPending,
+  };
+}

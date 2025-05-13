@@ -186,7 +186,18 @@ export default function EvaluationHistoryScreen() {
       type: 'actions',
       actionItems: [
         { label: 'Editar', onClick: handleEdit },
-        { label: 'Ver más', onClick: handleVerMas },
+        {
+          // Si NO está EVALUADO o EN CURSO → "Evaluar"
+          label: 'Evaluar',
+          onClick: handleVerMas,
+          visible: row => !['EVALUADO', 'EN CURSO'].includes(row.estado),
+        },
+        {
+          // Si está EVALUADO o EN CURSO → "Ver detalles"
+          label: 'Ver detalles',
+          onClick: handleVerMas,
+          visible: row => ['EVALUADO', 'EN CURSO'].includes(row.estado),
+        },
         {
           label: 'Reevaluar',
           onClick: handleReEvaluate,

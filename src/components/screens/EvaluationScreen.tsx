@@ -36,7 +36,7 @@ export default function EvaluationScreen() {
 
   // ─── tabla derivada directamente de norms ───────────────────────────────
   const tableData = useMemo(
-    () => norms.map(({ createdAt, updatedAt, ...rest }) => rest),
+    () => norms.map(({ createdAt, updatedAt, evaluationId, ...rest }) => rest),
     [norms]
   )
 

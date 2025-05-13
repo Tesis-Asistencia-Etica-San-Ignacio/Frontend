@@ -56,4 +56,5 @@ export interface ColumnConfig {
     actionItems?: ActionItem[]
     searchable?: boolean
     badgeVariant?: string
+    hidden?: boolean
 }

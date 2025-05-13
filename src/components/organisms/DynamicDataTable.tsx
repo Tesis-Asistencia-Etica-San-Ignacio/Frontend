@@ -16,7 +16,6 @@ interface DynamicDataTableProps<TData extends object> {
     onRowClick?: (rowData: TData) => void
     selectedRowId?: string
     loading?: boolean
-    hideColumns?: string[];
 }
 /** 
  * Filtro local: filtra el valor de la celda según el filtro
@@ -81,7 +80,6 @@ export function DynamicDataTable<TData extends object>({
     onRowClick,
     selectedRowId,
     loading = false,
-    hideColumns = [],  
 }: DynamicDataTableProps<TData>) {
     // 0) Cargar/guardar visibilidad
     const [columnVisibility] = React.useState<VisibilityState>(() => {
@@ -97,16 +95,19 @@ export function DynamicDataTable<TData extends object>({
 
     // 1. Separa la columna "actions" (para que siempre quede al final)
     const actionsColumn = columnsConfig.find(c => c.type === "actions")
-    const nonActionsCols = columnsConfig.filter(c => c.type !== "actions")
+    const nonActionsCols = columnsConfig.filter(c => c.type !== "actions" && !c.hidden)
 
     // 2. "Adivina" columnas no definidas en la config
     const dataKeys = Object.keys(data[0] || {})
     const defined = nonActionsCols.map(c => c.accessorKey).filter(Boolean)
     // const missing = dataKeys.filter(k => !defined.includes(k))
     // FILTRAR las que NO quieras nunca ver:
-   const missing = dataKeys.filter(
-    k => !defined.includes(k) && !hideColumns.includes(k)
-  );
+    const missing = dataKeys.filter(
+        k =>
+            !defined.includes(k) &&
+            // descartamos las que en config existan y tengan hidden
+            !columnsConfig.some(c => c.id === k && c.hidden)
+    )
     // 3. Construye ColumnDefs para las columnas definidas
     const mainDefs: ColumnDef<TData>[] = nonActionsCols.map(col => {
         if (col.type === "selection") {

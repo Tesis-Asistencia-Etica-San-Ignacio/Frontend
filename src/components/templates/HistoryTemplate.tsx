@@ -25,8 +25,8 @@ interface HistoryTemplateProps {
   onConfirmValueChange: (val: string) => void;
 
   /* --------- Edición --------- */
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
+  open?: boolean;
+  onOpenChange?: (open: boolean) => void;
   modalFormFields?: FormField[][];
   onModalSubmit?: (data: any) => Promise<void> | void;
   DataSelectedRow?: { [key: string]: any };
@@ -34,8 +34,6 @@ interface HistoryTemplateProps {
   /*-----PDF-----*/
   extraModal?: ReactNode;
 
-  /*-----HideColumns*/
-  hideColumns?: string[];
 }
 
 export default function HistoryTemplate({
@@ -62,9 +60,6 @@ export default function HistoryTemplate({
   /*-----PDF-----*/
   extraModal,
 
-  /*-----HideColumns*/
-  hideColumns,
-
   DataSelectedRow,
 }: Readonly<HistoryTemplateProps>) {
   return (
@@ -85,7 +80,6 @@ export default function HistoryTemplate({
             selectedRowId={selectedRowId}
             onRowClick={onRowClick}
             loading={tableLoading}
-            hideColumns={hideColumns}
           />
         </div>
       </div>
@@ -130,8 +124,8 @@ export default function HistoryTemplate({
       {/* --------- Edición --------- */}
       {modalFormFields && onModalSubmit && (
         <ModalForm
-          open={open}
-          onOpenChange={onOpenChange}
+          open={open ?? false}
+          onOpenChange={onOpenChange ?? (() => {})}
           title={{ text: "Editar evaluación" + " - " + DataSelectedRow?.id_fundanet, align: "left" }}
           formDataConfig={modalFormFields}
           onSubmit={onModalSubmit}
