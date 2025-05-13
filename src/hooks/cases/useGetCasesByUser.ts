@@ -7,7 +7,7 @@ export default function useGetCasesByUserHook() {
   const { notifyError } = useNotify();
 
   const {
-    data = [],          // ← lista de cases
+    data = [],
     isLoading,
     isError,
     error,

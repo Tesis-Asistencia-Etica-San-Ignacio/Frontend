@@ -6,11 +6,11 @@ export const sidebarData: SidebarData = {
     {
       title: "Menú",
       items: [
-       /*  { title: "Inicio", url: "/inicio", icon: LayoutGrid, roles: ["EVALUADOR"] }, */
+        /*  { title: "Inicio", url: "/inicio", icon: LayoutGrid, roles: ["EVALUADOR"] }, */
+        { title: "Crear nuevo caso", url: "/crear-nuevo-caso", icon: FilePlus2, roles: ["INVESTIGADOR"] },
         { title: "Subir archivos", url: "/subir-archivos", icon: Upload, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos-evaluados", icon: FileStack, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos", icon: FileStack, roles: ["INVESTIGADOR"] },
-        { title: "Crear nuevo caso", url: "/crear-nuevo-caso", icon: FilePlus2, roles: ["INVESTIGADOR"] },
         { title: "Estadísticas", url: "/estadisticas", icon: ChartLine, roles: ["EVALUADOR"] }
       ]
     },
