@@ -2,13 +2,79 @@
 - .gitignore
 - bun.lock
 - components.json
+- dist
+  - assets
+    - 401-12ty-2lN.js
+    - 404-Dr-YWjb7.js
+    - AccountScreen-Bjzd55Bw.js
+    - alert-BCk2sHh1.js
+    - AppearanceScreen-ns4ffZvd.js
+    - AuthScreen-CU-m0uxn.js
+    - badge-DBDq4qPH.js
+    - bg-Medicina-wwvTN9Yl.jpg
+    - button-C0u_Isq-.js
+    - calendar-B5R4ybFx.js
+    - card-PDj5reHS.js
+    - CaseHistoryScreen-D5tKtpBh.js
+    - caseService-CHB5LIR6.js
+    - chevron-right-mSbA8XUD.js
+    - circle-BGRYM2r6.js
+    - circle-check-big-DXJI8rim.js
+    - collapsible-BWPrLfyy.js
+    - Combination-CCq_kz5a.js
+    - ContentSection-CqE42Q_7.js
+    - CreateCaseScreen-B2MQnDvC.js
+    - DashboardScreen-Cd1Bk1W8.js
+    - dropdown-menu-DscfyUCZ.js
+    - DropFilesScreen-BIUxz1gv.js
+    - Dynamic-form-DCTpNJGM.js
+    - DynamicDataTable-BcI6D8lT.js
+    - EvaluationHistoryScreen-CMg2XK4U.js
+    - EvaluationScreen-BS9lnzeN.js
+    - evaluationService-CXNWTId3.js
+    - EvaluatorRoutes-QgRqhS-l.js
+    - form--_BdDlLe.js
+    - GenericErrorMolecule-DVMoM_Hf.js
+    - HistoryTemplate-4Dsiyr4r.js
+    - IAScreen-BetuzjGs.js
+    - iaService-DdsghpuF.js
+    - index-BlGcZKLg.js
+    - index-BMOX7xTu.js
+    - index-BmzzVV1G.js
+    - index-Bz8uM8XD.js
+    - index-Bz9juTye.css
+    - index-ChkCbq7M.js
+    - index-FUXhwIkY.js
+    - index-W-tepAB5.js
+    - input-DnNV4eTm.js
+    - LandingTemplate-BTx2zkVC.js
+    - LayoutScreen-BDiqizk2.js
+    - LogoHUSI-Dz8d9qU_.png
+    - Logo_HUSI_Blanco-DPPkJCMZ.png
+    - Logo_HUSI_Blanco-HOCDiMF5.js
+    - mail-Blhj1SKK.js
+    - ModalForm-C_aMGily.js
+    - PdfRenderer-CyYTDJBM.css
+    - PdfRenderer-Pvp4qjVT.js
+    - pdfService-DoSGkfsn.js
+    - ponti-lZmpB4eZ.jpg
+    - popover-BiwbIzEy.js
+    - requestsApi-LRx4eVcJ.js
+    - ResearcherRoutes-DWaw2_RW.js
+    - scroll-area-HvLyXfhe.js
+    - select-CzA3dB-T.js
+    - separator-BgVWn6CT.js
+    - SettingsScreen-DgzPAnC-.js
+    - sidebar-data-DVsHlaZN.js
+    - upload-KKGbvpLF.js
+    - useUpdateUser-L7Rsird_.js
+  - index.html
 - Dockerfile
 - eslint.config.js
 - index.html
 - nginx.conf
 - package.json
-- public
-  - vite.svg
+- project_structure.text
 - README.md
 - src
   - App.tsx
@@ -34,7 +100,7 @@
         - text-animate.tsx
       - Main.tsx
       - README.md
-      - Spinner.tsx
+      - spinner.tsx
       - ui
         - alert.tsx
         - avatar.tsx
@@ -101,8 +167,8 @@
       - Text-section.tsx
       - ThemeApp.tsx
       - top-navigation
-        - Main-nav.tsx
-        - User-nav.tsx
+        - main-nav.tsx
+        - user-nav.tsx
     - organisms
       - AppSideBar.tsx
       - Auth-form.tsx
@@ -157,13 +223,12 @@
     - AuthContext.tsx
     - ThemeContext.tsx
   - data
-    - models.json
     - sidebar-data.ts
   - hooks
     - cases
+      - useCreateCases.ts
       - useDeleteCases.ts
       - useGetCasesByUser.ts
-      - useUpdateCases.ts
     - ethicalRules
       - useGetEthicalRulesByEvaluationIdHook.ts
       - useUpdateEthicalRulesHook.ts
@@ -174,14 +239,13 @@
       - useUpdateEvaluation.ts
     - ia
       - useGenerateAnalisisHook.ts
-      - useGetModels.ts
+      - useIaProviders.ts
       - useReEvaluateEvaluation.ts
       - useUpdateApiKey.ts
-      - useUpdateModel.ts
-    - index.ts
     - mails
       - useSendEmail.ts
     - pdf
+      - useFetchCasesPdf.ts
       - useGeneratePdfByEvaluationId.ts
       - useGeneratePdfByInvestigator.ts
     - prompts

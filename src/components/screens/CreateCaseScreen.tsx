@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateCaseTemplate } from "@/components/templates/CreateCaseTemplate";
-import { DynamicFormHandles, DynamicForm } from "@/components/molecules/Dynamic-form";
+import { DynamicFormHandles } from "@/components/molecules/Dynamic-form";
 import { FormSection } from "@/components/organisms/FormSection";
 import ModalForm from "@/components/organisms/dialogs/ModalForm";
 import PdfRenderer from "@/components/organisms/PdfRenderer";
@@ -51,8 +51,7 @@ const LS_KEY = "caseDraft";
     const authRef     = useRef<DynamicFormHandles>(null!);
   
     /* -------- State de secciones y ortografía -------- */
-    const [formValues, setFormValues] = useState<Record<string,string>>(stored);
-    const [fecha, setFecha]           = useState<Date>();
+    const [fecha]           = useState<Date>();
     const [openSections,setOpen]      = useState({ intro:true, info:true, auth:true, head: true });
     const [spellingWarnings,setWarn]  = useState<Record<string,LTMatch[]>>({});
     // arriba, junto a los demás estados
@@ -103,18 +102,6 @@ const LS_KEY = "caseDraft";
     }
   
 
-    /* ─────────── Campos infogeneral ────────── */
-    const buildInfoFields = (): FormField[] => {
-      const fields: FormField[] = [];
-      let idx = 1;
-      const add = (fld: Omit<FormField, "label"> & { baseLabel: string }) => {
-        fields.push({
-          ...fld,
-          label: `${idx++}. ${fld.baseLabel}`,
-        });
-      };
-      return fields;
-    }
     
     /* ─────────── Submit (genera PDF) ────────── */
     const handleSubmit = async () => {

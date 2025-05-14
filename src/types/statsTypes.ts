@@ -9,7 +9,7 @@ export type PieSlice = { label: string; value: number }
 export interface CardMetric {
     title: string
     value: number
-    previousValue: number
+    previousValue: number 
 }
 export interface CardStats {
     title: string
@@ -23,7 +23,8 @@ export interface EvaluationStatsDto {
         total: CardMetric
         aprobados: CardMetric
         rechazados: CardMetric
-        tasaDevolucion: CardMetric   // usamos el mismo shape
+        tasaDevolucion: CardMetric
+        tiempoPromedio: CardMetric  // usamos el mismo shape
     }
     lineSeries: LinePoint[]
     pieSeries: PieSlice[]

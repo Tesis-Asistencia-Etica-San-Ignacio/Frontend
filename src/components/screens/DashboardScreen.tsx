@@ -33,7 +33,7 @@ export default function DashboardScreen() {
                 value: cards.tasaDevolucion.value * 100,
                 previousValue: cards.tasaDevolucion.previousValue * 100,
             },
-            cards.tasaDevolucion,
+        {value: cards.tiempoPromedio.value, previousValue: 0, title: 'Tiempo promedio de evaluación'},
         ]
 
         const icons = [
