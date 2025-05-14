@@ -46,7 +46,6 @@ interface IATemplateProps {
 
 export default function IATemplate({
     initialProvider,
-    providerTitle,
     providerDesc,
     providerFields,
     providerFormRef,
