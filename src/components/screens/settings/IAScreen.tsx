@@ -22,14 +22,13 @@ export default function IAScreen() {
 
     /* ─── proveedores / modelos ─────────────────────────────────────── */
     const { data: providers = [], isLoading: loadingProviders } = useIaProviders()
-    const firstProvider = providers[0]?.provider ?? ''
-    const initialProvider = user?.provider || firstProvider
-    const [providerSelected, setProviderSelected] = useState(initialProvider)
+    const [providerSelected, setProviderSelected] = useState<string>(user?.provider ?? '')
 
     useEffect(() => {
-        if (user?.provider) setProviderSelected(user.provider)
-        else if (firstProvider) setProviderSelected(firstProvider)
-    }, [firstProvider, user?.provider])
+        if (user?.provider) {
+            setProviderSelected(user.provider)
+        }
+    }, [user?.provider])
 
     const providerOptions = providers.map(p => ({ value: p.provider, label: p.provider }))
     const modelsOfProvider = useMemo(
@@ -79,7 +78,7 @@ export default function IAScreen() {
 
     /* ─── handlers ───────────────────────────────────────────────────── */
     const { updateApiKey } = useUpdateApiKey()
-    const {  updateUser } = useUpdateUser()
+    const { updateUser } = useUpdateUser()
 
     const handleConfirmProvider = async (prov: string) => {
         await updateUser({ provider: prov, modelo: "" })
