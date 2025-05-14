@@ -1,24 +1,17 @@
-import React from "react"
 import {
   Card,
   CardContent,
   CardHeader,
   CardTitle,
 } from "../atoms/ui/card"
+import { StatsCardProps } from "@/types/statsTypes"
 
-export interface StatsCardProps {
-  title: string
-  value: string | number
-  description?: string
-  icon?: React.ReactNode
-  loading?: boolean
-}
 
-export function StatsCard({ title, value, description, icon,  loading, }: StatsCardProps) {
+
+export function StatsCard({ title, value, description, icon, loading, }: StatsCardProps) {
   return (
-    <div className="relative">
-
-      <Card>
+    <div className="relative w-full h-full min-h-[150px]">
+      <Card className="h-full">
         <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
           <CardTitle className="text-sm font-medium">{title}</CardTitle>
           {icon && <div className="flex items-center justify-center">{icon}</div>}

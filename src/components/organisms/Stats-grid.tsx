@@ -1,4 +1,5 @@
-import { StatsCard, StatsCardProps } from "@/components/molecules/Stats-card"
+import { StatsCard,  } from "@/components/molecules/Stats-card"
+import { StatsCardProps } from "@/types/statsTypes"
 
 export interface StatsGridProps {
   cards: StatsCardProps[]

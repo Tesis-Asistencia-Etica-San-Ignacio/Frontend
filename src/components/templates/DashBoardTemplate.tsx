@@ -3,8 +3,8 @@ import { DatePickerWithRange } from "../molecules/calendars/DateRangePicker"
 import { Card, CardContent, CardHeader, CardTitle } from "../atoms/ui/card"
 import { LineChartComponent } from "../molecules/graphics/Line-Chart"
 import { PieChartComponent } from "../molecules/graphics/Pie-Chart"
-import type { StatsCardProps } from "@/components/molecules/Stats-card"
-import type { LinePoint, PieSlice } from "@/types/statsTypes"
+
+import type { LinePoint, PieSlice, StatsCardProps } from "@/types/statsTypes"
 
 export interface DashboardTemplateProps {
     readonly cardsData: StatsCardProps[]

@@ -18,7 +18,7 @@ export function Table({ className, ...props }: React.ComponentProps<"table">) {
       <TooltipProvider>
         <table
           data-slot="table"
-          className={cn("w-full caption-bottom text-sm", className)}
+          className={cn("w-full caption-bottom text-sm ", className)}
           {...props}
         />
       </TooltipProvider>
@@ -64,7 +64,7 @@ export function TableRow({ className, ...props }: React.ComponentProps<"tr">) {
     <tr
       data-slot="table-row"
       className={cn(
-        "hover:bg-muted/50 data-[state=selected]:bg-selected-item-table border-b transition-colors",
+        "hover:bg-muted/50 data-[state=selected]:bg-selected-item-table border-b transition-colors text-center ",
         className
       )}
       {...props}
@@ -92,12 +92,12 @@ export function TableCell({
   colSpan,
   ...props
 }: React.ComponentProps<"td"> & { colSpan?: number }) {
-  
+
   if (colSpan) {
     return (
       <td
         colSpan={colSpan}
-        className={cn("p-2 align-middle text-center", className)}
+        className={cn("p-2 align-middle text-center ", className)}
         {...props}
       >
         {children}

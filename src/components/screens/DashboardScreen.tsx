@@ -1,68 +1,84 @@
-import { useMemo, useState } from 'react'
-import { formatISO, subMonths, startOfDay } from 'date-fns'
-import { ArrowUpRight, CheckCircle, XCircle, CalendarSync } from 'lucide-react'
+import { useMemo, useState } from 'react';
+import { formatISO, subMonths, startOfDay } from 'date-fns';
+import {
+    ArrowUpRight,
+    CheckCircle,
+    XCircle,
+    CalendarSync,
+    Clock,
+} from 'lucide-react';
 
-import DashboardTemplate from '@/components/templates/DashBoardTemplate'
-import { useGetEvaluationStats } from '@/hooks/stats/useGetEvaluationStats'
-import type { CardMetric, LinePoint, PieSlice } from '@/types/statsTypes'
-import type { StatsCardProps } from '@/components/molecules/Stats-card'
+import DashboardTemplate from '@/components/templates/DashBoardTemplate';
+import { useGetEvaluationStats } from '@/hooks/stats/useGetEvaluationStats';
+import {
+    type LinePoint,
+    type PieSlice,
+    type EvaluationStatsDto,
+} from '@/types/statsTypes';
+import type { ReactNode } from 'react';
+
+type MetricKey = keyof EvaluationStatsDto['cards'];
+interface MetricConfig {
+    key: MetricKey;
+    title: string;
+    icon: ReactNode;
+    overrideDesc?: string;
+}
+
+const METRICS: MetricConfig[] = [
+    { key: 'total', title: 'Total de consentimientos evaluados', icon: <CalendarSync className="h-4 w-4 text-muted-foreground" /> },
+    { key: 'aprobados', title: 'Consentimientos aprobados', icon: <CheckCircle className="h-4 w-4 text-green-500" /> },
+    { key: 'rechazados', title: 'Consentimientos rechazados', icon: <XCircle className="h-4 w-4 text-red-500" /> },
+    { key: 'tasaDevolucion', title: 'Tasa de devolución', icon: <ArrowUpRight className="h-4 w-4 text-blue-500" /> },
+    { key: 'tiempoPromedio', title: 'Tiempo promedio de evaluación', icon: <Clock className="h-4 w-4 text-muted-foreground" />, overrideDesc: 'Este valor es general' },
+];
+
+const formatDelta = (now: number, prev: number) => {
+    const diff = now - prev;
+    const pct = prev ? (diff / prev) * 100 : 0;
+    const sign = diff >= 0 ? '+' : '';
+    return `${sign}${pct.toFixed(1)}% vs mes anterior`;
+};
 
 export default function DashboardScreen() {
-    // rango inicial: último mes
     const [range, setRange] = useState({
         from: startOfDay(subMonths(new Date(), 1)),
         to: startOfDay(new Date()),
-    })
+    });
 
     const { data, isLoading } = useGetEvaluationStats(
         formatISO(range.from, { representation: 'date' }),
-        formatISO(range.to, { representation: 'date' })
-    )
+        formatISO(range.to, { representation: 'date' }),
+    );
 
-    // --- Transformaciones derivadas -------------------------------
-    const cardsData: StatsCardProps[] = useMemo(() => {
-        if (!data) return []
+    const cardsData = useMemo(() => {
+        if (!data) return [];
+        return METRICS.map(({ key, title, icon, overrideDesc }) => {
+            let { value, previousValue } = data.cards[key];
 
-        const { cards } = data
-        const rawCards: CardMetric[] = [
-            {...cards.total, title: 'Total de consentiemientos evaluados'},
-            {...cards.aprobados, title: 'Concentiemientos aprobados'},
-            {...cards.rechazados, title: 'Concentiemientos rechazados'},
-            {
-                title: 'Tasa de devolución',
-                value: cards.tasaDevolucion.value * 100,
-                previousValue: cards.tasaDevolucion.previousValue * 100,
-            },
-        {value: cards.tiempoPromedio.value, previousValue: 0, title: 'Tiempo promedio de evaluación'},
-        ]
+            // ajusta porcentaje
+            if (key === 'tasaDevolucion') {
+                value *= 100;
+                previousValue = previousValue != null ? previousValue * 100 : 0;
+            }
 
-        const icons = [
-            <CalendarSync className="h-4 w-4 text-muted-foreground" />,
-            <CheckCircle className="h-4 w-4 text-green-500" />,
-            <XCircle className="h-4 w-4 text-red-500" />,
-            <ArrowUpRight className="h-4 w-4 text-blue-500" />,
-        ] as const
+            const displayValue = key === 'tasaDevolucion'
+                ? `${value.toFixed(1)} %`
+                : value.toLocaleString();
 
-        const formatDelta = (now: number, prev: number) => {
-            const diff = now - prev
-            const pct = prev ? (diff / prev) * 100 : 0
-            const sign = diff >= 0 ? '+' : ''
-            return `${sign}${pct.toFixed(1)}% vs mes anterior`
-        }
+            const description = overrideDesc
+                ?? (previousValue != null
+                    ? formatDelta(value, previousValue)
+                    : undefined);
 
-        return rawCards.map((c, i) => ({
-            title: c.title,
-            value:
-                i === 3 ? `${c.value.toFixed(1)} %` : c.value.toLocaleString(),
-            description: formatDelta(c.value, c.previousValue),
-            icon: icons[i],
-        }))
-    }, [data])
+            return { title, value: displayValue, previousValue, description, icon, loading: isLoading };
+        });
+    }, [data, isLoading]);
 
-    const lineSeries: LinePoint[] = data?.lineSeries ?? []
-    const pieSeries: PieSlice[] = data?.pieSeries ?? []
+    const lineSeries: LinePoint[] = data?.lineSeries ?? [];
+    const pieSeries: PieSlice[] = data?.pieSeries ?? [];
+    console.log('lineSeries', lineSeries);
 
-    // --- Render -----------------------------------------------------
     return (
         <DashboardTemplate
             cardsData={cardsData}
@@ -72,5 +88,5 @@ export default function DashboardScreen() {
             onRangeChange={setRange}
             loading={isLoading}
         />
-    )
+    );
 }
