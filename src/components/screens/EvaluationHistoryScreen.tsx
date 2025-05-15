@@ -7,8 +7,11 @@ import useUpdateEvaluationHook from '@/hooks/evaluation/useUpdateEvaluation';
 import type { ColumnConfig } from '@/types/table';
 import type { FormField } from '@/types/formTypes';
 import { CheckCircle, Circle } from 'lucide-react';
+import { useAuthContext } from "@/context/AuthContext"
 
 export default function EvaluationHistoryScreen() {
+  const { user } = useAuthContext()
+  const iaReady = !!(user?.provider && user?.modelo)
   const navigate = useNavigate();
 
   // ─── React Query hooks ─────────────────────────────────────────────
@@ -191,6 +194,8 @@ export default function EvaluationHistoryScreen() {
           label: 'Evaluar',
           onClick: handleVerMas,
           visible: row => !['EVALUADO', 'EN CURSO'].includes(row.estado),
+          disabled: !iaReady,
+          tooltip: "Configura proveedor y modelo en Ajustes → IA"
         },
         {
           // Si está EVALUADO o EN CURSO → "Ver detalles"
@@ -202,6 +207,8 @@ export default function EvaluationHistoryScreen() {
           label: 'Reevaluar',
           onClick: handleReEvaluate,
           visible: r => ['EVALUADO', 'EN CURSO'].includes(r.estado),
+          disabled: !iaReady,
+          tooltip: "Configura proveedor y modelo en Ajustes → IA"
         },
         { label: 'Eliminar', onClick: handleDelete },
       ],

@@ -15,6 +15,11 @@ import {
   DropdownMenuTrigger,
   DropdownMenuShortcut,
 } from "@/components/atoms/ui/dropdown-menu"
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+} from "@/components/atoms/ui/tooltip"
 
 import { ActionItem } from "@/types/table"
 
@@ -99,20 +104,38 @@ export function DataTableRowActions<TData>({
             )
           }
           // Item normal (sin subMenu)
-          return (
+          const isDisabled =
+            typeof action.disabled === "function"
+              ? action.disabled(rowData)
+              : !!action.disabled
+
+          const item = (
             <DropdownMenuItem
               key={idx}
-              onClick={() => {
-                if (action.onClick) {
-                  action.onClick(rowData)
+              onClick={e => {
+                if (isDisabled) {
+                  e.preventDefault()
+                  e.stopPropagation()
+                  return
                 }
+                action.onClick?.(rowData)
               }}
+              className={isDisabled ? "opacity-50 cursor-not-allowed" : ""}
             >
               {action.label}
               {action.shortcut && (
                 <DropdownMenuShortcut>{action.shortcut}</DropdownMenuShortcut>
               )}
             </DropdownMenuItem>
+          )
+
+          if (!isDisabled || !action.tooltip) return item
+
+          return (
+            <Tooltip key={idx}>
+              <TooltipTrigger asChild>{item}</TooltipTrigger>
+              <TooltipContent>{action.tooltip}</TooltipContent>
+            </Tooltip>
           )
         })}
       </DropdownMenuContent>

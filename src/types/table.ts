@@ -25,6 +25,9 @@ export interface ActionItem {
     shortcut?: string
     visible?: (rowData: any) => boolean
     onClick?: (rowData: any) => void
+
+    disabled?: boolean | ((rowData: any) => boolean)
+    tooltip?: string
     subMenu?: {
         radioGroup?: RadioGroupConfig
     }[]

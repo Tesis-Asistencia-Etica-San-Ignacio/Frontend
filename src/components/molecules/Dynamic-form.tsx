@@ -31,7 +31,7 @@ import { LTMatch } from "@/lib/api/languageApi"
 
 import CalendarPicker from "./calendars/DatePicker"
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react"
-import isEqual from "lodash.isequal" 
+import isEqual from "lodash.isequal"
 function baseValidationForType(type: FieldType): z.ZodTypeAny {
     // ① declara schema como “cualquier Zod” (no sólo string)
     let schema: z.ZodTypeAny
@@ -89,7 +89,7 @@ function baseValidationForType(type: FieldType): z.ZodTypeAny {
                     return Number.isNaN(n) ? NaN : n
                 },
                 z.number().min(1, "El número debe ser mayor a 0")
-                .optional()       // permite undefined
+                    .optional()       // permite undefined
             )
 
             schema = preprocessNumber.refine(
@@ -131,10 +131,20 @@ export function buildZodSchemaForField(field: FormField): z.ZodTypeAny {
         }
     }
     if (typeof field.maxLength !== "undefined") {
-        schema = (schema as z.ZodString).max(
-            field.maxLength,
-            `Máximo ${field.maxLength} caracteres`
+        schema = (schema as z.ZodString).max(field.maxLength, `Máximo ${field.maxLength} caracteres`
         )
+    }
+
+    if (field.customValidation) {
+        schema = schema.superRefine((val, ctx) => {
+            const error = field.customValidation!(val);
+            if (error) {
+                ctx.addIssue({
+                    code: z.ZodIssueCode.custom,
+                    message: error,
+                });
+            }
+        });
     }
 
     return schema.default(field.type === "datePicker" ? new Date() : "")
@@ -160,7 +170,7 @@ export interface DynamicFormProps {
     formDataConfig: FormField[] | FormField[][]
     onSubmit?: (data: { [key: string]: any }) => void
     onChange?: (data: { [key: string]: any }) => void
-  
+
     onSpellCheck?: (key: string, text: string) => void
     spellWarnings?: Record<string, LTMatch[]>
     containerClassName?: string
@@ -176,7 +186,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     initialData = {},
 }, ref) => {
     const flatFields = flattenFields(formDataConfig)
-   
+
     const shape: Record<string, z.ZodTypeAny> = {}
     flatFields.forEach((field) => {
         shape[field.key] = buildZodSchemaForField(field).default("")
@@ -203,7 +213,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
         __formInstance: form,
         reset: form.reset,
     }))
-   
+
 
     useEffect(() => {
         const subscription = watch((values) => {
@@ -215,17 +225,17 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
     const prevInit = useRef(initialData);
 
     useEffect(() => {
-      if (!isEqual(prevInit.current, initialData)) {
-        form.reset(initialData);          // sólo si de verdad cambió
-        prevInit.current = initialData;
-      }
+        if (!isEqual(prevInit.current, initialData)) {
+            form.reset(initialData);          // sólo si de verdad cambió
+            prevInit.current = initialData;
+        }
     }, [initialData, form]);
 
 
     const renderField = (field: FormField) => {
         if (field.hidden === true) return null    // se pinta salvo que sea true
 
-        
+
         return (
             <ShadcnFormField
                 key={field.key}

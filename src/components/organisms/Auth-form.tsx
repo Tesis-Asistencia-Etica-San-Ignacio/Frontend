@@ -2,12 +2,7 @@ import React, { useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/atoms/ui/button";
 import { DynamicForm, DynamicFormHandles } from "@/components/molecules/Dynamic-form";
-import {
-    Tabs,
-    TabsContent,
-    TabsList,
-    TabsTrigger,
-} from "@/components/atoms/ui/tabs";
+import { Tabs, TabsContent, TabsList, TabsTrigger, } from "@/components/atoms/ui/tabs";
 import type { FormField } from "@/types/formTypes";
 import { LoginInput, User } from "../../types";
 import { useNotify } from "@/hooks/useNotify";
@@ -99,10 +94,10 @@ export default function AuthForm({
 
             <Tabs defaultValue="login" className="flex flex-col flex-1 min-h-0">
                 <TabsList className="flex items-center justify-center gap-2 rounded-full self-center px-3 py-7">
-                    <TabsTrigger value="login" className="px-4 py-2 text-sm font-medium rounded-full">
+                    <TabsTrigger value="login" className="px-4 py-2 text-sm font-medium rounded-full cursor-pointer">
                         Iniciar Sesión
                     </TabsTrigger>
-                    <TabsTrigger value="registry" className="px-4 py-2 text-sm font-medium rounded-full">
+                    <TabsTrigger value="registry" className="px-4 py-2 text-sm font-medium rounded-full cursor-pointer">
                         Registro
                     </TabsTrigger>
                 </TabsList>

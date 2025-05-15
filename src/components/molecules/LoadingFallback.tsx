@@ -1,5 +1,5 @@
 import React from "react"
- import { Spinner } from "../atoms/Spinner"
+import { Spinner } from "../atoms/spinner"
 
 export const LoadingFallback: React.FC = () => {
     return (
