@@ -4,7 +4,7 @@ import { getEvaluationsByUser } from '@/services/evaluationService';
 import { useNotify } from '@/hooks/useNotify';
 import { QUERY_KEYS, DEFAULT_QUERY_OPTIONS } from '@/lib/api/constants';
 
-const useGetEvaluationsByUserHook = () => {
+export default function useGetEvaluationsByUserHook() {
   const { notifyError } = useNotify();
 
   const {
@@ -32,4 +32,3 @@ const useGetEvaluationsByUserHook = () => {
   return { files: data, isLoading, refetch };
 };
 
-export default useGetEvaluationsByUserHook;

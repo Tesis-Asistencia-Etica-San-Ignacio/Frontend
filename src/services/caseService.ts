@@ -1,12 +1,11 @@
 import { requestsApi } from "@/lib/api/requestsApi";
 import type { FileItem } from "@/types/fileType";
-import { UpdateCaseParams } from "@/types/caseType";
 
 
 export const getCasesByUser = async (): Promise<FileItem[]> => {
   const response = await requestsApi.get("/cases/my");
-  const evaluations = response.data;
-  return evaluations;
+  const cases = response.data;
+  return cases;
 };
 
 export const deleteCase = async (caseId: string): Promise<void> => {
@@ -19,31 +18,10 @@ export const createCase = async (caseData: Record<string, any>): Promise<void> =
   });
 };
 
-
-/*export const uploadFile = async (
-  formData: FormData,
-  onProgress?: (event: AxiosProgressEvent) => void
-): Promise<void> => {
-  await requestsApi.post("/files/upload", formData, {
-    headers: { "Content-Type": "multipart/form-data" },
-    onUploadProgress: onProgress,
-  })
-}*/
 export const getCasePdf = async (filename: string): Promise<Blob> => {
   // llama a tu endpoint que sirve el PDF
   const response = await requestsApi.get(`/files/pdf/${filename}`, {
     responseType: "blob"
   });
   return response.data;
-};
-
-export const updateCase = async (
-    caseId: string,
-  updateData: UpdateCaseParams
-): Promise<void> => {
-  console.log("Updating case with data:", updateData);
-  await requestsApi.patch(`/cases/${caseId}`, updateData, {
-    headers: { "Content-Type": "application/json" },
-  });
-
 };

@@ -20,6 +20,5 @@ export async function sendEmail({
     infoMail: { subject, mensajeAdicional },
     evaluationId,
     modelo
-
   });
 }

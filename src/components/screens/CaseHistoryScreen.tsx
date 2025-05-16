@@ -22,7 +22,7 @@ export default function CaseHistoryScreen() {
   // ───────────────────────────── efectos ───────────────────────────────────
   const tableData = useMemo(
     () =>
-      files.map(f => ({
+      files.map((f: any) => ({
         id: f.id,
         nombre_proyecto: f.nombre_proyecto,
         version: f.version,

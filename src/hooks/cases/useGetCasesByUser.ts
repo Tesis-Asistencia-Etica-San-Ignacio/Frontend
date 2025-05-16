@@ -11,6 +11,7 @@ export default function useGetCasesByUserHook() {
     isLoading,
     isError,
     error,
+    refetch,
   } = useQuery<any[], Error>({
     queryKey: QUERY_KEYS.CASES,
     queryFn: getCasesByUser,
@@ -27,5 +28,5 @@ export default function useGetCasesByUserHook() {
   }
 
   /* NOTA: devuelvo `files` para no tocar tu pantalla   */
-  return { files: data, isLoading };
+  return { files: data, isLoading, refetch, };
 }
