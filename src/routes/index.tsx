@@ -61,7 +61,7 @@ export const AppRoutes = () => {
 
             {/* Rutas para investigadores */}
             <Route element={<ResearcherRoutes />}>
-              <Route path="historial-archivos" element={<CaseHistory />} />
+              <Route path="historial-casos" element={<CaseHistory />} />
               <Route path="crear-nuevo-caso" element={<CreateCaseScreen />} />
             </Route>
           </Route>

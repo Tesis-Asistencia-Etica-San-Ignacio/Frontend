@@ -38,7 +38,7 @@ export const FormSection: React.FC<FormSectionProps> = ({
     <div
       key={sectionKey}
       className={cn(
-        "group rounded-lg transition-all duration-200 ease-in-out border border-border/50",
+        "group rounded-lg transition-all duration-200 ease-in-out border border-border/50 space-y-4",
         open
           ? "bg-gradient-to-br from-background via-muted/50 to-background"
           : "hover:bg-muted/50"

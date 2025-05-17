@@ -2,27 +2,13 @@ import { requestsApi } from "@/lib/api/requestsApi";
 import type { FileItem } from "@/types/fileType";
 
 /**
- * 1) Previsualiza el PDF del investigador.
- *    Devuelve el Blob y el pdfId que usaremos luego.
- */
-
-
-/**
- * 2) Guarda el PDF previamente cacheado.
+ * Guarda el PDF previamente cacheado.
  *    Envía el mismo body + el header X-Pdf-Id.
  */
-export const createCase = async (
-  caseData: Record<string, any>,
-  pdfId: string
-): Promise<void> => {
-  await requestsApi.post(
-    "/cases",
-    caseData,
+export const createCase = async (caseData: Record<string, any>, pdfId: string): Promise<void> => {
+  await requestsApi.post("/cases", caseData,
     {
-      headers: {
-        "Content-Type": "application/json",
-        "X-Pdf-Id": pdfId         // el servidor usa req.get('X-Pdf-Id') para recuperar el buffer :contentReference[oaicite:2]{index=2}
-      },
+      headers: { "Content-Type": "application/json", "X-Pdf-Id": pdfId },
     }
   );
 };
@@ -41,7 +27,6 @@ export const deleteCase = async (caseId: string): Promise<void> => {
 };
 
 export const getCasePdf = async (filename: string): Promise<Blob> => {
-  // llama a tu endpoint que sirve el PDF
   const response = await requestsApi.get(`/files/pdf/${filename}`, {
     responseType: "blob"
   });

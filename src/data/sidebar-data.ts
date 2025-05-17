@@ -10,7 +10,7 @@ export const sidebarData: SidebarData = {
         { title: "Crear nuevo caso", url: "/crear-nuevo-caso", icon: FilePlus2, roles: ["INVESTIGADOR"] },
         { title: "Subir archivos", url: "/subir-archivos", icon: Upload, roles: ["EVALUADOR"] },
         { title: "Historial", url: "/historial-archivos-evaluados", icon: FileStack, roles: ["EVALUADOR"] },
-        { title: "Historial", url: "/historial-archivos", icon: FileStack, roles: ["INVESTIGADOR"] },
+        { title: "Historial", url: "/historial-casos", icon: FileStack, roles: ["INVESTIGADOR"] },
         { title: "Estadísticas", url: "/estadisticas", icon: ChartLine, roles: ["EVALUADOR"] }
       ]
     },

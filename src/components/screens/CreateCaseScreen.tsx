@@ -2,10 +2,8 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { FormProvider, useForm } from "react-hook-form";
 import { CreateCaseTemplate } from "@/components/templates/CreateCaseTemplate";
 import { DynamicFormHandles } from "@/components/molecules/Dynamic-form";
-import { FormSection } from "@/components/organisms/FormSection";
 import ModalForm from "@/components/organisms/dialogs/ModalForm";
 import PdfRenderer from "@/components/organisms/PdfRenderer";
-import { Button } from "@/components/atoms/ui/button";
 
 import type { FormField } from "@/types/formTypes";
 import { FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
@@ -14,6 +12,8 @@ import useCreateCaseHook from "@/hooks/cases/useCreateCases";
 import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi";
 import { Input } from "../atoms/ui/input-form";
 import { pick } from "lodash";
+import { SectionConfig } from "@/types/SectionConfig";
+import { useNavigate } from "react-router-dom";
 
 /* ────────────── constantes para localStorage ────────────── */
 const LS_KEY = "caseDraft";
@@ -23,7 +23,7 @@ export default function CreateCaseScreen() {
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
   const { fetchPdfInvestigator, pdfId, pdfUrl, loading, clearPdf } = useGeneratePdfInvestigator();
   const { createCase } = useCreateCaseHook();
-
+  const navigate = useNavigate();
 
   /* -------- borrador almacenado -------- */
   const stored = useMemo(() => {
@@ -43,6 +43,7 @@ export default function CreateCaseScreen() {
       ...stored,
     },
     mode: "onChange",
+    reValidateMode: "onChange",
   });
 
   /* -------- Refs de DynamicForm -------- */
@@ -53,7 +54,7 @@ export default function CreateCaseScreen() {
 
   /* -------- State de secciones y ortografía -------- */
   const [fecha] = useState<Date>();
-  const [openSections, setOpen] = useState({ intro: true, info: true, auth: true, head: true });
+  const [openSections, setOpen] = useState({ intro: false, info: false, auth: false, head: false });
   const [spellingWarnings, setWarn] = useState<Record<string, LTMatch[]>>({});
   // arriba, junto a los demás estados
   const [formData, setFormData] = useState<Record<string, any> | null>(null);
@@ -140,7 +141,8 @@ export default function CreateCaseScreen() {
     // Aquí pasamos formData **y** pdfId al hook de creación
     await createCase(formData, pdfId);
     // Limpieza
-    /* localStorage.removeItem(LS_KEY); */
+    navigate(`/historial-casos`);
+    localStorage.removeItem(LS_KEY);
     clearPdf();
     setPdfModalOpen(false);
   };
@@ -168,6 +170,7 @@ export default function CreateCaseScreen() {
         { value: "riesgo_minimo", label: "Riesgo mínimo" },
         { value: "riesgo_mayor", label: "Riesgo mayor que el mínimo" },
       ],
+      placeholder: "Seleccione una opción",
       required: true,
     } as FormField);
     fields.push({
@@ -179,6 +182,7 @@ export default function CreateCaseScreen() {
         { value: "menores", label: "Menores de edad" },
         { value: "discapacitados", label: "Adulto mayor con requerimiento de representante legal" },
       ],
+      placeholder: "Seleccione una opción",
       required: true,
     } as FormField);
     fields.push({
@@ -192,6 +196,7 @@ export default function CreateCaseScreen() {
         { value: "intervencion_muestras", label: "Intervención (toma de muestras biológicas)" },
         { value: "intervencion_medica", label: "Intervención (medicamentos, dispositivos...)" },
       ],
+      placeholder: "Seleccione una opción",
       required: true,
     } as FormField);
 
@@ -201,6 +206,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿Por qué se debe realizar este estudio?`,
       placeholder: "Describa brevemente el problema y la pertinencia del estudio",
       required: true,
+
     } as FormField);
     fields.push({
       key: "objetivo",
@@ -563,7 +569,7 @@ export default function CreateCaseScreen() {
       key: "textoAutorizacion",
       type: "custom",
       component: (
-        <div className="text-sm text-gray-700 dark:text-foreground leading-[2] space-y-4 border-t pt-4 mt-4">
+        <div className="text-sm text-gray-700 dark:text-foreground leading-[2]">
           <p>
             He comprendido las explicaciones que en un lenguaje claro y sencillo se me han brindado. El investigador me ha permitido expresar todas mis observaciones y ha aclarado todas las dudas y preguntas que he planteado respecto a los fines, métodos, ventajas, inconvenientes y pronóstico de participar en el estudio. Se me ha proporcionado una copia de este documento.
           </p>
@@ -715,69 +721,73 @@ export default function CreateCaseScreen() {
     () => pick(methods.getValues(), cabeceraFields.map(f => f.key)),
     [watch("version"), watch("codigo"), watch("fecha")]  // keys de la cabecera
   );
-  const cabeceraForm = (
-
-    <FormSection
-      sectionKey="head" title="Cabecera"
-      open={openSections.head} onToggle={() => toggle("head")}
-      formRef={cabeceraRef} fields={cabeceraFields}
-      initialData={cabeceraInitial}
-      onChange={onSectionChange}
-
-
-    />
-  );
 
   const introInitial = useMemo(
     () => pick(methods.getValues(), introduccionFields.map(f => f.key)),
     [watch("nombre_proyecto"), watch("instituciones")]
   );
 
-  const introSection = (
-    <FormSection
-      sectionKey="intro" title="Introducción"
-      open={openSections.intro} onToggle={() => toggle("intro")}
-      formRef={introRef} fields={introduccionFields}
-      initialData={introInitial}
-      onChange={onSectionChange}
-      onSpellCheck={(k, t) => doSpellCheck(k, t)} spellWarnings={spellingWarnings}
-    />
-  );
-
   const infoInitial = useMemo(
     () => pick(methods.getValues(), informacionGeneralFields.map(f => f.key)),
     [methods, informacionGeneralFields.map(f => watch(f.key)).join("|")]
   );
-  const infoSection = (
-    <FormSection
 
-      sectionKey="info" title="Información general"
-      open={openSections.info} onToggle={() => toggle("info")}
-      formRef={infoRef} fields={informacionGeneralFields}
-      dynamicFormKey={informacionGeneralFields.map(f => f.key).join("|")}
-
-      initialData={infoInitial}
-      onChange={onSectionChange}
-      onSpellCheck={(k, t) => doSpellCheck(k, t)} spellWarnings={spellingWarnings}
-    />
-  );
 
   const authInitial = useMemo(
     () => pick(methods.getValues(), autorizacionFields.map(f => f.key)),
     [methods, autorizacionFields.map(f => watch(f.key)).join("|")]
   );
-  const authSection = (
-    <FormSection
-      sectionKey="auth" title="Autorización"
-      open={openSections.auth} onToggle={() => toggle("auth")}
-      formRef={authRef} fields={autorizacionFields}
-      initialData={authInitial}
-      onChange={onSectionChange}
-      onSpellCheck={(k, t) => doSpellCheck(k, t)} spellWarnings={spellingWarnings}
-    />
-  );
 
-  const guardarBtn = <Button type="submit">Previsualizar PDF</Button>;
+
+  const sections: SectionConfig[] = [
+    {
+      sectionKey: "head",
+      title: "Cabecera",
+      fields: cabeceraFields,
+      initialData: cabeceraInitial,
+      open: openSections.head,
+      onToggle: () => toggle("head"),
+      formRef: cabeceraRef,
+      onChange: onSectionChange,
+    },
+    {
+      sectionKey: "intro",
+      title: "Introducción",
+      fields: introduccionFields,
+      initialData: introInitial,
+      open: openSections.intro,
+      onToggle: () => toggle("intro"),
+      formRef: introRef,
+      onChange: onSectionChange,
+      onSpellCheck: (k, t) => doSpellCheck(k, t),
+      spellingWarnings,
+    },
+    {
+      sectionKey: "info",
+      title: "Información general",
+      fields: informacionGeneralFields,
+      initialData: infoInitial,
+      open: openSections.info,
+      onToggle: () => toggle("info"),
+      formRef: infoRef,
+      onChange: onSectionChange,
+      dynamicFormKey: informacionGeneralFields.map(f => f.key).join("|"),
+      onSpellCheck: (k, t) => doSpellCheck(k, t),
+      spellingWarnings,
+    },
+    {
+      sectionKey: "auth",
+      title: "Autorización",
+      fields: autorizacionFields,
+      initialData: authInitial,
+      open: openSections.auth,
+      onToggle: () => toggle("auth"),
+      formRef: authRef,
+      onChange: onSectionChange,
+      onSpellCheck: (k, t) => doSpellCheck(k, t),
+      spellingWarnings,
+    },
+  ];
 
   const modalForm = (
     <ModalForm
@@ -804,6 +814,7 @@ export default function CreateCaseScreen() {
     />
   );
 
+
   const spellingWarningsEl = (
     <>
       {Object.entries(spellingWarnings).map(([k, m]) => m.length > 0 && (
@@ -819,17 +830,10 @@ export default function CreateCaseScreen() {
   return (
     <FormProvider {...methods}>
       <CreateCaseTemplate
-        onFormSubmit={handleSubmit}
-
         headerTitle="Crear nuevo caso"
-        description="Llena cada uno de los campos requeridos del consentimiento informado"
-
-        cabeceraForm={cabeceraForm}
-        introSection={introSection}
-        infoSection={infoSection}
-        authSection={authSection}
-        guardarButton={guardarBtn}
-
+        description="Llena cada uno de los campos requeridos del consentimiento informado "
+        sections={sections}
+        onFormSubmit={handleSubmit}
         modalForm={modalForm}
         spellingWarnings={spellingWarningsEl}
       />

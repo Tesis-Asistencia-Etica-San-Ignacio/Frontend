@@ -52,8 +52,8 @@ export default function AuthScreen() {
     if (user) {
       if (user.type === "EVALUADOR" && location.pathname !== "/estadisticas") {
         navigate("/estadisticas");
-      } else if (user.type === "INVESTIGADOR" && location.pathname !== "/historial-archivos") {
-        navigate("/historial-archivos");
+      } else if (user.type === "INVESTIGADOR" && location.pathname !== "/historial-casos") {
+        navigate("/historial-casos");
       }
     }
   }, [user, location.pathname, navigate]);
