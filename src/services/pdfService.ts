@@ -1,23 +1,35 @@
-import { requestsApi } from '../lib/api/requestsApi';
+import { requestsApi } from "@/lib/api/requestsApi";
+
+export interface PreviewEvaluatorResult {
+  blob: Blob;
+  pdfId: string;
+}
 
 export const generatePdfByEvaluationId = async (
   evaluationId: string
-): Promise<Blob> => {
+): Promise<PreviewEvaluatorResult> => {
   const response = await requestsApi.post(
-    `/pdf/generate`,
+    "/pdf/preview-evaluator",
     { evaluationId },
     { responseType: "blob" }
   );
-  return response.data;
+  const pdfId = response.headers["x-pdf-id"] as string;
+  return { blob: response.data as Blob, pdfId };
 };
 
-export const generatePdfInvestigator = async (
-  data: any
-): Promise<Blob> => {
+
+export const previewInvestigatorPdf = async (
+  caseData: Record<string, any>
+): Promise<{ blob: Blob; pdfId: string }> => {
   const response = await requestsApi.post(
-    `/pdf/generate-investigator`,
-    data,
+    "/pdf/preview-investigator",
+    caseData,
     { responseType: "blob" }
   );
-  return response.data;
+
+  // axios almacena headers en response.headers, case-insensitive :contentReference[oaicite:1]{index=1}
+  const pdfId = response.headers["x-pdf-id"] as string;
+  const blob = response.data as Blob;
+
+  return { blob, pdfId };
 };

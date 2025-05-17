@@ -304,10 +304,22 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                                     );
                                 }
                                 /* input normal */
+
+                                // Si es un password, elegimos current- vs new-password según la key
+                                const autoComplete =
+                                    field.type === "password"
+                                        ? field.key === "newPassword"
+                                            ? "new-password"
+                                            : "current-password"
+                                        : field.type === "email"
+                                            ? "email"
+                                            : undefined;
+
                                 return (
                                     <Input
                                         inputType={field.type}
                                         placeholder={field.placeholder}
+                                        autoComplete={autoComplete}
                                         value={controllerField.value || ""}
                                         onChange={controllerField.onChange}
                                         onBlur={e => onSpellCheck?.(field.key, e.target.value)}

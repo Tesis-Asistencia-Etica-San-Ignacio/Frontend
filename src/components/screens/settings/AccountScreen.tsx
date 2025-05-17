@@ -39,6 +39,7 @@ export default function AccountScreen() {
   ];
 
   const passwordFields: FormField[] = [
+    
     {
       type: "password",
       key: "password",

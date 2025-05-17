@@ -26,7 +26,7 @@ export default function EvaluationScreen() {
     useGetEthicalRulesByEvaluationIdHook(evaluationId)
   const { mutateAsync: sendEmailMutation } = useSendEmail()
   const { updateEthicalNorm } = useUpdateEthicalNormHook(evaluationId)
-  const { pdfUrl, fetchPdf, loading: loadingPdf } = useGeneratePdfByEvaluationId()
+  const { pdfUrl, fetchPdf, pdfId, loading: loadingPdf, clear } = useGeneratePdfByEvaluationId()
 
   const [selectedRow, setSelectedRow] = useState<any>(null)
   const [mailModalOpen, setMailModalOpen] = useState(false)
@@ -78,9 +78,14 @@ export default function EvaluationScreen() {
 
 
   const handleMailModalFormSubmit = async (data: any) => {
-    await sendEmailMutation({ ...data, evaluationId, modelo: user?.modelo })
-    setMailModalOpen(false)
-  }
+    if (!pdfId) {
+      console.error("No hay pdfId para enviar");
+      return;
+    }
+    await sendEmailMutation({ ...data, evaluationId, modelo: user?.modelo, pdfId });
+    clear();
+    setMailModalOpen(false);
+  };
 
   const handleEditSubmit = async (data: any) => {
     if (!selectedRow) return

@@ -6,6 +6,7 @@ export interface SendEmailInput {
   mensajeAdicional?: string;
   evaluationId: string;
   modelo?: string;
+  pdfId: string;
 }
 
 export async function sendEmail({
@@ -14,11 +15,13 @@ export async function sendEmail({
   mensajeAdicional,
   evaluationId,
   modelo,
+  pdfId,
 }: SendEmailInput): Promise<void> {
-  await requestsApi.post("smtp/send-email", {
-    to,
-    infoMail: { subject, mensajeAdicional },
-    evaluationId,
-    modelo
-  });
+  await requestsApi.post(
+    "/smtp/send-email",
+    { to, infoMail: { subject, mensajeAdicional }, evaluationId, modelo },
+    {
+      headers: { "X-Pdf-Id": pdfId },
+    }
+  );
 }

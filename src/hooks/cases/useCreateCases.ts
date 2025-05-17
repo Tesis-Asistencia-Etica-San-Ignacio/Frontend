@@ -7,13 +7,16 @@ export default function useCreateCaseHook() {
   const qc = useQueryClient();
   const { notifySuccess, notifyError } = useNotify();
 
-  const mutation = useMutation<any, Error, Record<string, any>>({
-    mutationFn: createCase,
-    onSuccess: newCase => {
-      qc.setQueryData<any[]>(QUERY_KEYS.CASES, old =>
-        old ? [...old, newCase] : [newCase]
-      );
-
+  const mutation = useMutation<
+    void,
+    Error,
+    { caseData: Record<string, any>; pdfId: string }
+  >({
+    mutationFn: ({ caseData, pdfId }) => createCase(caseData, pdfId),
+    onSuccess: () => {
+      // En lugar de hacer push de undefined, invalidamos para que
+      // se reejecute useGetCasesByUserHook y traiga la lista real.
+      qc.invalidateQueries({ queryKey: QUERY_KEYS.CASES });
       notifySuccess({
         title: "Caso guardado",
         description: "Se añadió al historial correctamente.",
@@ -30,7 +33,7 @@ export default function useCreateCaseHook() {
   });
 
   return {
-    createCase: (data: Record<string, any>) => mutation.mutateAsync(data),
-    loading: mutation.isPending,
+    createCase: (caseData: Record<string, any>, pdfId: string) =>
+      mutation.mutateAsync({ caseData, pdfId }),
   };
 }

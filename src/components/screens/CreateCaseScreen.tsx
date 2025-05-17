@@ -10,9 +10,9 @@ import { Button } from "@/components/atoms/ui/button";
 import type { FormField } from "@/types/formTypes";
 import { FormField as ShadcnFormField, FormControl, FormItem, FormMessage } from "../atoms/ui/form"
 import useGeneratePdfInvestigator from "@/hooks/pdf/useGeneratePdfByInvestigator";
+import useCreateCaseHook from "@/hooks/cases/useCreateCases";
 import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi";
 import { Input } from "../atoms/ui/input-form";
-import useCreateCases from "@/hooks/cases/useCreateCases";
 import { pick } from "lodash";
 
 /* ────────────── constantes para localStorage ────────────── */
@@ -21,8 +21,9 @@ const LS_KEY = "caseDraft";
 export default function CreateCaseScreen() {
   /* -------- Hooks pdf -------- */
   const [pdfModalOpen, setPdfModalOpen] = useState(false);
-  const { fetchPdfInvestigator, pdfUrl, loading, clearPdf } = useGeneratePdfInvestigator();
-  const { createCase } = useCreateCases();
+  const { fetchPdfInvestigator, pdfId, pdfUrl, loading, clearPdf } = useGeneratePdfInvestigator();
+  const { createCase } = useCreateCaseHook();
+
 
   /* -------- borrador almacenado -------- */
   const stored = useMemo(() => {
@@ -89,6 +90,7 @@ export default function CreateCaseScreen() {
   useEffect(() => {
     if (!pdfModalOpen || !formData) return
     fetchPdfInvestigator(formData)
+    console.log("✅ Preview generado, pdfId =", pdfId);
   }, [pdfModalOpen, formData, fetchPdfInvestigator])
 
 
@@ -134,10 +136,12 @@ export default function CreateCaseScreen() {
 
 
   const handleModalSubmit = async () => {
-
     if (!formData) return;
-    await createCase(formData);
-    localStorage.removeItem(LS_KEY);
+    // Aquí pasamos formData **y** pdfId al hook de creación
+    await createCase(formData, pdfId);
+    // Limpieza
+    /* localStorage.removeItem(LS_KEY); */
+    clearPdf();
     setPdfModalOpen(false);
   };
 

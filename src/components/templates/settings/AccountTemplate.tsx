@@ -39,31 +39,54 @@ export default function AccountTemplate({
     const [confirmValue, setConfirmValue] = useState("");
 
     return (
-        <div className="flex flex-col w-full">
+        <div className="flex flex-col w-full space-y-8">
+            {/* ——— Bloque de actualización de cuenta ——— */}
             <ContentSection title={title} desc={desc}>
-                <div className="lg:max-w-xl space-y-4">
-                    <DynamicForm
-                        ref={accountFormRef}
-                        formDataConfig={accountFields}
-                        initialData={accountInitialData}
-                        containerClassName="flex flex-col gap-4"
-                    />
-                    <Button onClick={() => setOpenAccount(true)}>Actualizar Cuenta</Button>
+                <div className="lg:max-w-xl">
+                    <form
+                        id="account-form"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            setOpenAccount(true);
+                        }}
+
+                        className="flex flex-col gap-4"
+                    >
+                        <DynamicForm
+                            ref={accountFormRef}
+                            formDataConfig={accountFields}
+                            initialData={accountInitialData}
+                            containerClassName="flex flex-col gap-4"
+                        />
+                        <Button type="submit">Actualizar Cuenta</Button>
+                    </form>
                 </div>
             </ContentSection>
 
+            {/* ——— Bloque de actualización de contraseña ——— */}
             <ContentSection title="Contraseña" desc="Actualiza tu contraseña.">
-                <div className="lg:max-w-xl space-y-4">
-                    <DynamicForm
-                        ref={passwordFormRef}
-                        formDataConfig={passwordFields}
-                        initialData={passwordInitialData}
-                        containerClassName="flex flex-col gap-4"
-                    />
-                    <Button onClick={() => setOpenPassword(true)}>Actualizar Contraseña</Button>
+                <div className="lg:max-w-xl">
+                    <form
+                        id="password-form"
+                        onSubmit={(e) => {
+                            e.preventDefault();
+                            setOpenPassword(true);
+                        }}
+                        autoComplete="off"
+                        className="flex flex-col gap-4"
+                    >
+                        <DynamicForm
+                            ref={passwordFormRef}
+                            formDataConfig={passwordFields}
+                            initialData={passwordInitialData}
+                            containerClassName="flex flex-col gap-4"
+                        />
+                        <Button type="submit">Actualizar Contraseña</Button>
+                    </form>
                 </div>
             </ContentSection>
 
+            {/* ——— Confirmación para datos de cuenta ——— */}
             <ConfirmDialog
                 open={openAccount}
                 onOpenChange={setOpenAccount}
@@ -73,6 +96,7 @@ export default function AccountTemplate({
                 confirmText="Sí, actualizar"
             />
 
+            {/* ——— Confirmación para cambio de contraseña ——— */}
             <ConfirmDialog
                 open={openPassword}
                 onOpenChange={setOpenPassword}
@@ -80,8 +104,8 @@ export default function AccountTemplate({
                 disabled={confirmValue.trim() !== "ACTUALIZAR"}
                 destructive
                 title={
-                    <span className="text-destructive">
-                        <TriangleAlert size={18} className="inline-block mr-1" />
+                    <span className="text-destructive inline-flex items-center">
+                        <TriangleAlert size={18} className="mr-1" />
                         Actualizar contraseña
                     </span>
                 }
