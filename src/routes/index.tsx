@@ -9,7 +9,6 @@ const Dashboard = lazy(() => import("../components/screens/DashboardScreen"));
 const Dropfiles = lazy(() => import("../components/screens/DropFilesScreen"));
 const EvaluationHistory = lazy(() => import("../components/screens/EvaluationHistoryScreen"));
 const CaseHistory = lazy(() => import("../components/screens/CaseHistoryScreen"));
-const Landing = lazy(() => import("../components/templates/LandingTemplate"));
 const Evaluation = lazy(() => import("../components/screens/EvaluationScreen"));
 const UnauthorizedErrorScreen = lazy(() => import("../components/screens/errors/401"));
 const NotFoundErrorScreen = lazy(() => import("../components/screens/errors/404"));
@@ -52,7 +51,6 @@ export const AppRoutes = () => {
 
             {/* Rutas para evaluadores */}
             <Route element={<EvaluatorRoutes />}>
-              <Route path="inicio" element={<Landing />} />
               <Route path="estadisticas" element={<Dashboard />} />
               <Route path="subir-archivos" element={<Dropfiles />} />
               <Route path="historial-archivos-evaluados" element={<EvaluationHistory />} />
