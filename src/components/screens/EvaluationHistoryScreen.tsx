@@ -15,7 +15,7 @@ export default function EvaluationHistoryScreen() {
   const navigate = useNavigate();
 
   // ─── React Query hooks ─────────────────────────────────────────────
-  const { files, isLoading } = useGetEvaluationsByUserHook();
+  const { files } = useGetEvaluationsByUserHook();
   const { deleteEvaluation } = useDeleteEvaluationHook();
   const { updateEvaluation } = useUpdateEvaluationHook();
 
@@ -221,7 +221,6 @@ export default function EvaluationHistoryScreen() {
       /* Tabla */
       data={tableData}
       columnsConfig={columnsConfig}
-      tableLoading={isLoading}
       onRowClick={handleRowClick}
       selectedRowId={selectedRow?.id}
 

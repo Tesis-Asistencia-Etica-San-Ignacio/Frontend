@@ -178,7 +178,7 @@ export default function EvaluationScreen() {
 
   const columnsConfig: ColumnConfig[] = [
     { id: "id", accessorKey: "id", headerLabel: "ID" },
-    { id: "codeNumber", accessorKey: "codeNumber", headerLabel: "Número de norma" },
+    { id: "codeNumber", accessorKey: "codeNumber", headerLabel: "Número de norma", searchable: true, },
     {
       id: "status",
       accessorKey: "status",
@@ -190,8 +190,8 @@ export default function EvaluationScreen() {
         { value: "NO_APLICA", label: "No aplica", icon: CircleDashed, badgeVariant: "unknown" },
       ],
     },
-    { id: "description", accessorKey: "description", headerLabel: "Descripción" },
-    { id: "justification", accessorKey: "justification", headerLabel: "Justificación" },
+    { id: "description", accessorKey: "description", headerLabel: "Descripción", searchable: true, },
+    { id: "justification", accessorKey: "justification", headerLabel: "Justificación", searchable: true, },
     { id: "cita", accessorKey: "cita", headerLabel: "Cita" },
     {
       id: "actions",
