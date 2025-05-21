@@ -5,50 +5,50 @@ import React, {
     ChangeEvent,
     DragEvent,
     useCallback,
-} from "react"
-import { useNavigate } from "react-router-dom"
-import { Plus } from "lucide-react"
-import { toast } from "sonner"
-import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluation"
-import type { FileWithUrl } from "@/types/fileType"
-import FileRow from "@/components/molecules/FileRowDropFile"
-import { Button } from "@/components/atoms/ui/button"
-import { cn } from "@/lib/utils"
+} from "react";
+import { useNavigate } from "react-router-dom";
+import { toast } from "sonner";
+import useCreateEvaluationHook from "@/hooks/evaluation/useCreateEvaluation";
+import type { FileWithUrl } from "@/types/fileType";
+import FileRow from "@/components/molecules/FileRowDropFile";
+import { Button } from "@/components/atoms/ui/button";
+import { cn } from "@/lib/utils";
+import { Plus } from "lucide-react";
 
-const MAX_FILES = 10
+const MAX_FILES = 10;
 
 type Action =
     | { type: "ADD_FILES"; payload: FileWithUrl[] }
     | { type: "REMOVE_FILE"; payload: number }
     | { type: "UPDATE_PROGRESS"; payload: { index: number; progress: number } }
-    | { type: "CLEAR_FILES" }
+    | { type: "CLEAR_FILES" };
 
-type State = FileWithUrl[]
+type State = FileWithUrl[];
 
 function fileReducer(state: State, action: Action): State {
     switch (action.type) {
         case "ADD_FILES":
             if (state.length + action.payload.length > MAX_FILES) {
-                toast.error(`Máximo ${MAX_FILES} archivos.`, { closeButton: true })
-                return state
+                toast.error(`Máximo ${MAX_FILES} archivos PDF.`, { closeButton: true });
+                return state;
             }
-            return [...state, ...action.payload]
+            return [...state, ...action.payload];
 
         case "REMOVE_FILE":
-            return state.filter((_, i) => i !== action.payload)
+            return state.filter((_, i) => i !== action.payload);
 
         case "UPDATE_PROGRESS":
             return state.map((f, i) =>
                 i === action.payload.index
                     ? { ...f, progress: action.payload.progress }
                     : f
-            )
+            );
 
         case "CLEAR_FILES":
-            return []
+            return [];
 
         default:
-            return state
+            return state;
     }
 }
 
@@ -56,23 +56,20 @@ const FileInput = forwardRef<
     HTMLInputElement,
     Omit<React.InputHTMLAttributes<HTMLInputElement>, "type">
 >(({ className, ...props }, ref) => {
-    const [files, dispatch] = useReducer(fileReducer, [])
-    const [dragActive, setDragActive] = useState(false)
-    const [showProgress, setShowProgress] = useState(false)
-    const { uploadFiles, loading } = useCreateEvaluationHook()
-    const navigate = useNavigate()
+    const [files, dispatch] = useReducer(fileReducer, []);
+    const [dragActive, setDragActive] = useState(false);
+    const [showProgress, setShowProgress] = useState(false);
+    const { uploadFiles, loading } = useCreateEvaluationHook();
+    const navigate = useNavigate();
 
-    // Sólo PDF y Word (DOC/DOCX)
-    const validateFileType = (file: File) =>
-        /\.(pdf|docx|doc)$/i.test(file.name)
-    // Si quieres reactivar imágenes coméntalas abajo:
-    // /\.(jpe?g|png|gif|webp|bmp|svg|pdf)$/i
+    // Solo PDF
+    const validateFileType = (file: File) => /\.pdf$/i.test(file.name);
 
     const handleFiles = (incoming: File[]) => {
         const newFiles = incoming.map(file => {
-            const ok = validateFileType(file)
+            const ok = validateFileType(file);
             if (!ok) {
-                toast.error(`${file.name} no es PDF ni Word.`, { closeButton: true })
+                toast.error(`${file.name} no es PDF.`, { closeButton: true });
             }
             return {
                 file,
@@ -81,46 +78,46 @@ const FileInput = forwardRef<
                 url: URL.createObjectURL(file),
                 error: !ok,
                 progress: 0,
-            }
-        }).filter(f => !f.error) // descartamos los no válidos
-        dispatch({ type: "ADD_FILES", payload: newFiles })
-    }
+            };
+        }).filter(f => !f.error);
+        dispatch({ type: "ADD_FILES", payload: newFiles });
+    };
 
     const handleDragEnter = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault(); e.stopPropagation(); setDragActive(true)
-    }
+        e.preventDefault(); e.stopPropagation(); setDragActive(true);
+    };
     const handleDragOver = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault(); e.stopPropagation(); setDragActive(true)
-    }
+        e.preventDefault(); e.stopPropagation(); setDragActive(true);
+    };
     const handleDragLeave = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault(); e.stopPropagation(); setDragActive(false)
-    }
+        e.preventDefault(); e.stopPropagation(); setDragActive(false);
+    };
     const handleDrop = (e: DragEvent<HTMLDivElement>) => {
-        e.preventDefault(); e.stopPropagation(); setDragActive(false)
-        handleFiles(Array.from(e.dataTransfer.files))
-    }
+        e.preventDefault(); e.stopPropagation(); setDragActive(false);
+        handleFiles(Array.from(e.dataTransfer.files));
+    };
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
-        handleFiles(Array.from(e.target.files || []))
-    }
+        handleFiles(Array.from(e.target.files || []));
+    };
 
     const handleRemoveFile = (idx: number) =>
-        dispatch({ type: "REMOVE_FILE", payload: idx })
+        dispatch({ type: "REMOVE_FILE", payload: idx });
 
     const handleClickContainer = () =>
-        document.getElementById("dropzone-file")?.click()
+        document.getElementById("dropzone-file")?.click();
 
     const handleUploadClick = useCallback(async () => {
-        if (loading || files.length === 0) return
-        setShowProgress(true)
+        if (loading || files.length === 0) return;
+        setShowProgress(true);
         await uploadFiles(files, (i, pct) =>
             dispatch({ type: "UPDATE_PROGRESS", payload: { index: i, progress: pct } })
-        )
-        dispatch({ type: "CLEAR_FILES" })
-        setShowProgress(false)
-        navigate("/historial-archivos-evaluados")
-    }, [files, loading, uploadFiles, navigate])
+        );
+        dispatch({ type: "CLEAR_FILES" });
+        setShowProgress(false);
+        navigate("/historial-archivos-evaluados");
+    }, [files, loading, uploadFiles, navigate]);
 
-    const noFiles = files.length === 0
+    const noFiles = files.length === 0;
 
     return (
         <div className="w-full h-full">
@@ -156,9 +153,10 @@ const FileInput = forwardRef<
                         <p className="mb-2 text-sm text-gray-500">
                             <span className="font-semibold">Click para subir archivos</span> o arrastra y suelta
                         </p>
-                        <p className="text-xs text-gray-500">hasta {MAX_FILES} archivos PDF/Word</p>
+                        <p className="text-xs text-gray-500">hasta {MAX_FILES} archivos PDF</p>
                         <input
                             {...props}
+                            accept=".pdf"
                             ref={ref}
                             multiple
                             onChange={handleChange}
@@ -216,6 +214,7 @@ const FileInput = forwardRef<
                                         <Plus className="w-6 h-6 text-gray-500" />
                                         <input
                                             {...props}
+                                            accept=".pdf"
                                             ref={ref}
                                             multiple
                                             onChange={handleChange}
@@ -242,8 +241,8 @@ const FileInput = forwardRef<
                 </div>
             )}
         </div>
-    )
-})
+    );
+});
 
-FileInput.displayName = "FileInput"
-export default FileInput
+FileInput.displayName = "FileInput";
+export default FileInput;
