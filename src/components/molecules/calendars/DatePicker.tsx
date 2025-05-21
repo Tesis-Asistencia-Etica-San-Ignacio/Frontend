@@ -35,7 +35,15 @@ export default function CalendarPicker({
 }: CalendarPickerProps) {
     const [open, setOpen] = useState(false);
     const [viewYear, setViewYear] = useState(false);
-    const [month, setMonth] = useState<Date>(value ?? new Date());
+
+    // ─── 1) Parsear value si viene como string ───
+    const parsedValue: Date | undefined =
+        value && !(value instanceof Date)
+            ? new Date(value as any)
+            : (value as Date | undefined);
+
+    // ─── 2) Inicializar el mes desde parsedValue ───
+    const [month, setMonth] = useState<Date>(parsedValue ?? new Date());
 
     const start = minDate ?? new Date(1960, 0, 1);
     const end = maxDate ?? new Date();
@@ -64,7 +72,8 @@ export default function CalendarPicker({
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" className={className}>
-                    {value ? format(value, "PPP") : placeholder}
+                    {/* ─── 3) Mostrar parsedValue en lugar de value ─── */}
+                    {parsedValue ? format(parsedValue, "PPP") : placeholder}
                     <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
             </PopoverTrigger>
@@ -77,7 +86,8 @@ export default function CalendarPicker({
                 >
                     <Calendar
                         mode="single"
-                        selected={value}
+                        /* ─── 4) Usar parsedValue para selected ─── */
+                        selected={parsedValue}
                         onSelect={(d) => {
                             onChange(d!);
                             setOpen(false);
@@ -85,7 +95,8 @@ export default function CalendarPicker({
                         }}
                         month={month}
                         onMonthChange={setMonth}
-                        defaultMonth={new Date()}
+                        /* ─── 5) Usar parsedValue para defaultMonth ─── */
+                        defaultMonth={parsedValue}
                         startMonth={start}
                         endMonth={end}
                         className="overflow-hidden rounded-lg border border-border p-2 bg-background"
@@ -238,4 +249,3 @@ function MonthGrid({
         </div>
     );
 }
-
