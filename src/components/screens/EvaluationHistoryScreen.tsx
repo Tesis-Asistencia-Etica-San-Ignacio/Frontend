@@ -8,6 +8,9 @@ import type { ColumnConfig } from '@/types/table';
 import type { FormField } from '@/types/formTypes';
 import { CheckCircle, Circle } from 'lucide-react';
 import { useAuthContext } from "@/context/AuthContext"
+import useFetchCasePdf from "@/hooks/pdf/useFetchCasesPdf";
+import ModalForm from "@/components/organisms/dialogs/ModalForm";
+import PdfRenderer from "@/components/organisms/PdfRenderer";
 
 export default function EvaluationHistoryScreen() {
   const { user } = useAuthContext()
@@ -25,6 +28,10 @@ export default function EvaluationHistoryScreen() {
   const [toDeleteId, setToDeleteId] = useState<string>('');
   const [selectedRow, setSelectedRow] = useState<any | null>(null);
   const [editModalOpen, setEditModalOpen] = useState(false);
+
+  // pdf
+  const [pdfModalOpen, setPdfModalOpen] = useState(false);
+  const { pdfUrl, fetchCasePdf, loading: pdfLoading } = useFetchCasePdf();
 
   // ─── Transformación de datos ────────────────────────────────────────
   const tableData = useMemo(
@@ -64,6 +71,12 @@ export default function EvaluationHistoryScreen() {
     navigate(`/evaluacion/${row.id}`, {
       state: { runReEvaluate: true },
     });
+  };
+
+  const handleViewPdf = async (row: any) => {
+    const filename = row.file as string;
+    await fetchCasePdf(filename);
+    setPdfModalOpen(true);
   };
 
   const handleDelete = (row: any) => {
@@ -190,7 +203,6 @@ export default function EvaluationHistoryScreen() {
       actionItems: [
         { label: 'Editar', onClick: handleEdit },
         {
-          // Si NO está EVALUADO o EN CURSO → "Evaluar"
           label: 'Evaluar',
           onClick: handleVerMas,
           visible: row => !['EVALUADO', 'EN CURSO'].includes(row.estado),
@@ -198,7 +210,6 @@ export default function EvaluationHistoryScreen() {
           tooltip: "Configura proveedor y modelo en Ajustes → IA"
         },
         {
-          // Si está EVALUADO o EN CURSO → "Ver detalles"
           label: 'Ver detalles',
           onClick: handleVerMas,
           visible: row => ['EVALUADO', 'EN CURSO'].includes(row.estado),
@@ -210,6 +221,7 @@ export default function EvaluationHistoryScreen() {
           disabled: !iaReady,
           tooltip: "Configura proveedor y modelo en Ajustes → IA"
         },
+        { label: 'Ver PDF', onClick: handleViewPdf },
         { label: 'Eliminar', onClick: handleDelete },
       ],
     },
@@ -241,6 +253,33 @@ export default function EvaluationHistoryScreen() {
       onModalSubmit={handleEditSubmit}
 
       DataSelectedRow={editInitialData}
+
+      /* PDF */
+      extraModal={
+        <ModalForm
+          open={pdfModalOpen}
+          onOpenChange={open => {
+            setPdfModalOpen(open);
+            if (!open) URL.revokeObjectURL(pdfUrl);
+          }}
+          title={{ text: "Ver Evaluación", align: "left" }}
+          formDataConfig={[
+            [
+              {
+                type: "custom",
+                key: "pdfPreview",
+                placeholder: "Vista previa",
+                component: <PdfRenderer url={pdfUrl} externalLoading={pdfLoading} />,
+                required: false,
+              },
+            ],
+          ]}
+          onSubmit={() => setPdfModalOpen(false)}
+          submitButtonText="Cerrar"
+          width="70%"
+          height="90%"
+        />
+      }
     />
   );
 }

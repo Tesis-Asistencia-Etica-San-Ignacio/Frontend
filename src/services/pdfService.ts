@@ -33,3 +33,10 @@ export const previewInvestigatorPdf = async (
 
   return { blob, pdfId };
 };
+
+export const getCasePdf = async (filename: string): Promise<Blob> => {
+  const response = await requestsApi.get(`/files/pdf/${filename}`, {
+    responseType: "blob"
+  });
+  return response.data;
+};

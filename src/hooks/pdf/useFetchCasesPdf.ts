@@ -1,5 +1,5 @@
 import { useState, useCallback } from "react";
-import { getCasePdf } from "@/services/caseService";
+import { getCasePdf } from "@/services/pdfService";
 import { useNotify } from "@/hooks/useNotify";
 
 export default function useFetchCasePdf() {

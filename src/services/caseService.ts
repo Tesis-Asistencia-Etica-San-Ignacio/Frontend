@@ -26,9 +26,3 @@ export const deleteCase = async (caseId: string): Promise<void> => {
   await requestsApi.delete(`/cases/${caseId}`);
 };
 
-export const getCasePdf = async (filename: string): Promise<Blob> => {
-  const response = await requestsApi.get(`/files/pdf/${filename}`, {
-    responseType: "blob"
-  });
-  return response.data;
-};
