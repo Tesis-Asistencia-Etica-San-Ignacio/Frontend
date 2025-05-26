@@ -583,7 +583,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="text"
-                      placeholder="nombre del estudio"
+                      placeholder="Nombre del estudio"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                       onBlur={async (e) => {
                         const texto = (e.target as HTMLInputElement).value;
@@ -625,7 +625,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="text"
-                      placeholder="nombre"
+                      placeholder="Nombre"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                       onBlur={async (e) => {
                         const texto = (e.target as HTMLInputElement).value;
@@ -646,7 +646,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="number"
-                      placeholder="número de celular"
+                      placeholder="Número de celular"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                     />
                   </FormControl>
@@ -662,7 +662,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="number"
-                      placeholder="télefono"
+                      placeholder="Télefono"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                     />
                   </FormControl>
@@ -678,7 +678,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="number"
-                      placeholder="ext. "
+                      placeholder="Ext. "
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                     />
                   </FormControl>
@@ -697,7 +697,7 @@ export default function CreateCaseScreen() {
                     <Input
                       {...field}
                       inputType="text"
-                      placeholder="nombre presidente"
+                      placeholder="Nombre presidente"
                       className="inline text-sm px-1 py-[2px] h-6 border rounded-md"
                       onBlur={async (e) => {
                         const texto = (e.target as HTMLInputElement).value;

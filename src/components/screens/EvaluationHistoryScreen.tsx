@@ -174,7 +174,7 @@ export default function EvaluationHistoryScreen() {
       headerLabel: 'Correo Estudiante',
       searchable: true,
     },
-    { id: 'file', accessorKey: 'file', headerLabel: 'Archivo' },
+    { id: 'file', accessorKey: 'file', headerLabel: 'Archivo', searchable: true },
     { id: 'tipo_error', accessorKey: 'tipo_error', headerLabel: 'Tipo de error' },
     {
       id: 'aprobado',
