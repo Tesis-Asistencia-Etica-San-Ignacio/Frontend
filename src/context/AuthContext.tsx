@@ -71,6 +71,7 @@ export const AuthProvider: React.FC<{ children: ReactNode }> = ({ children }) =>
     };
     const logout = async (): Promise<void> => {
         await logoutMutation.mutateAsync();
+        window.location.assign('/');
     };
 
     const value: IAuthContext = {
