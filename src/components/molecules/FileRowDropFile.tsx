@@ -11,7 +11,7 @@ export interface FileRowProps extends React.HTMLAttributes<HTMLTableRowElement> 
     error?: boolean
     progress?: number
     onRemove?: () => void
-    showProgress?: boolean   // <— nueva prop
+    showProgress?: boolean
 }
 
 const FileRow = forwardRef<HTMLTableRowElement, FileRowProps>(

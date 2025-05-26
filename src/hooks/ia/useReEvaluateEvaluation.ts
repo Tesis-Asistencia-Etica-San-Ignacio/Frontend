@@ -1,4 +1,3 @@
-// src/hooks/ia/useReEvaluateEvaluationHook.ts
 import { useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { reEvaluateEvaluation } from "@/services/iaService";
@@ -18,7 +17,6 @@ export default function useReEvaluateEvaluation() {
         try {
             await reEvaluateEvaluation(evaluationId);
 
-            // ★ Actualiza solo la fecha en cache ★
             qc.setQueryData<any[]>(QUERY_KEYS.EVALUATIONS, old =>
                 old
                     ? old.map(ev =>

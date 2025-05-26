@@ -1,4 +1,3 @@
-// src/hooks/useGeneratePdfByInvestigator.ts
 import { useState, useCallback, useRef, useEffect } from "react";
 import { previewInvestigatorPdf } from "@/services/pdfService";
 import { useNotify } from "@/hooks/useNotify";

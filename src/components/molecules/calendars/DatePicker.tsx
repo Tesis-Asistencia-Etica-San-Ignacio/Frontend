@@ -36,13 +36,13 @@ export default function CalendarPicker({
     const [open, setOpen] = useState(false);
     const [viewYear, setViewYear] = useState(false);
 
-    // ─── 1) Parsear value si viene como string ───
+    // 1) Parsear value si viene como string
     const parsedValue: Date | undefined =
         value && !(value instanceof Date)
             ? new Date(value as any)
             : (value as Date | undefined);
 
-    // ─── 2) Inicializar el mes desde parsedValue ───
+    // 2) Inicializar el mes desde parsedValue
     const [month, setMonth] = useState<Date>(parsedValue ?? new Date());
 
     const start = minDate ?? new Date(1960, 0, 1);
@@ -72,7 +72,7 @@ export default function CalendarPicker({
         <Popover open={open} onOpenChange={setOpen}>
             <PopoverTrigger asChild>
                 <Button variant="outline" className={className}>
-                    {/* ─── 3) Mostrar parsedValue en lugar de value ─── */}
+                    {/* 3) Mostrar parsedValue en lugar de value */}
                     {parsedValue ? format(parsedValue, "PPP") : placeholder}
                     <ChevronDown className="ml-auto h-4 w-4 opacity-50" />
                 </Button>
@@ -154,7 +154,7 @@ function CaptionLabel({
             variant="ghost"
             size="sm"
             className="flex items-center gap-2 text-sm font-medium hover:bg-transparent
-                 data-[state=open]:text-muted-foreground/80 [&[data-state=open]>svg]:rotate-180"
+                data-[state=open]:text-muted-foreground/80 [&[data-state=open]>svg]:rotate-180"
             onClick={() => setIsYearView((v) => !v)}
             data-state={isYearView ? "open" : "closed"}
         >

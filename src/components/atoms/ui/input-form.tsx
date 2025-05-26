@@ -15,9 +15,6 @@ import {
 import { type InputType } from "@/types/formTypes"
 import { checkSpellingWithLT, LTMatch } from "@/lib/api/languageApi"
 
-
-
-
 export function getConfigForType(type: InputType) {
   switch (type) {
     case "email":
@@ -60,12 +57,12 @@ export function getConfigForType(type: InputType) {
         maxLength: 100,
         icon: <SearchIcon className="w-5 h-5 text-gray-400" />,
       }
-      case "number":
-            return {
-               maxLength: 12,            // o el que necesites
-               icon: undefined,
-           }
-           
+    case "number":
+      return {
+        maxLength: 12,
+        icon: undefined,
+      }
+
     default:
       return {
         maxLength: 100,
@@ -99,7 +96,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
   ({ className, inputType, icon, value = "", onChange, maxLength, onSpellCheck, ...props }, ref) => {
     const [showPassword, setShowPassword] = React.useState(false)
 
-    const { maxLength: defaultMaxLength, icon: defaultIcon,   } = getConfigForType(inputType)
+    const { maxLength: defaultMaxLength, icon: defaultIcon, } = getConfigForType(inputType)
 
     let nativeType: React.HTMLInputTypeAttribute = "text"
     if (inputType === "password") {
@@ -109,7 +106,7 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
     } else if (inputType === "search") {
       nativeType = "search"
     } else if (inputType === "number") {
-      nativeType = "number"  
+      nativeType = "number"
     } else if (
       inputType === "phone" ||
       inputType === "extension-phone" ||
@@ -131,16 +128,16 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
         <input
           ref={ref}
           type={nativeType}
-          maxLength={finalMaxLength} 
+          maxLength={finalMaxLength}
           value={value}
           onChange={onChange}
           className={cn(inputStyle, finalIcon ? "pl-8" : "pl-2")}
           onBlur={async (e) => {
-             if (onSpellCheck) {
-               const matches = await checkSpellingWithLT(e.currentTarget.value);
-               onSpellCheck(matches);
-             }
-           }}
+            if (onSpellCheck) {
+              const matches = await checkSpellingWithLT(e.currentTarget.value);
+              onSpellCheck(matches);
+            }
+          }}
           spellCheck={true}
           {...props}
         />

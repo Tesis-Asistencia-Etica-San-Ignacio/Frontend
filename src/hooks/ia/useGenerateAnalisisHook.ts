@@ -1,4 +1,3 @@
-// src/hooks/ia/useGenerateEvaluationHook.ts
 import { useState, useCallback } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { generateEvaluation } from "@/services/iaService";
@@ -18,7 +17,6 @@ function useGenerateEvaluation() {
     try {
       await generateEvaluation(evaluationId);
 
-      // ★ SOLO ESTA LÍNEA/N bloque actualiza el cache ★
       qc.setQueryData<any[]>(QUERY_KEYS.EVALUATIONS, old =>
         old
           ? old.map(ev =>

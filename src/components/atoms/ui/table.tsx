@@ -13,8 +13,7 @@ export function Table({ className, ...props }: React.ComponentProps<"table">) {
       data-slot="table-container"
       className="relative w-full overflow-x-auto"
     >
-      {/* Solo envolvemos al <table> en el provider, 
-          así el wrapper <div> sigue idéntico al original */}
+
       <TooltipProvider>
         <table
           data-slot="table"
@@ -30,7 +29,7 @@ export function TableHeader({ className, ...props }: React.ComponentProps<"thead
   return (
     <thead
       data-slot="table-header"
-      className={cn("[&_tr]:border-b" , className)}
+      className={cn("[&_tr]:border-b", className)}
       {...props}
     />
   )

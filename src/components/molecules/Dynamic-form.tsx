@@ -33,7 +33,7 @@ import CalendarPicker from "./calendars/DatePicker"
 import React, { useEffect, useRef, forwardRef, useImperativeHandle } from "react"
 import isEqual from "lodash.isequal"
 function baseValidationForType(type: FieldType): z.ZodTypeAny {
-    // ① declara schema como “cualquier Zod” (no sólo string)
+    // declara schema como “cualquier Zod” (no sólo string)
     let schema: z.ZodTypeAny
 
     switch (type) {
@@ -160,7 +160,7 @@ function flattenFields(data: FormField[] | FormField[][]): FormField[] {
 
 export interface DynamicFormHandles {
     handleSubmit: <T>(onValid: (data: any) => T) => (e?: React.BaseSyntheticEvent) => Promise<void>
-    trigger: (name?: string | string[]) => Promise<boolean>   //  ←  NUEVO
+    trigger: (name?: string | string[]) => Promise<boolean>
     reset: (values?: Record<string, any>) => void
 
 }
@@ -209,7 +209,7 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
 
     useImperativeHandle(ref, () => ({
         handleSubmit,
-        trigger: form.trigger,          //  ←  NUEVO
+        trigger: form.trigger,
         __formInstance: form,
         reset: form.reset,
     }))
@@ -303,7 +303,6 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                                         />
                                     );
                                 }
-                                /* input normal */
 
                                 // Si es un password, elegimos current- vs new-password según la key
                                 const autoComplete =
@@ -323,7 +322,6 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                                         value={controllerField.value || ""}
                                         onChange={controllerField.onChange}
                                         onBlur={e => onSpellCheck?.(field.key, e.target.value)}
-
                                     />
                                 )
                             })()}
@@ -360,7 +358,6 @@ export const DynamicForm = forwardRef<DynamicFormHandles, DynamicFormProps>(({
                 {renderField(field)}
             </div>
         ))
-
     }
 
     return (

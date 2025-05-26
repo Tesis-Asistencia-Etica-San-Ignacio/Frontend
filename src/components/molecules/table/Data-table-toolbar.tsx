@@ -1,6 +1,5 @@
 import { Table } from "@tanstack/react-table"
 import { X } from "lucide-react"
-
 import { Button } from "../../atoms/ui/button"
 import { Input } from "../../atoms/ui/input-form"
 import { DataTableViewOptions } from "./Data-table-view-options"

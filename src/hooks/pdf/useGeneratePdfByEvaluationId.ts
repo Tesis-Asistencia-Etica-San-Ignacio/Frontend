@@ -1,4 +1,3 @@
-// src/hooks/pdf/useGeneratePdfByEvaluation.ts
 import { useState, useCallback, useRef, useEffect } from "react";
 import { generatePdfByEvaluationId } from "@/services/pdfService";
 import { useNotify } from "@/hooks/useNotify";
