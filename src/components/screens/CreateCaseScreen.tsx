@@ -54,7 +54,7 @@ export default function CreateCaseScreen() {
 
   /* -------- State de secciones y ortografía -------- */
   const [fecha] = useState<Date>();
-  const [openSections, setOpen] = useState({ intro: false, info: false, auth: false, head: false });
+  const [openSections, setOpen] = useState({ head: false,intro: false, info: false, auth: false });
   const [spellingWarnings, setWarn] = useState<Record<string, LTMatch[]>>({});
   // arriba, junto a los demás estados
   const [formData, setFormData] = useState<Record<string, any> | null>(null);
@@ -206,6 +206,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿Por qué se debe realizar este estudio?`,
       placeholder: "Describa brevemente el problema y la pertinencia del estudio",
       required: true,
+      autoAdjust: true
 
     } as FormField);
     fields.push({
@@ -214,6 +215,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿Cuál es el objetivo de este estudio?`,
       placeholder: "Enuncie el objetivo general",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "def_estudio",
@@ -221,6 +223,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿En qué consiste el estudio?`,
       placeholder: "Describa de manera clara y sencilla los procedimientos, intervenciones y su propósito, incluyendo los experimentales (aleatorización, cegamiento, uso de placebo, etc.). ",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "riesgos",
@@ -228,6 +231,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿Cuáles son las molestias o los riesgos esperados?`,
       placeholder: "Describir molestias y riesgos. En caso de que no existan molestias o riesgos igualmente se debe informar.",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "beneficios",
@@ -235,6 +239,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}.	¿Cuáles son los beneficios que puedo obtener por participar? Enunciar. `,
       placeholder: "Enunciar beneficios. En caso de que no existan beneficios igualmente se debe informar. ",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "confidencialidad",
@@ -243,6 +248,7 @@ export default function CreateCaseScreen() {
       placeholder:
         "Indique brevemente cómo se manejarán los datos: Describa en dónde se almacenarán los datos e información, los mecanismos de custodia y seguridad de los mismos y el tiempo de custodia Describa quiénes tendrán acceso a la información y bajo qué parámetros de seguridad se accederá a ello Describa cómo se llevará a cabo la anonimización de los datos tanto para los análisis como para la publicación de los resultados. Describa la posibilidad de conocer los datos personales registrados en la base de datos del estudio, solicitar rectificación de los mismos y de retirar su consentimiento para el tratamiento de los datos en cualquier momento del estudio, excepto a partir de la anonimización.  -  Describa los procesos de transferencia de datos a terceros, en caso de estudios colaborativos, y la garantía de mantener la privacidad, confidencialidad y seguridad en el tratamiento por parte del tercero.",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "p_alternativos",
@@ -250,6 +256,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}.	¿Existen procedimientos alternativos que pudieran ser ventajosos para mi?`,
       placeholder: "En caso de que se realicen intervenciones con dispositivos, procedimiento médico-quirúrgico o medicamentos explicar si existen otras intervenciones que puedan realizarse para la patología del paciente. ",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "compromiso_info",
@@ -259,6 +266,7 @@ export default function CreateCaseScreen() {
       placeholder:
         "En caso de realización de estudios que requieran entrega de resultados de procedimiento o consejería (genética, por ejemplo), explicar el proceso.",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "ob_financiera",
@@ -266,6 +274,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}.	¿Existe alguna obligación financiera? Participar en este estudio no tiene ningún costo económico para usted.`,
       placeholder: "En caso contrario, enunciar costos generados por participar en el estudio, describir cuáles: transporte, alimentación etc. y la forma cómo serán asumidos con cargo al presupuesto del proyecto. ",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "duracion",
@@ -273,6 +282,7 @@ export default function CreateCaseScreen() {
       label: `${idx++}. ¿Cuánto tiempo durará mi participación en el estudio? `,
       placeholder: "Indique el tiempo de participación y en caso de ser necesario la frecuencia de las intervenciones. ",
       required: true,
+      autoAdjust: true
     } as FormField);
     fields.push({
       key: "afectaciones",
@@ -281,6 +291,7 @@ export default function CreateCaseScreen() {
       placeholder:
         "Indique que el retiro no afecta derechos ni tratamientos",
       required: true,
+      autoAdjust: true
     } as FormField);
 
     if (mostrarAsentimiento) {
@@ -291,6 +302,7 @@ export default function CreateCaseScreen() {
         placeholder:
           "En estudios en los que se involucran menores de edad o discapacitados físicos y mentales adultos, que propongan intervenciones o procedimientos que superan el riesgo mínimo (no hacen parte del estándar de manejo), se debe evaluar la capacidad de entendimiento de acuerdo a la Res. 8430 de 1993. ",
         required: true,
+        autoAdjust: true
       } as FormField);
     }
     if (mostrarPoliza) {
@@ -302,6 +314,7 @@ export default function CreateCaseScreen() {
         placeholder:
           "En estudios en los que se involucran menores de edad o discapacitados físicos y mentales adultos, que propongan intervenciones o procedimientos que superan el riesgo mínimo (no hacen parte del estándar de manejo), se debe evaluar la capacidad de entendimiento de acuerdo a la Res. 8430 de 1993. (Mantener o retirar el numeral 12 de acuerdo a la naturaleza del estudio)",
         required: true,
+        autoAdjust: true
       } as FormField);
     }
     fields.push({

@@ -19,7 +19,7 @@ interface CarouselPluginProps {
 }
 
 export function CarouselPlugin({ slides }: CarouselPluginProps) {
-    const plugin = React.useRef(Autoplay({ delay: 2000, stopOnInteraction: true }))
+    const plugin = React.useRef(Autoplay({ delay: 7000, stopOnInteraction: true }))
 
     return (
         <div className="flex flex-col w-full justify-center items-center">
