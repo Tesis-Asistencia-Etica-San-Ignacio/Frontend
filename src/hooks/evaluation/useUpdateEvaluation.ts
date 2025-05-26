@@ -14,6 +14,11 @@ const useUpdateEvaluationHook = () => {
     ...DEFAULT_QUERY_OPTIONS,
 
     onSuccess: () => {
+      qc.refetchQueries({
+        queryKey: [QUERY_KEYS.STATS], // coincide con ['stats', from, to]
+        exact: false,               // cualquier rango
+        type: 'all',               // 'active' ⇒ solo las montadas
+      })
       notifySuccess({
         title: 'Evaluación actualizada',
         description: 'Cambios guardados correctamente.',

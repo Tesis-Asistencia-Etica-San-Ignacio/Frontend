@@ -4,8 +4,8 @@ export const QUERY_KEYS = {
     ETHICAL_NORMS: (evaluationId: string) => ['ethicalNorms', evaluationId] as const,
     IA_PROVIDERS: ['iaProviders'] as const,
     ME: ['me'] as const,
-    USERS: ['users'] as const, // 'users',
-    STATS: ['stats'] as const, // 'stats',
+    USERS: ['users'] as const,
+    STATS: ['stats'] as const,
     PROMPTS: ['prompts'] as const,
 };
 
